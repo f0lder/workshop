@@ -2,7 +2,7 @@
 
 ## Supabase Row Level Security
 
-This document outlines the security approach used in the Workshop Management application to protect data while allowing appropriate access.
+This document outlines the security approach used in the Mimesiss application to protect data while allowing appropriate access.
 
 ## Principles
 

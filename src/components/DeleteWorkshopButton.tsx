@@ -57,7 +57,7 @@ export default function DeleteWorkshopButton({ workshopId, workshopTitle }: Dele
             <button
               onClick={() => setShowConfirm(false)}
               disabled={isDeleting}
-              className="inline-flex items-center px-2 py-1 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="inline-flex items-center px-2 py-1 border border-input text-xs font-medium rounded text-foreground bg-card hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Cancel
             </button>
@@ -70,7 +70,7 @@ export default function DeleteWorkshopButton({ workshopId, workshopTitle }: Dele
   return (
     <button
       onClick={() => setShowConfirm(true)}
-      className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+      className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-card hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
     >
       <FaTrash className="h-4 w-4 mr-1" />
       Delete

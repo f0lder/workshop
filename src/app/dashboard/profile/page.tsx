@@ -126,9 +126,9 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="bg-white shadow rounded-lg">
+      <div className="bg-card shadow rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-6">
+          <h3 className="text-lg leading-6 font-medium text-foreground mb-6">
             Profile Settings
           </h3>
 
@@ -146,7 +146,7 @@ export default function ProfilePage() {
 
           <form onSubmit={handleSave} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-foreground">
                 Email Address
               </label>
               <div className="mt-1 relative">
@@ -155,19 +155,19 @@ export default function ProfilePage() {
                   id="email"
                   value={user?.email || ''}
                   disabled
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-gray-50 pl-10"
+                  className="appearance-none block w-full px-3 py-2 border border-input rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-muted pl-10"
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <FaEnvelope className="h-4 w-4 text-gray-400" />
+                  <FaEnvelope className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Email address cannot be changed. Contact support if you need to update it.
               </p>
             </div>
 
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="fullName" className="block text-sm font-medium text-foreground">
                 Full Name
               </label>
               <div className="mt-1 relative">
@@ -176,17 +176,17 @@ export default function ProfilePage() {
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm pl-10"
+                  className="appearance-none block w-full px-3 py-2 border border-input rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm pl-10"
                   placeholder="Enter your full name"
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <FaUser className="h-4 w-4 text-gray-400" />
+                  <FaUser className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-foreground">
                 Account Type
               </label>
               <div className="mt-1">
@@ -194,17 +194,17 @@ export default function ProfilePage() {
                   {profile?.role || 'User'}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Your account type determines your access level in the system.
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-foreground">
                 Member Since
               </label>
               <div className="mt-1">
-                <span className="text-sm text-gray-900">
+                <span className="text-sm text-foreground">
                   {profile?.created_at 
                     ? new Date(profile.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',

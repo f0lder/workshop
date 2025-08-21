@@ -1,4 +1,4 @@
-# Workshop Management App
+# Mimesiss
 
 A modern workshop management application built with Next.js 15, TypeScript, Tailwind CSS, and Supabase.
 

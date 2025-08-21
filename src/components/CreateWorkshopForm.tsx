@@ -63,7 +63,7 @@ export default function CreateWorkshopForm() {
       )}
 
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="title" className="block text-sm font-medium text-foreground">
           Workshop Title *
         </label>
         <div className="mt-1">
@@ -74,14 +74,14 @@ export default function CreateWorkshopForm() {
             required
             value={formData.title}
             onChange={handleChange}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="appearance-none block w-full px-3 py-2 border border-input rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="e.g., Introduction to React"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="description" className="block text-sm font-medium text-foreground">
           Description
         </label>
         <div className="mt-1">
@@ -91,7 +91,7 @@ export default function CreateWorkshopForm() {
             rows={4}
             value={formData.description}
             onChange={handleChange}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="appearance-none block w-full px-3 py-2 border border-input rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="Describe what participants will learn..."
           />
         </div>
@@ -99,7 +99,7 @@ export default function CreateWorkshopForm() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="date" className="block text-sm font-medium text-foreground">
             Date *
           </label>
           <div className="mt-1">
@@ -110,13 +110,13 @@ export default function CreateWorkshopForm() {
               required
               value={formData.date}
               onChange={handleChange}
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="appearance-none block w-full px-3 py-2 border border-input rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="time" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="time" className="block text-sm font-medium text-foreground">
             Time *
           </label>
           <div className="mt-1">
@@ -127,14 +127,14 @@ export default function CreateWorkshopForm() {
               required
               value={formData.time}
               onChange={handleChange}
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="appearance-none block w-full px-3 py-2 border border-input rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
         </div>
       </div>
 
       <div>
-        <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="location" className="block text-sm font-medium text-foreground">
           Location *
         </label>
         <div className="mt-1">
@@ -145,14 +145,14 @@ export default function CreateWorkshopForm() {
             required
             value={formData.location}
             onChange={handleChange}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="appearance-none block w-full px-3 py-2 border border-input rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="e.g., Conference Room A, Online, etc."
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="max_participants" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="max_participants" className="block text-sm font-medium text-foreground">
           Maximum Participants *
         </label>
         <div className="mt-1">
@@ -165,10 +165,10 @@ export default function CreateWorkshopForm() {
             max="100"
             value={formData.max_participants}
             onChange={handleChange}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="appearance-none block w-full px-3 py-2 border border-input rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-muted-foreground">
           Maximum number of participants allowed for this workshop.
         </p>
       </div>
@@ -177,7 +177,7 @@ export default function CreateWorkshopForm() {
         <button
           type="button"
           onClick={() => router.back()}
-          className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="bg-card py-2 px-4 border border-input rounded-md shadow-sm text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Cancel
         </button>

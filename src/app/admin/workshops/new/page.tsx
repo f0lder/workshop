@@ -9,7 +9,7 @@ export default function NewWorkshopPage() {
       <div className="flex items-center space-x-4">
         <Link
           href="/admin/workshops"
-          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700"
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
         >
           <FaArrowLeft className="h-4 w-4 mr-1" />
           Back to Workshops
@@ -17,14 +17,14 @@ export default function NewWorkshopPage() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Create New Workshop</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-foreground">Create New Workshop</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Fill in the details below to create a new workshop.
         </p>
       </div>
 
       {/* Form */}
-      <div className="bg-white shadow sm:rounded-lg">
+      <div className="bg-card shadow sm:rounded-lg">
         <div className="px-4 py-5 sm:p-6">
           <CreateWorkshopForm />
         </div>

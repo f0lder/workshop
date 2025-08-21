@@ -1,8 +1,8 @@
-# Workshop App - Copilot Instructions
+# Mimesiss - Copilot Instructions
 
 <!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
 
-This is a Next.js workshop application with the following key features and conventions:
+This is a Next.js workshop application called Mimesiss with the following key features and conventions:
 
 ## Tech Stack
 - **Framework**: Next.js 15 with App Router
