@@ -1,6 +1,5 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import Header from './Header'
 import { User } from '@supabase/supabase-js'
 
@@ -20,8 +19,6 @@ interface HeaderWrapperProps {
 }
 
 export default function HeaderWrapper({ user, profile }: HeaderWrapperProps) {
-  const pathname = usePathname()
-  
   // Show header on all pages now (removed auth page exclusion)
   return <Header user={user} profile={profile} />
 }

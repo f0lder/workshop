@@ -1,7 +1,7 @@
 import { FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaClock } from 'react-icons/fa'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Profile, Workshop } from '@/types/models'
+import { Workshop } from '@/types/models'
 import { registerForWorkshop } from './actions'
 
 export default async function WorkshopsPage() {
@@ -11,18 +11,15 @@ export default async function WorkshopsPage() {
   } = await supabase.auth.getUser()
 
   // Get user profile if logged in
-  let profile: Profile | null = null
   if (user) {
     const { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single()
-    profile = data
+    // Profile data available if needed later
+    void data
   }
-
-  // Use profile variable to avoid unused warning
-  const _ = profile
 
   // Fetch workshops using the regular client with appropriate RLS policies
   const { data: workshops, error } = await supabase

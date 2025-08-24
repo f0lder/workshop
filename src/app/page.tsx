@@ -9,18 +9,15 @@ export default async function HomePage() {
   } = await supabase.auth.getUser()
 
   // Get user profile if logged in
-  let profile = null
   if (user) {
     const { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single()
-    profile = data
+    // Profile data available if needed later
+    void data
   }
-  
-  // Use profile variable to avoid unused warning
-  const _ = profile
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
       {/* Hero Section */}
