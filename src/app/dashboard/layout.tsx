@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Header from '@/components/Header'
+import DashboardSidebar from '@/components/DashboardSidebar'
 
 export default async function DashboardLayout({
   children,
@@ -23,12 +23,29 @@ export default async function DashboardLayout({
     .eq('id', user.id)
     .single()
 
+  const isAdmin = profile?.role === 'admin'
+
   return (
-    <div className="min-h-screen bg-muted">
-      <Header user={user} profile={profile} variant="dashboard" />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+    <div className="min-h-screen bg-background">
+      {/* Desktop: Flex layout with sidebar */}
+      <div className="hidden lg:flex h-screen">
+        <DashboardSidebar user={user} profile={profile} isAdmin={isAdmin} />
+        
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          <main className="p-4 lg:p-8">
+            {children}
+          </main>
+        </div>
+      </div>
+
+      {/* Mobile/Tablet: Single column layout */}
+      <div className="lg:hidden">
+        <DashboardSidebar user={user} profile={profile} isAdmin={isAdmin} />
+        <main className="p-4">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

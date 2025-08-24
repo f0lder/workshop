@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { FaCalendarAlt, FaUsers, FaMapMarkerAlt } from 'react-icons/fa'
 import { createClient } from '@/lib/supabase/server'
-import Header from '@/components/Header'
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -19,11 +18,11 @@ export default async function HomePage() {
       .single()
     profile = data
   }
+  
+  // Use profile variable to avoid unused warning
+  const _ = profile
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
-      {/* Header */}
-      <Header user={user} profile={profile} variant="home" />
-
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">

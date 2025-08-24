@@ -1,20 +1,21 @@
 'use client'
 
-
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { 
-  FaCalendarAlt, 
   FaUser, 
   FaSignOutAlt, 
   FaBars, 
   FaTimes, 
   FaHome,
+  FaCalendarAlt,
+  FaUsers,
   FaCog,
-  FaUserCog
+  FaUserCog,
+  FaChartBar
 } from 'react-icons/fa'
 
 interface Profile {
@@ -29,330 +30,335 @@ interface Profile {
 interface HeaderProps {
   user?: User | null
   profile?: Profile | null
-  variant?: 'home' | 'dashboard'
 }
 
-export default function Header({ user, profile, variant = 'home' }: HeaderProps) {
+export default function Header({ user, profile }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen)
-
   const handleSignOut = async () => {
-    if (variant === 'dashboard') {
-      await supabase.auth.signOut()
-      router.push('/')
-      router.refresh()
-    }
-    setIsMobileMenuOpen(false)
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
   }
 
-  const isAdmin = profile?.role === 'admin'
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
 
   return (
     <>
-      <header className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+        <div className="mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center">
-                <FaCalendarAlt className="h-8 w-8 text-primary" />
-                <span className="ml-2 text-2xl font-bold text-foreground">Mimesiss</span>
-              </Link>
-            </div>
+            <Link href="/" className="text-xl font-bold text-foreground">
+              Mimesiss
+            </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-4">
+            <nav className="hidden lg:flex items-center space-x-6">
+              <Link href="/" className="text-foreground hover:text-foreground/80 transition-colors">
+                Acasă
+              </Link>
+              <Link href="/about" className="text-foreground hover:text-foreground/80 transition-colors">
+                Cine suntem
+              </Link>
+              <Link href="/info" className="text-foreground hover:text-foreground/80 transition-colors">
+                Informații
+              </Link>
+              <Link href="/program" className="text-foreground hover:text-foreground/80 transition-colors">
+                Program
+              </Link>
+              <Link href="/previous-editions" className="text-foreground hover:text-foreground/80 transition-colors">
+                Ediții anterioare
+              </Link>
+              <Link href="/contact" className="text-foreground hover:text-foreground/80 transition-colors">
+                Date de contact
+              </Link>
+              <Link href="/gallery" className="text-foreground hover:text-foreground/80 transition-colors">
+                Galerie foto
+              </Link>
+              <Link href="/sponsors" className="text-foreground hover:text-foreground/80 transition-colors">
+                Sponsori și parteneri
+              </Link>
+            </nav>
+
+            {/* Desktop Auth Section */}
+            <div className="hidden lg:flex items-center space-x-4">
               {user ? (
-                // Logged in user navigation
                 <>
-                  {variant === 'dashboard' ? (
-                    // Dashboard navigation
-                    <>
-                      <Link
-                        href="/dashboard"
-                        className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                      >
-                        <FaHome className="h-4 w-4 mr-1" />
-                        Dashboard
-                      </Link>
-
-                      <Link
-                        href="/workshops"
-                        className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                      >
-                        <FaCalendarAlt className="h-4 w-4 mr-1" />
-                        Workshops
-                      </Link>
-
-                      {isAdmin && (
-                        <Link
-                          href="/admin"
-                          className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                        >
-                          <FaUserCog className="h-4 w-4 mr-1" />
-                          Admin
-                        </Link>
-                      )}
-
-                      <Link
-                        href="/dashboard/profile"
-                        className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                      >
-                        <FaCog className="h-4 w-4 mr-1" />
-                        Profile
-                      </Link>
-
-                      <div className="flex items-center space-x-3">
-                        <span className="text-sm text-foreground">
-                          {profile?.full_name || user.email}
-                        </span>
-                        <button
-                          onClick={handleSignOut}
-                          className="text-muted-foreground hover:text-destructive p-2 rounded-md"
-                          title="Sign out"
-                        >
-                          <FaSignOutAlt className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    // Home page navigation for logged in users
-                    <>
-                      <Link
-                        href="/dashboard"
-                        className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium"
-                      >
-                        Dashboard
-                      </Link>
-                      
-                      <Link
-                        href="/workshops"
-                        className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium"
-                      >
-                        Workshops
-                      </Link>
-                      
-                      {isAdmin && (
-                        <Link
-                          href="/admin"
-                          className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium"
-                        >
-                          Admin
-                        </Link>
-                      )}
-                      
-                      <div className="flex items-center space-x-2">
-                        <FaUser className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm text-foreground">
-                          {profile?.full_name || user.email}
-                        </span>
-                      </div>
-                      
-                      <form action="/auth/signout" method="post">
-                        <button
-                          type="submit"
-                          className="text-muted-foreground hover:text-destructive p-2 rounded-md"
-                          title="Sign out"
-                        >
-                          <FaSignOutAlt className="h-4 w-4" />
-                        </button>
-                      </form>
-                    </>
-                  )}
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center space-x-2 text-foreground hover:text-foreground/80 transition-colors"
+                  >
+                    <FaUser className="h-4 w-4" />
+                    <span>Contul meu</span>
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="flex items-center space-x-2 text-destructive hover:text-destructive/80 transition-colors"
+                  >
+                    <FaSignOutAlt className="h-4 w-4" />
+                    <span>Deconectare</span>
+                  </button>
                 </>
               ) : (
-                // Guest user navigation
                 <>
                   <Link
-                    href="/workshops"
-                    className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Browse Workshops
-                  </Link>
-                  
-                  <Link
                     href="/auth/login"
-                    className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium"
+                    className="text-foreground hover:text-foreground/80 transition-colors"
                   >
-                    Sign In
+                    Conectare
                   </Link>
-                  
                   <Link
                     href="/auth/signup"
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md transition-colors"
                   >
-                    Sign Up
+                    Înregistrare
                   </Link>
                 </>
               )}
             </div>
 
-            {/* Mobile menu button */}
+            {/* Mobile Menu Button */}
             <button
+              className="lg:hidden p-2 text-foreground hover:bg-accent rounded-md transition-colors"
               onClick={toggleMobileMenu}
-              className="md:hidden p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
-              aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? (
-                <FaTimes className="h-6 w-6" />
-              ) : (
-                <FaBars className="h-6 w-6" />
-              )}
+              <FaBars className="h-5 w-5" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+      {/* Mobile Side Menu Overlay */}
+      <div className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ease-in-out ${
+        isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+      }`}>
+        {/* Backdrop */}
+        <div 
+          className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
+            isMobileMenuOpen ? 'opacity-100' : 'opacity-0'
+          }`}
           onClick={toggleMobileMenu}
         />
-      )}
-
-      {/* Mobile Side Menu */}
-      <div
-        className={`fixed top-0 right-0 h-full w-80 backdrop-blur-2xl bg-card/80 border-l border-border z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+        
+        {/* Side Menu */}
+        <div className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90 border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-border/50">
-            <div className="flex items-center">
-              <FaCalendarAlt className="h-6 w-6 text-primary" />
-              <span className="ml-2 text-lg font-bold text-foreground">Mimesiss</span>
+        }`}>
+          <div className="flex flex-col h-full">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <Link href="/" className="text-xl font-bold text-foreground">
+                Mimesiss
+              </Link>
+              <button
+                onClick={toggleMobileMenu}
+                className="p-2 text-foreground hover:bg-accent rounded-md transition-colors duration-200"
+              >
+                <FaTimes className="h-5 w-5" />
+              </button>
             </div>
-            <button
-              onClick={toggleMobileMenu}
-              className="p-1 rounded-md text-muted-foreground hover:text-foreground"
-            >
-              <FaTimes className="h-5 w-5" />
-            </button>
-          </div>
 
-          {/* User Info */}
-          {user && (
-            <div className="p-6 border-b border-border/50">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                  <FaUser className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    {profile?.full_name || user.email}
-                  </p>
-                  <p className="text-xs text-muted-foreground capitalize">
-                    {profile?.role || 'user'}
-                  </p>
+            {/* User Profile Section */}
+            {user && (
+              <div className={`p-6 border-b border-border transform transition-all duration-300 ease-in-out delay-100 ${
+                isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+              }`}>
+                <div className="flex items-center space-x-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <FaUser className="h-5 w-5 text-primary" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {profile?.full_name || user?.email}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {profile?.role === 'admin' ? 'Administrator' : 'Utilizator'}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Navigation Links */}
-          <nav className="flex-1 px-6 py-6 space-y-2">
-            {user ? (
-              // Logged in user navigation
-              <>
-                <Link
-                  href="/dashboard"
-                  onClick={toggleMobileMenu}
-                  className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors"
+            {/* Navigation Links */}
+            <nav className="flex-1 px-6 py-6 space-y-2">
+              <Link
+                href="/"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '150ms' : '0ms' }}
+              >
+                <FaHome className="h-4 w-4 mr-3" />
+                Acasă
+              </Link>
+              
+              <Link
+                href="/workshops"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '200ms' : '0ms' }}
+              >
+                <FaCalendarAlt className="h-4 w-4 mr-3" />
+                Înregistrare
+              </Link>
+              
+              <Link
+                href="/about"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '250ms' : '0ms' }}
+              >
+                <FaUsers className="h-4 w-4 mr-3" />
+                Cine suntem
+              </Link>
+              
+              <Link
+                href="/info"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '300ms' : '0ms' }}
+              >
+                <FaCog className="h-4 w-4 mr-3" />
+                Informații
+              </Link>
+              
+              <Link
+                href="/program"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '350ms' : '0ms' }}
+              >
+                <FaCalendarAlt className="h-4 w-4 mr-3" />
+                Program
+              </Link>
+              
+              <Link
+                href="/previous-editions"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '400ms' : '0ms' }}
+              >
+                <FaChartBar className="h-4 w-4 mr-3" />
+                Ediții anterioare
+              </Link>
+              
+              <Link
+                href="/contact"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '450ms' : '0ms' }}
+              >
+                <FaUser className="h-4 w-4 mr-3" />
+                Date de contact
+              </Link>
+              
+              <Link
+                href="/gallery"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '500ms' : '0ms' }}
+              >
+                <FaCalendarAlt className="h-4 w-4 mr-3" />
+                Galerie foto
+              </Link>
+              
+              <Link
+                href="/sponsors"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '550ms' : '0ms' }}
+              >
+                <FaUserCog className="h-4 w-4 mr-3" />
+                Sponsori și parteneri
+              </Link>
+
+              {user ? (
+                // Logged in user actions
+                <>
+                  <div className={`border-t border-border/50 my-4 pt-4 transform transition-all duration-200 ${
+                    isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                  }`}
+                  style={{ transitionDelay: isMobileMenuOpen ? '600ms' : '0ms' }}
+                  >
+                    <Link
+                      href="/dashboard"
+                      onClick={toggleMobileMenu}
+                      className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors duration-200"
+                    >
+                      <FaUser className="h-4 w-4 mr-3" />
+                      Contul meu
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                // Guest user actions
+                <div className={`border-t border-border/50 my-4 pt-4 space-y-2 transform transition-all duration-200 ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '600ms' : '0ms' }}
                 >
-                  <FaHome className="h-4 w-4 mr-3" />
-                  Dashboard
-                </Link>
-                
-                <Link
-                  href="/workshops"
-                  onClick={toggleMobileMenu}
-                  className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors"
-                >
-                  <FaCalendarAlt className="h-4 w-4 mr-3" />
-                  Workshops
-                </Link>
-                
-                {isAdmin && (
                   <Link
-                    href="/admin"
+                    href="/auth/login"
                     onClick={toggleMobileMenu}
-                    className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors"
+                    className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors duration-200"
+                  >
+                    <FaUser className="h-4 w-4 mr-3" />
+                    Conectare
+                  </Link>
+                  
+                  <Link
+                    href="/auth/signup"
+                    onClick={toggleMobileMenu}
+                    className="flex items-center px-3 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
                   >
                     <FaUserCog className="h-4 w-4 mr-3" />
-                    Admin
+                    Înregistrare
                   </Link>
-                )}
-                
-                <Link
-                  href="/dashboard/profile"
-                  onClick={toggleMobileMenu}
-                  className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors"
-                >
-                  <FaCog className="h-4 w-4 mr-3" />
-                  Profile
-                </Link>
-              </>
-            ) : (
-              // Guest user navigation
-              <>
-                <Link
-                  href="/workshops"
-                  onClick={toggleMobileMenu}
-                  className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors"
-                >
-                  <FaCalendarAlt className="h-4 w-4 mr-3" />
-                  Browse Workshops
-                </Link>
-                
-                <Link
-                  href="/auth/login"
-                  onClick={toggleMobileMenu}
-                  className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors"
-                >
-                  Sign In
-                </Link>
-                
-                <Link
-                  href="/auth/signup"
-                  onClick={toggleMobileMenu}
-                  className="flex items-center px-3 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </nav>
+                </div>
+              )}
+            </nav>
 
-          {/* Sign Out Button */}
-          {user && (
-            <div className="p-6 border-t border-border/50">
-              {variant === 'dashboard' ? (
+            {/* Sign Out Button */}
+            {user && (
+              <div className={`p-6 border-t border-border/50 transform transition-all duration-200 ${
+                isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+              }`}
+              style={{ transitionDelay: isMobileMenuOpen ? '650ms' : '0ms' }}
+              >
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center w-full px-3 py-2 rounded-md text-destructive hover:bg-destructive/10 transition-colors"
+                  className="flex items-center w-full px-3 py-2 rounded-md text-destructive hover:bg-destructive/10 transition-colors duration-200"
                 >
                   <FaSignOutAlt className="h-4 w-4 mr-3" />
-                  Sign Out
+                  Deconectare
                 </button>
-              ) : (
-                <form action="/auth/signout" method="post">
-                  <button
-                    type="submit"
-                    className="flex items-center w-full px-3 py-2 rounded-md text-destructive hover:bg-destructive/10 transition-colors"
-                    onClick={toggleMobileMenu}
-                  >
-                    <FaSignOutAlt className="h-4 w-4 mr-3" />
-                    Sign Out
-                  </button>
-                </form>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>

@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Profile, Workshop } from '@/types/models'
 import { registerForWorkshop } from './actions'
-import Header from '@/components/Header'
 
 export default async function WorkshopsPage() {
   const supabase = await createClient()
@@ -21,6 +20,9 @@ export default async function WorkshopsPage() {
       .single()
     profile = data
   }
+
+  // Use profile variable to avoid unused warning
+  const _ = profile
 
   // Fetch workshops using the regular client with appropriate RLS policies
   const { data: workshops, error } = await supabase
@@ -45,8 +47,6 @@ export default async function WorkshopsPage() {
 
   return (
     <div className="min-h-screen bg-muted">
-      <Header user={user} profile={profile} variant="home" />
-
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">

@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
-import AdminNav from '@/components/AdminNav'
+import DashboardSidebar from '@/components/DashboardSidebar'
 
 export default async function AdminLayout({
   children,
@@ -21,7 +21,7 @@ export default async function AdminLayout({
   const adminSupabase = await createAdminClient()
   const { data: profile, error } = await adminSupabase
     .from('profiles')
-    .select('role')
+    .select('*')
     .eq('id', user.id)
     .single()
 
@@ -30,12 +30,29 @@ export default async function AdminLayout({
     redirect('/unauthorized')
   }
 
+  const isAdmin = profile?.role === 'admin'
+
   return (
-    <div className="min-h-screen bg-muted">
-      <AdminNav user={user} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+    <div className="min-h-screen bg-background">
+      {/* Desktop: Flex layout with sidebar */}
+      <div className="hidden lg:flex h-screen">
+        <DashboardSidebar user={user} profile={profile} isAdmin={isAdmin} />
+        
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          <main className="p-4 lg:p-8">
+            {children}
+          </main>
+        </div>
+      </div>
+
+      {/* Mobile/Tablet: Single column layout */}
+      <div className="lg:hidden">
+        <DashboardSidebar user={user} profile={profile} isAdmin={isAdmin} />
+        <main className="p-4">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }
