@@ -3,7 +3,6 @@ import { currentUser } from '@clerk/nextjs/server'
 import Link from 'next/link'
 import connectDB from '@/lib/mongodb'
 import { Workshop, Registration } from '@/models'
-import { syncUserWithDatabase } from '@/lib/auth'
 import { WorkshopRegistrationButton } from '@/components/WorkshopRegistrationButton'
 
 export default async function WorkshopsPage() {

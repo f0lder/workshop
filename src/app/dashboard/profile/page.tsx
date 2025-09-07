@@ -5,13 +5,6 @@ import { useUser } from '@clerk/nextjs'
 import { FaSave, FaEnvelope, FaUser } from 'react-icons/fa'
 import { updateProfile } from './actions'
 
-// Simple CSS spinner component
-function Spinner() {
-  return (
-    <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-  )
-}
-
 export default function ProfilePage() {
   const { isLoaded, user } = useUser()
   const [firstName, setFirstName] = useState('')

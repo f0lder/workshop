@@ -4,7 +4,7 @@ export default function NotFound() {
       <div className="text-center">
         <h2 className="text-2xl font-bold text-foreground mb-2">Workshop Not Found</h2>
         <p className="text-muted-foreground mb-4">
-          The workshop you're looking for doesn't exist or has been deleted.
+          The workshop you&apos;re looking for doesn&apos;t exist or has been deleted.
         </p>
         <a
           href="/admin/workshops"

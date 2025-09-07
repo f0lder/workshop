@@ -2,6 +2,7 @@ import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import DashboardSidebar from '@/components/DashboardSidebar'
 import { syncUserWithDatabase } from '@/lib/auth'
+import { User } from '@/types/models'
 
 export default async function AdminLayout({
   children,
@@ -15,7 +16,7 @@ export default async function AdminLayout({
   }
 
   // Sync Clerk user with our database and get user data
-  const user = await syncUserWithDatabase(clerkUser)
+  const user: User = await syncUserWithDatabase(clerkUser)
 
   // Check if user is admin
   if (user.role !== 'admin') {

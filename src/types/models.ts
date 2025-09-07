@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'user';
 
-// MongoDB User interface
+// Our MongoDB User interface (this is our main user type)
 export interface User {
   _id: string;
   clerkId: string;
@@ -12,9 +12,12 @@ export interface User {
   updatedAt: Date;
 }
 
-// MongoDB Workshop interface
+// For Clerk user type, we'll use the imported type from @clerk/nextjs/server
+
+// MongoDB Workshop interface (works for both lean queries and regular documents)
 export interface Workshop {
-  id: string;
+  _id?: string | { toString(): string }; // MongoDB ObjectId
+  id?: string; // For serialized versions
   title: string;
   description: string;
   date: Date;
@@ -22,12 +25,12 @@ export interface Workshop {
   location: string;
   maxParticipants: number;
   current_participants: number;
-  max_participants: number; // Alias for compatibility
   instructor: string;
   status: 'active' | 'cancelled' | 'completed';
-  registrationStatus: 'open' | 'closed';
-  // For display in UI
-  user_registered?: boolean;
+  registrationStatus?: 'open' | 'closed';
+  user_registered?: boolean; // For display in UI
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // MongoDB Registration interface

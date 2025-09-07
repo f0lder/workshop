@@ -1,7 +1,6 @@
 'use server'
 
 import { currentUser } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { Workshop, Registration } from '@/models'
 import connectDB from '@/lib/mongodb'

@@ -65,14 +65,14 @@ export default async function DebugPage() {
 
   try {
     // Try to read package.json from the project root
-    const fs = require('fs')
-    const path = require('path')
+    const fs = await import('fs')
+    const path = await import('path')
     const packagePath = path.join(process.cwd(), 'package.json')
     if (fs.existsSync(packagePath)) {
       const packageContent = fs.readFileSync(packagePath, 'utf8')
       packageInfo = JSON.parse(packageContent)
     }
-  } catch (error) {
+  } catch {
     console.log('Could not read package.json, using defaults')
   }
 

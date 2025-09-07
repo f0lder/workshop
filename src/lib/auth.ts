@@ -1,23 +1,24 @@
 import { User as ClerkUser } from '@clerk/nextjs/server'
 import connectDB from '@/lib/mongodb'
-import { User, IUser } from '@/models'
+import { User as MongoUser } from '@/models'
+import { User, UserRole } from '@/types/models'
 
 /**
  * Sync Clerk user with our database
  * This function ensures every Clerk user has a corresponding record in our MongoDB
  */
-export async function syncUserWithDatabase(clerkUser: ClerkUser): Promise<any> {
+export async function syncUserWithDatabase(clerkUser: ClerkUser): Promise<User> {
   await connectDB()
 
   try {
     // First, check if user already exists to preserve their role
-    const existingUser = await User.findOne({ clerkId: clerkUser.id }).lean() as any
+    const existingUser = await MongoUser.findOne({ clerkId: clerkUser.id }).lean() as { role?: string } | null
     
     // Determine the role: use Clerk's publicMetadata if set, otherwise preserve existing role or default to 'user'
     const role = clerkUser.publicMetadata?.role || existingUser?.role || 'user'
 
     // Use findOneAndUpdate with upsert to avoid duplicate key errors
-    const user = await User.findOneAndUpdate(
+    const user = await MongoUser.findOneAndUpdate(
       { clerkId: clerkUser.id },
       {
         clerkId: clerkUser.id,
@@ -32,7 +33,7 @@ export async function syncUserWithDatabase(clerkUser: ClerkUser): Promise<any> {
         runValidators: true,
         lean: true    // Return plain object instead of Mongoose document
       }
-    ) as any
+    ) as { _id: { toString(): string }, clerkId: string, email: string, firstName?: string, lastName?: string, role: UserRole, createdAt: Date, updatedAt: Date } | null
 
     if (!user) {
       throw new Error('Failed to create or update user')
@@ -45,7 +46,7 @@ export async function syncUserWithDatabase(clerkUser: ClerkUser): Promise<any> {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      role: user.role,
+      role: user.role as UserRole,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     }
@@ -54,7 +55,7 @@ export async function syncUserWithDatabase(clerkUser: ClerkUser): Promise<any> {
     
     // If it's a duplicate key error, try to find the existing user
     if (error instanceof Error && error.message.includes('E11000')) {
-      const existingUser = await User.findOne({ clerkId: clerkUser.id }).lean() as any
+      const existingUser = await MongoUser.findOne({ clerkId: clerkUser.id }).lean() as { _id: { toString(): string }, clerkId: string, email: string, firstName?: string, lastName?: string, role: UserRole, createdAt: Date, updatedAt: Date } | null
       if (existingUser) {
         return {
           _id: existingUser._id.toString(),
@@ -62,7 +63,7 @@ export async function syncUserWithDatabase(clerkUser: ClerkUser): Promise<any> {
           email: existingUser.email,
           firstName: existingUser.firstName,
           lastName: existingUser.lastName,
-          role: existingUser.role,
+          role: existingUser.role as UserRole,
           createdAt: existingUser.createdAt,
           updatedAt: existingUser.updatedAt
         }
@@ -79,7 +80,7 @@ export async function syncUserWithDatabase(clerkUser: ClerkUser): Promise<any> {
 export async function getUserRole(clerkUserId: string): Promise<'user' | 'admin'> {
   await connectDB()
   
-  const user = await User.findOne({ clerkId: clerkUserId })
+  const user = await MongoUser.findOne({ clerkId: clerkUserId })
   return user?.role || 'user'
 }
 

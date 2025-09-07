@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSignIn, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const [code, setCode] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -25,6 +25,14 @@ export default function ResetPasswordPage() {
     }
   }, [user, router])
 
+  // Get email from URL params
+  useEffect(() => {
+    const emailParam = searchParams.get('email')
+    if (emailParam) {
+      setEmail(emailParam)
+    }
+  }, [searchParams])
+
   // Don't render the form if user is already logged in
   if (user) {
     return (
@@ -35,14 +43,6 @@ export default function ResetPasswordPage() {
       </div>
     )
   }
-
-  useEffect(() => {
-    // Get email from URL params
-    const emailParam = searchParams.get('email')
-    if (emailParam) {
-      setEmail(emailParam)
-    }
-  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -83,9 +83,9 @@ export default function ResetPasswordPage() {
       } else {
         setError('Procesul de resetare nu s-a finalizat. Încercați din nou.')
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Password reset error:', err)
-      if (err.errors && err.errors[0]) {
+      if (err && typeof err === 'object' && 'errors' in err && Array.isArray(err.errors) && err.errors[0]) {
         const errorMsg = err.errors[0].message
         const errorCode = err.errors[0].code
         
@@ -125,7 +125,7 @@ export default function ResetPasswordPage() {
       })
       setError('')
       alert('Codul a fost retrimis!')
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Resend code error:', err)
       setError('Nu s-a putut retrimite codul')
     }
@@ -254,5 +254,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   )
 }

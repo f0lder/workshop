@@ -23,7 +23,7 @@ export function WorkshopRegistrationButton({ workshop }: WorkshopRegistrationBut
   
   // Check if user is registered
   const isRegistered = !!workshop.user_registered
-  const isFull = workshop.current_participants >= workshop.max_participants
+  const isFull = workshop.current_participants >= workshop.maxParticipants
   const isRegistrationClosed = workshop.registrationStatus === 'closed'
   
   async function handleSubmit(formData: FormData) {

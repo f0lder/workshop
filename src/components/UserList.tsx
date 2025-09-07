@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { FaUser, FaCrown, FaEdit, FaSave, FaTimes, FaTrash } from 'react-icons/fa'
+import Image from 'next/image'
 import { updateUserRole, deleteUser } from '@/app/admin/users/actions'
 
 interface CombinedUser {
@@ -166,10 +167,12 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                   <div className="flex items-center">
                     <div className="h-10 w-10 flex-shrink-0">
                       {user.imageUrl ? (
-                        <img 
+                        <Image 
                           className="h-10 w-10 rounded-full" 
                           src={user.imageUrl} 
                           alt=""
+                          width={40}
+                          height={40}
                         />
                       ) : (
                         <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">

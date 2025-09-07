@@ -7,19 +7,17 @@ import { toggleRegistrationStatus } from '@/app/admin/workshops/actions'
 interface WorkshopRegistrationToggleProps {
   workshopId: string
   currentStatus: 'open' | 'closed'
-  workshopTitle: string
 }
 
 export default function WorkshopRegistrationToggle({ 
   workshopId, 
-  currentStatus, 
-  workshopTitle 
+  currentStatus 
 }: WorkshopRegistrationToggleProps) {
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  const handleToggle = (checked: boolean) => {
+  const handleToggle = () => {
     startTransition(async () => {
       try {
         setError('')

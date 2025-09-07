@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { FaUsers, FaCalendarAlt, FaUserPlus, FaCog } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
+import { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { User, Workshop, Registration } from '@/models'
 
@@ -14,7 +15,7 @@ export default async function AdminDashboard() {
   }
 
   // Sync user and check if admin
-  const user = await syncUserWithDatabase(clerkUser)
+  const user: UserType = await syncUserWithDatabase(clerkUser)
   
   if (user.role !== 'admin') {
     redirect('/unauthorized')

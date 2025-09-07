@@ -104,7 +104,7 @@ export async function deleteUser(formData: FormData) {
     }
 
     // Delete user from MongoDB first
-    const deletedUser = await User.findOneAndDelete({ clerkId: userId })
+    await User.findOneAndDelete({ clerkId: userId })
 
     // Delete user from Clerk
     const client = await clerkClient()

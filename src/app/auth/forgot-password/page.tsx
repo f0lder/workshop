@@ -58,9 +58,9 @@ export default function ForgotPasswordPage() {
       } else {
         setError('Nu s-a putut inițializa procesul de resetare. Încercați din nou.')
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Password reset error:', err)
-      if (err.errors && err.errors[0]) {
+      if (err && typeof err === 'object' && 'errors' in err && Array.isArray(err.errors) && err.errors[0]) {
         const errorCode = err.errors[0].code
         const errorMessage = err.errors[0].message
         

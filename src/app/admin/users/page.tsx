@@ -29,7 +29,7 @@ export default async function AdminUsersPage() {
 
   // Combine Clerk and MongoDB data
   const combinedUsers = clerkUsers.data.map((clerkUser) => {
-    const mongoUser = mongoUsers.find((u: any) => u.clerkId === clerkUser.id)
+    const mongoUser = mongoUsers.find((u) => u.clerkId === clerkUser.id)
     
     return {
       id: clerkUser.id,

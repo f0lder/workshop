@@ -1,8 +1,9 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { FaCalendarAlt, FaPlus, FaEdit, FaUsers, FaMapMarkerAlt, FaClock, FaUser } from 'react-icons/fa'
+import { FaCalendarAlt, FaPlus, FaEdit, FaUsers, FaMapMarkerAlt, FaUser } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
+import { User as UserType, Workshop as WorkshopType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Workshop } from '@/models'
 import DeleteWorkshopButton from '@/components/DeleteWorkshopButton'
@@ -16,7 +17,7 @@ export default async function AdminWorkshopsPage() {
   }
 
   // Sync user and check if admin
-  const user = await syncUserWithDatabase(clerkUser)
+  const user: UserType = await syncUserWithDatabase(clerkUser)
   
   if (user.role !== 'admin') {
     redirect('/unauthorized')
@@ -25,7 +26,7 @@ export default async function AdminWorkshopsPage() {
   await connectDB()
 
   // Fetch all workshops
-  const workshops = await Workshop.find({}).sort({ date: 1 }).lean()
+  const workshops = await Workshop.find({}).sort({ date: 1 }).lean() as unknown as WorkshopType[]
 
   return (
     <div className="space-y-6">
@@ -50,8 +51,8 @@ export default async function AdminWorkshopsPage() {
       <div className="bg-card shadow border border-border overflow-hidden sm:rounded-md">
         <ul className="divide-y divide-border">
           {workshops && workshops.length > 0 ? (
-            workshops.map((workshop: any) => (
-              <li key={workshop._id.toString()}>
+            workshops.map((workshop: WorkshopType) => (
+              <li key={workshop._id?.toString() || workshop.id || ''}>
                 <div className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
@@ -66,20 +67,19 @@ export default async function AdminWorkshopsPage() {
                         </div>
                         <div className="ml-4 flex-shrink-0 flex items-center space-x-3">
                           <WorkshopRegistrationToggle 
-                            workshopId={workshop._id.toString()}
+                            workshopId={workshop._id?.toString() || workshop.id || ''}
                             currentStatus={workshop.registrationStatus || 'open'}
-                            workshopTitle={workshop.title}
                           />
                           <div className="flex space-x-2">
                             <Link
-                              href={`/admin/workshops/edit/${workshop._id}`}
+                              href={`/admin/workshops/edit/${workshop._id?.toString() || workshop.id}`}
                               className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-primary-foreground bg-primary hover:bg-primary/90"
                             >
                               <FaEdit className="mr-1 h-3 w-3" />
                               Editează
                             </Link>
                             <DeleteWorkshopButton 
-                              workshopId={workshop._id.toString()} 
+                              workshopId={workshop._id?.toString() || workshop.id || ''} 
                               workshopTitle={workshop.title}
                             />
                           </div>
@@ -96,7 +96,7 @@ export default async function AdminWorkshopsPage() {
                         </div>
                         <div className="flex items-center">
                           <FaUsers className="flex-shrink-0 mr-1.5 h-4 w-4" />
-                          {workshop.currentParticipants || 0}/{workshop.maxParticipants} participanți
+                          {workshop.current_participants || 0}/{workshop.maxParticipants} participanți
                         </div>
                         {workshop.instructor && (
                           <div className="flex items-center">

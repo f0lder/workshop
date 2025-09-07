@@ -1,6 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect, notFound } from 'next/navigation'
 import { syncUserWithDatabase } from '@/lib/auth'
+import { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Workshop } from '@/models'
 import WorkshopForm from '@/components/WorkshopForm'
@@ -19,7 +20,7 @@ export default async function EditWorkshopPage({ params }: EditWorkshopPageProps
   }
 
   // Sync user and check if admin
-  const user = await syncUserWithDatabase(clerkUser)
+  const user: UserType = await syncUserWithDatabase(clerkUser)
   
   if (user.role !== 'admin') {
     redirect('/unauthorized')
@@ -31,7 +32,19 @@ export default async function EditWorkshopPage({ params }: EditWorkshopPageProps
   await connectDB()
 
   // Fetch the workshop
-  const workshop = await Workshop.findById(id).lean() as any
+  const workshop = await Workshop.findById(id).lean() as {
+    _id: { toString(): string }
+    title: string
+    description: string
+    date: Date
+    time: string
+    location: string
+    maxParticipants: number
+    current_participants: number
+    instructor: string
+    status: string
+    registrationStatus?: string
+  } | null
 
   if (!workshop) {
     notFound()
@@ -46,10 +59,10 @@ export default async function EditWorkshopPage({ params }: EditWorkshopPageProps
     time: workshop.time,
     location: workshop.location,
     maxParticipants: workshop.maxParticipants,
-    currentParticipants: workshop.currentParticipants,
+    currentParticipants: workshop.current_participants,
     instructor: workshop.instructor,
     status: workshop.status,
-    registrationStatus: workshop.registrationStatus || 'open'
+    registrationStatus: (workshop.registrationStatus || 'open') as 'open' | 'closed'
   }
 
   return <WorkshopForm mode="edit" workshop={workshopData} />

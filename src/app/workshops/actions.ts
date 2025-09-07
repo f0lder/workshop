@@ -19,7 +19,7 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
   }
 
   // Sync user with database
-  const user = await syncUserWithDatabase(clerkUser)
+  await syncUserWithDatabase(clerkUser)
   
   // Get app settings to check global registration settings
   const appSettings = await getAppSettings()

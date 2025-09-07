@@ -13,10 +13,10 @@ import {
   FaSignOutAlt,
   FaCogs
 } from 'react-icons/fa'
-import { IUser } from '@/models'
+import { User } from '@/types/models'
 
 interface DashboardSidebarProps {
-  user: IUser
+  user: User
   isAdmin: boolean
 }
 
