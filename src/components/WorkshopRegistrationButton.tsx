@@ -1,38 +1,55 @@
 'use client'
 
 import { Workshop } from '@/types/models'
-import { useState } from 'react'
+import { useTransition } from 'react'
 import { useToast } from '@/components/ui/ToastProvider'
+import { registerForWorkshop } from '@/app/workshops/actions'
 
 interface WorkshopRegistrationButtonProps {
   workshop: Workshop
   userId?: string | null
 }
 
+// Simple CSS spinner component
+function Spinner() {
+  return (
+    <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+  )
+}
+
 export function WorkshopRegistrationButton({ workshop }: WorkshopRegistrationButtonProps) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const { showToast } = useToast()
   
   // Check if user is registered
   const isRegistered = !!workshop.user_registered
   const isFull = workshop.current_participants >= workshop.max_participants
+  const isRegistrationClosed = workshop.registrationStatus === 'closed'
   
-  async function handleSubmit() {
-    setIsLoading(true)
-    
-    try {
-      // Form action will be handled by server action
-      if (isRegistered) {
-        showToast('Successfully cancelled workshop registration', 'info')
-      } else {
-        showToast('Successfully registered for workshop', 'success')
+  async function handleSubmit(formData: FormData) {
+    startTransition(async () => {
+      try {
+        await registerForWorkshop(formData)
+        
+        if (isRegistered) {
+          showToast('Te-ai dezînscris cu succes de la workshop', 'info')
+        } else {
+          showToast('Te-ai înscris cu succes la workshop!', 'success')
+        }
+      } catch (error) {
+        showToast('A apărut o eroare. Te rugăm încearcă din nou.', 'error')
+        console.error('Registration error:', error)
       }
-    } catch (err) {
-      showToast('An error occurred. Please try again.', 'error')
-      console.error(err)
-    } finally {
-      setIsLoading(false)
-    }
+    })
+  }
+
+  // If registration is closed and user is not registered, show message
+  if (isRegistrationClosed && !isRegistered) {
+    return (
+      <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border">
+        Înregistrările sunt închise
+      </div>
+    )
   }
   
   return (
@@ -45,22 +62,23 @@ export function WorkshopRegistrationButton({ workshop }: WorkshopRegistrationBut
       />
       <button
         type="submit"
-        disabled={isLoading || (isFull && !isRegistered)}
-        className={`w-full font-medium py-2 px-4 rounded-md transition duration-200 ${
-          isLoading ? 'bg-gray-400 text-white cursor-wait' :
+        disabled={isPending || (isFull && !isRegistered) || (isRegistrationClosed && !isRegistered)}
+        className={`w-full font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2 ${
+          isPending ? 'bg-gray-400 text-white cursor-wait' :
           isFull && !isRegistered
             ? 'bg-gray-400 cursor-not-allowed text-white'
             : isRegistered
-            ? 'bg-green-600 hover:bg-green-700 text-white'
+            ? 'bg-red-600 hover:bg-red-700 text-white'
             : 'bg-blue-600 hover:bg-blue-700 text-white'
         }`}
       >
-        {isLoading ? 'Processing...' :
+        {isPending && <Spinner />}
+        {isPending ? 'Se procesează...' :
           isFull && !isRegistered
-            ? 'Workshop Full'
+            ? 'Workshop complet'
             : isRegistered
-            ? 'Cancel Registration'
-            : 'Register Now'
+            ? 'Anulează înregistrarea'
+            : 'Înregistrează-te acum'
         }
       </button>
     </form>

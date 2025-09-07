@@ -1,23 +1,11 @@
 import Link from 'next/link'
 import { FaCalendarAlt, FaUsers, FaMapMarkerAlt } from 'react-icons/fa'
-import { createClient } from '@/lib/supabase/server'
+import { currentUser } from '@clerk/nextjs/server'
 
 export default async function HomePage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await currentUser()
 
-  // Get user profile if logged in
-  if (user) {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
-    // Profile data available if needed later
-    void data
-  }
+  // User is available if logged in
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
       {/* Hero Section */}

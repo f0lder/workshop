@@ -1,28 +1,40 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { currentUser } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
+import { Workshop, Registration } from '@/models'
+import connectDB from '@/lib/mongodb'
+import { syncUserWithDatabase } from '@/lib/auth'
+import { getAppSettings } from '@/lib/settings'
 
 export async function registerForWorkshop(formData: FormData): Promise<void> {
-  const supabase = await createClient()
+  const clerkUser = await currentUser()
   const workshopId = formData.get('workshopId') as string
   const action = formData.get('action') as string
 
-  // Get user data
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (!user) {
+  if (!clerkUser) {
     console.error('Authentication required')
     revalidatePath('/workshops')
     return
   }
 
+  // Sync user with database
+  const user = await syncUserWithDatabase(clerkUser)
+  
+  // Get app settings to check global registration settings
+  const appSettings = await getAppSettings()
+  
+  await connectDB()
+
+  // Check if global registration is enabled
+  if (!appSettings.globalRegistrationEnabled) {
+    console.log('Global registration is disabled')
+    revalidatePath('/workshops')
+    return
+  }
+
   // Get workshop to check if it's full
-  const { data: workshop } = await supabase
-    .from('workshops')
-    .select('*')
-    .eq('id', workshopId)
-    .single()
+  const workshop = await Workshop.findById(workshopId)
 
   if (!workshop) {
     console.error('Workshop not found')
@@ -32,13 +44,30 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
 
   try {
     if (action === 'register') {
+      // Check if registrations are open
+      if (workshop.registrationStatus === 'closed') {
+        console.log('Registrations are closed for this workshop')
+        revalidatePath('/workshops')
+        return
+      }
+
+      // Check if user has reached maximum workshops limit
+      const userRegistrationsCount = await Registration.countDocuments({ 
+        userId: clerkUser.id, 
+        status: 'confirmed' 
+      })
+      
+      if (userRegistrationsCount >= appSettings.maxWorkshopsPerUser) {
+        console.log(`User has reached maximum workshops limit (${appSettings.maxWorkshopsPerUser})`)
+        revalidatePath('/workshops')
+        return
+      }
+
       // Check if already registered
-      const { data: existingRegistration } = await supabase
-        .from('workshop_registrations')
-        .select('*')
-        .eq('workshop_id', workshopId)
-        .eq('user_id', user.id)
-        .single()
+      const existingRegistration = await Registration.findOne({
+        userId: clerkUser.id,
+        workshopId
+      })
 
       if (existingRegistration) {
         console.log('Already registered')
@@ -47,51 +76,44 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
       }
 
       // Check if workshop is full
-      if (workshop.current_participants >= workshop.max_participants) {
+      const currentRegistrations = await Registration.countDocuments({ workshopId })
+      if (currentRegistrations >= workshop.maxParticipants) {
         console.log('Workshop is full')
         revalidatePath('/workshops')
         return
       }
 
       // Add registration
-      const { error } = await supabase
-        .from('workshop_registrations')
-        .insert({
-          user_id: user.id,
-          workshop_id: workshopId,
-        })
-
-      if (error) {
-        console.error('Registration error:', error)
-        revalidatePath('/workshops')
-        return
-      }
+      await Registration.create({
+        userId: clerkUser.id,
+        workshopId,
+        status: 'confirmed'
+      })
 
       // Update participant count
-      await supabase
-        .from('workshops')
-        .update({ current_participants: workshop.current_participants + 1 })
-        .eq('id', workshopId)
+      await Workshop.findByIdAndUpdate(workshopId, {
+        currentParticipants: currentRegistrations + 1
+      })
 
     } else if (action === 'cancel') {
-      // Remove registration
-      const { error } = await supabase
-        .from('workshop_registrations')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('workshop_id', workshopId)
-
-      if (error) {
-        console.error('Cancellation error:', error)
+      // Check if cancellation is allowed
+      if (!appSettings.allowCancelRegistration) {
+        console.log('Registration cancellation is not allowed')
         revalidatePath('/workshops')
         return
       }
 
+      // Remove registration
+      await Registration.findOneAndDelete({
+        userId: clerkUser.id,
+        workshopId
+      })
+
       // Update participant count
-      await supabase
-        .from('workshops')
-        .update({ current_participants: Math.max(0, workshop.current_participants - 1) })
-        .eq('id', workshopId)
+      const currentRegistrations = await Registration.countDocuments({ workshopId })
+      await Workshop.findByIdAndUpdate(workshopId, {
+        currentParticipants: currentRegistrations
+      })
     }
   } catch (error) {
     console.error('Registration action error:', error)

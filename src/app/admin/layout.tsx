@@ -1,42 +1,35 @@
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import DashboardSidebar from '@/components/DashboardSidebar'
+import { syncUserWithDatabase } from '@/lib/auth'
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const clerkUser = await currentUser()
 
-  if (!user) {
+  if (!clerkUser) {
     redirect('/auth/login')
   }
 
-  // Use admin client to check user role (bypasses RLS)
-  const adminSupabase = await createAdminClient()
-  const { data: profile, error } = await adminSupabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+  // Sync Clerk user with our database and get user data
+  const user = await syncUserWithDatabase(clerkUser)
 
-  if (error || !profile || profile.role !== 'admin') {
+  // Check if user is admin
+  if (user.role !== 'admin') {
     console.log('Admin Layout - Access denied, redirecting')
     redirect('/unauthorized')
   }
 
-  const isAdmin = profile?.role === 'admin'
+  const isAdmin = true // We already verified this above
 
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop: Flex layout with sidebar */}
       <div className="hidden lg:flex h-screen">
-        <DashboardSidebar user={user} profile={profile} isAdmin={isAdmin} />
+        <DashboardSidebar user={user} isAdmin={isAdmin} />
         
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
@@ -48,7 +41,7 @@ export default async function AdminLayout({
 
       {/* Mobile/Tablet: Single column layout */}
       <div className="lg:hidden">
-        <DashboardSidebar user={user} profile={profile} isAdmin={isAdmin} />
+        <DashboardSidebar user={user} isAdmin={isAdmin} />
         <main className="p-4">
           {children}
         </main>

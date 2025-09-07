@@ -1,50 +1,39 @@
 'use client'
 
-import { useState, useTransition, useEffect } from 'react'
+import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { FaSave, FaEnvelope, FaUser } from 'react-icons/fa'
-import { updateProfile } from './actions'
-
-// Simple CSS spinner component
-function Spinner() {
-  return (
-    <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-  )
-}
 
 export default function ProfilePage() {
   const { isLoaded, user } = useUser()
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [isPending, startTransition] = useTransition()
+  const [firstName, setFirstName] = useState(user?.firstName || '')
+  const [lastName, setLastName] = useState(user?.lastName || '')
+  const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  // Update state when user data loads
-  useEffect(() => {
-    if (user) {
-      setFirstName(user.firstName || '')
-      setLastName(user.lastName || '')
-    }
-  }, [user])
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!user) return
 
-  const handleSubmit = async (formData: FormData) => {
-    startTransition(async () => {
-      try {
-        setError('')
-        setMessage('')
-        
-        const result = await updateProfile(formData)
-        setMessage(result.message)
-        
-        // Force refresh user data
-        await user?.reload()
-        
-      } catch (err) {
-        console.error('Error updating profile:', err)
-        setError(err instanceof Error ? err.message : 'A apărut o eroare la actualizarea profilului.')
-      }
-    })
+    setSaving(true)
+    setError('')
+    setMessage('')
+
+    try {
+      await user.update({
+        firstName,
+        lastName,
+      })
+
+      setMessage('Profilul a fost actualizat cu succes!')
+    } catch (err) {
+      console.error('Error updating profile:', err)
+      setError('A apărut o eroare la actualizarea profilului.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (!isLoaded) {
@@ -96,7 +85,7 @@ export default function ProfilePage() {
       {/* Profile Form */}
       <div className="bg-card shadow border border-border rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <form action={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {message && (
               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm">
                 {message}
@@ -173,10 +162,10 @@ export default function ProfilePage() {
             <div className="flex justify-end">
               <button
                 type="submit"
-                disabled={isPending}
+                disabled={saving}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isPending ? (
+                {saving ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Se salvează...

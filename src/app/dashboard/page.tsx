@@ -1,39 +1,15 @@
-import { createClient } from '@/lib/supabase/server'
-import { FaCalendarAlt, FaUsers, FaMapMarkerAlt, FaClock } from 'react-icons/fa'
-import { Profile, WorkshopRegistration } from '@/types/models'
+import { currentUser } from '@clerk/nextjs/server'
+import { FaCalendarAlt, FaUsers, FaCog } from 'react-icons/fa'
+import Link from 'next/link'
+import { syncUserWithDatabase } from '@/lib/auth'
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return null
-
-  // Get user profile
-  const { data: profile }: { data: Profile | null } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-
-  // Get user's registered workshops
-  const { data: userRegistrations }: { data: WorkshopRegistration[] | null } = await supabase
-    .from('workshop_registrations')
-    .select('*, workshop:workshops(*)')
-    .eq('user_id', user.id)
-
-  const userWorkshops = userRegistrations || []
+  const clerkUser = await currentUser()
   
-  // Filter for upcoming workshops (future dates)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  
-  const upcomingWorkshops = userWorkshops.filter((registration: WorkshopRegistration) => {
-    if (!registration.workshop?.date) return false
-    const workshopDate = new Date(registration.workshop.date)
-    return workshopDate >= today
-  })
+  if (!clerkUser) return null
+
+  // Sync user with database
+  const user = await syncUserWithDatabase(clerkUser)
 
   return (
     <div className="space-y-6">
@@ -41,29 +17,29 @@ export default async function DashboardPage() {
       <div className="bg-card overflow-hidden shadow-lg border border-border rounded-lg">
         <div className="px-4 py-5 sm:p-6">
           <h1 className="text-2xl font-bold text-foreground">
-            Welcome back, {profile?.full_name || user.email}!
+            Bine ai venit, {clerkUser.firstName && clerkUser.lastName ? `${clerkUser.firstName} ${clerkUser.lastName}` : clerkUser.emailAddresses?.[0]?.emailAddress}!
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Here&apos;s what&apos;s happening with your workshops today.
+            Iată ce se întâmplă cu workshopurile tale astăzi.
           </p>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-card overflow-hidden shadow rounded-lg">
-          <div className="p-5">
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="bg-card overflow-hidden shadow border border-border rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <FaCalendarAlt className="h-6 w-6 text-muted-foreground" />
+                <FaCalendarAlt className="h-8 w-8 text-primary" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-muted-foreground truncate">
-                    Registered Workshops
+                    Workshop înregistrate
                   </dt>
                   <dd className="text-lg font-medium text-foreground">
-                    {userWorkshops.length}
+                    0
                   </dd>
                 </dl>
               </div>
@@ -71,19 +47,19 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-card overflow-hidden shadow rounded-lg">
-          <div className="p-5">
+        <div className="bg-card overflow-hidden shadow border border-border rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <FaClock className="h-6 w-6 text-muted-foreground" />
+                <FaUsers className="h-8 w-8 text-green-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-muted-foreground truncate">
-                    Upcoming This Week
+                    Urmează
                   </dt>
                   <dd className="text-lg font-medium text-foreground">
-                    {upcomingWorkshops.length}
+                    0
                   </dd>
                 </dl>
               </div>
@@ -91,39 +67,19 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-card overflow-hidden shadow rounded-lg">
-          <div className="p-5">
+        <div className="bg-card overflow-hidden shadow border border-border rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <FaUsers className="h-6 w-6 text-muted-foreground" />
+                <FaCog className="h-8 w-8 text-blue-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-muted-foreground truncate">
-                    Account Type
-                  </dt>
-                  <dd className="text-lg font-medium text-foreground capitalize">
-                    {profile?.role || 'User'}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-card overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FaMapMarkerAlt className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-muted-foreground truncate">
-                    Member Since
+                    Rol
                   </dt>
                   <dd className="text-lg font-medium text-foreground">
-                    {profile?.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear()}
+                    {user.role === 'admin' ? 'Administrator' : 'Utilizator'}
                   </dd>
                 </dl>
               </div>
@@ -133,133 +89,63 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-card shadow rounded-lg">
+      <div className="bg-card shadow border border-border rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-foreground mb-4">
-            Quick Actions
+          <h3 className="text-lg leading-6 font-medium text-foreground">
+            Acțiuni rapide
           </h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <a
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <Link
               href="/workshops"
-              className="relative rounded-lg border border-input bg-card px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
             >
-              <div className="flex-shrink-0">
-                <FaCalendarAlt className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="absolute inset-0" aria-hidden="true" />
-                <p className="text-sm font-medium text-foreground">Browse Workshops</p>
-                <p className="text-sm text-muted-foreground">Find and register for new workshops</p>
-              </div>
-            </a>
-
-            <a
+              <FaCalendarAlt className="mr-2 h-4 w-4" />
+              Vezi workshop-urile
+            </Link>
+            <Link
               href="/dashboard/profile"
-              className="relative rounded-lg border border-input bg-card px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+              className="inline-flex items-center px-4 py-2 border border-input text-sm font-medium rounded-md text-foreground bg-background hover:bg-accent"
             >
-              <div className="flex-shrink-0">
-                <FaUsers className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="absolute inset-0" aria-hidden="true" />
-                <p className="text-sm font-medium text-foreground">Update Profile</p>
-                <p className="text-sm text-muted-foreground">Manage your account settings</p>
-              </div>
-            </a>
-
-            {profile?.role === 'admin' && (
-              <a
+              <FaCog className="mr-2 h-4 w-4" />
+              Editează profilul
+            </Link>
+            {user.role === 'admin' && (
+              <Link
                 href="/admin"
-                className="relative rounded-lg border border-input bg-card px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-orange-700 bg-orange-100 hover:bg-orange-200"
               >
-                <div className="flex-shrink-0">
-                  <FaMapMarkerAlt className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="absolute inset-0" aria-hidden="true" />
-                  <p className="text-sm font-medium text-foreground">Admin Panel</p>
-                  <p className="text-sm text-muted-foreground">Manage workshops and users</p>
-                </div>
-              </a>
+                <FaUsers className="mr-2 h-4 w-4" />
+                Panou Admin
+              </Link>
             )}
           </div>
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-card shadow rounded-lg">
+      {/* Recent Workshops */}
+      <div className="bg-card shadow border border-border rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-foreground mb-4">
-            Your Registered Workshops
+          <h3 className="text-lg leading-6 font-medium text-foreground">
+            Workshop-urile mele
           </h3>
-          
-          {userWorkshops.length > 0 ? (
-            <div className="space-y-4">
-              {userWorkshops.map((registration: WorkshopRegistration) => (
-                <div key={registration.id} className="border border-border rounded-lg p-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="text-lg font-medium text-foreground">
-                        {registration.workshop?.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {registration.workshop?.description}
-                      </p>
-                      
-                      <div className="mt-2 space-y-2">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <FaCalendarAlt className="h-4 w-4 mr-2" />
-                          {registration.workshop?.date && 
-                            new Date(registration.workshop.date).toLocaleDateString('en-US', {
-                              weekday: 'long',
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })
-                          }
-                        </div>
-                        
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <FaClock className="h-4 w-4 mr-2" />
-                          {registration.workshop?.time || 'Time TBD'}
-                        </div>
-                        
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <FaMapMarkerAlt className="h-4 w-4 mr-2" />
-                          {registration.workshop?.location}
-                        </div>
-                        
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <FaUsers className="h-4 w-4 mr-2" />
-                          {registration.workshop?.current_participants} / {registration.workshop?.max_participants} participants
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="text-sm text-muted-foreground">
-                      Registered on: {new Date(registration.registered_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
+          <div className="mt-5">
+            <div className="text-center py-12">
               <FaCalendarAlt className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-2 text-sm font-medium text-foreground">No registered workshops</h3>
+              <h3 className="mt-2 text-sm font-medium text-foreground">Nu ești înregistrat la niciun workshop</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Register for workshops to see your activity here.
+                Începe prin a explora workshop-urile disponibile.
               </p>
               <div className="mt-6">
-                <a
+                <Link
                   href="/workshops"
-                  className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
                 >
-                  Browse Workshops
-                </a>
+                  <FaCalendarAlt className="mr-2 h-4 w-4" />
+                  Explorează workshop-urile
+                </Link>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

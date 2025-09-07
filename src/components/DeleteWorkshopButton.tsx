@@ -1,42 +1,35 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
 import { FaTrash } from 'react-icons/fa'
+import { deleteWorkshop } from '@/app/admin/workshops/actions'
 
 interface DeleteWorkshopButtonProps {
   workshopId: string
   workshopTitle: string
 }
 
+// Simple CSS spinner component
+function Spinner() {
+  return (
+    <div className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+  )
+}
+
 export default function DeleteWorkshopButton({ workshopId, workshopTitle }: DeleteWorkshopButtonProps) {
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const [showConfirm, setShowConfirm] = useState(false)
-  const router = useRouter()
 
   const handleDelete = async () => {
-    setIsDeleting(true)
-    
-    try {
-      const response = await fetch(`/api/admin/workshops/${workshopId}`, {
-        method: 'DELETE',
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        console.error('Error deleting workshop:', result.error)
-        alert('Failed to delete workshop: ' + (result.error || 'Unknown error'))
-      } else {
-        router.refresh()
+    startTransition(async () => {
+      try {
+        await deleteWorkshop(workshopId)
         setShowConfirm(false)
+      } catch (error) {
+        console.error('Error deleting workshop:', error)
+        alert('Failed to delete workshop: ' + (error instanceof Error ? error.message : 'Unknown error'))
       }
-    } catch (error) {
-      console.error('Error deleting workshop:', error)
-      alert('Failed to delete workshop')
-    } finally {
-      setIsDeleting(false)
-    }
+    })
   }
 
   if (showConfirm) {
@@ -49,14 +42,15 @@ export default function DeleteWorkshopButton({ workshopId, workshopTitle }: Dele
           <div className="flex space-x-2">
             <button
               onClick={handleDelete}
-              disabled={isDeleting}
-              className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+              disabled={isPending}
+              className="inline-flex items-center gap-1 px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
             >
-              {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+              {isPending && <Spinner />}
+              {isPending ? 'Deleting...' : 'Yes, Delete'}
             </button>
             <button
               onClick={() => setShowConfirm(false)}
-              disabled={isDeleting}
+              disabled={isPending}
               className="inline-flex items-center px-2 py-1 border border-input text-xs font-medium rounded text-foreground bg-card hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Cancel

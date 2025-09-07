@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { useClerk } from '@clerk/nextjs'
+import { UserResource } from '@clerk/types'
 import { 
   FaUser, 
   FaSignOutAlt, 
@@ -18,29 +18,18 @@ import {
   FaChartBar
 } from 'react-icons/fa'
 
-interface Profile {
-  id: string
-  email: string
-  full_name: string | null
-  role: 'admin' | 'user'
-  created_at: string
-  updated_at: string
-}
-
 interface HeaderProps {
-  user?: User | null
-  profile?: Profile | null
+  user?: UserResource | null
 }
 
-export default function Header({ user, profile }: HeaderProps) {
+export default function Header({ user }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const { signOut } = useClerk()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await signOut()
     router.push('/')
-    router.refresh()
   }
 
   const toggleMobileMenu = () => {
@@ -176,10 +165,10 @@ export default function Header({ user, profile }: HeaderProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">
-                      {profile?.full_name || user?.email}
+                      {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.emailAddresses?.[0]?.emailAddress}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {profile?.role === 'admin' ? 'Administrator' : 'Utilizator'}
+                      {user?.publicMetadata?.role === 'admin' ? 'Administrator' : 'Utilizator'}
                     </p>
                   </div>
                 </div>

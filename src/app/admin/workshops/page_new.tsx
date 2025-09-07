@@ -1,12 +1,11 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { FaCalendarAlt, FaPlus, FaEdit, FaUsers, FaMapMarkerAlt, FaClock, FaUser } from 'react-icons/fa'
+import { FaCalendarAlt, FaPlus, FaEdit, FaUsers, FaMapMarkerAlt, FaClock } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
 import connectDB from '@/lib/mongodb'
 import { Workshop } from '@/models'
 import DeleteWorkshopButton from '@/components/DeleteWorkshopButton'
-import WorkshopRegistrationToggle from '@/components/WorkshopRegistrationToggle'
 
 export default async function AdminWorkshopsPage() {
   const clerkUser = await currentUser()
@@ -56,7 +55,7 @@ export default async function AdminWorkshopsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <div className="flex-1">
+                        <div>
                           <p className="text-sm font-medium text-foreground truncate">
                             {workshop.title}
                           </p>
@@ -64,25 +63,18 @@ export default async function AdminWorkshopsPage() {
                             {workshop.description}
                           </p>
                         </div>
-                        <div className="ml-4 flex-shrink-0 flex items-center space-x-3">
-                          <WorkshopRegistrationToggle 
-                            workshopId={workshop._id.toString()}
-                            currentStatus={workshop.registrationStatus || 'open'}
+                        <div className="ml-2 flex-shrink-0 flex space-x-2">
+                          <Link
+                            href={`/admin/workshops/edit/${workshop._id}`}
+                            className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-primary-foreground bg-primary hover:bg-primary/90"
+                          >
+                            <FaEdit className="mr-1 h-3 w-3" />
+                            Editează
+                          </Link>
+                          <DeleteWorkshopButton 
+                            workshopId={workshop._id.toString()} 
                             workshopTitle={workshop.title}
                           />
-                          <div className="flex space-x-2">
-                            <Link
-                              href={`/admin/workshops/edit/${workshop._id}`}
-                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-primary-foreground bg-primary hover:bg-primary/90"
-                            >
-                              <FaEdit className="mr-1 h-3 w-3" />
-                              Editează
-                            </Link>
-                            <DeleteWorkshopButton 
-                              workshopId={workshop._id.toString()} 
-                              workshopTitle={workshop.title}
-                            />
-                          </div>
                         </div>
                       </div>
                       <div className="mt-2 flex items-center text-sm text-muted-foreground space-x-4">
@@ -98,12 +90,6 @@ export default async function AdminWorkshopsPage() {
                           <FaUsers className="flex-shrink-0 mr-1.5 h-4 w-4" />
                           {workshop.currentParticipants || 0}/{workshop.maxParticipants} participanți
                         </div>
-                        {workshop.instructor && (
-                          <div className="flex items-center">
-                            <FaUser className="flex-shrink-0 mr-1.5 h-4 w-4" />
-                            {workshop.instructor}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useClerk } from '@clerk/nextjs'
 import { 
   FaUser, 
   FaCog, 
@@ -9,33 +10,24 @@ import {
   FaChartBar, 
   FaUsers, 
   FaHome,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaCogs
 } from 'react-icons/fa'
-import { Profile } from '@/types/models'
-import { User } from '@supabase/supabase-js'
+import { IUser } from '@/models'
 
 interface DashboardSidebarProps {
-  user: User
-  profile: Profile | null
+  user: IUser
   isAdmin: boolean
 }
 
-export default function DashboardSidebar({ user, profile, isAdmin }: DashboardSidebarProps) {
+export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProps) {
   const pathname = usePathname()
   const isAdminPage = pathname.startsWith('/admin')
+  const { signOut } = useClerk()
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch('/auth/signout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (response.ok) {
-        window.location.href = '/'
-      }
+      await signOut()
     } catch (error) {
       console.error('Error signing out:', error)
     }
@@ -51,7 +43,7 @@ export default function DashboardSidebar({ user, profile, isAdmin }: DashboardSi
             <div className="flex items-center p-4 border-b border-border mb-4 min-w-max">
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground whitespace-nowrap">
-                  {profile?.full_name || user?.email}
+                  {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
                 </p>
                 <p className="text-xs text-muted-foreground whitespace-nowrap">
                   {isAdmin ? 'Administrator' : 'Utilizator'}
@@ -98,6 +90,18 @@ export default function DashboardSidebar({ user, profile, isAdmin }: DashboardSi
                   >
                     <FaUsers className="mr-3 h-4 w-4 flex-shrink-0" />
                     Administrare Utilizatori
+                  </Link>
+
+                  <Link
+                    href="/admin/settings"
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
+                      pathname.startsWith('/admin/settings')
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                    }`}
+                  >
+                    <FaCogs className="mr-3 h-4 w-4 flex-shrink-0" />
+                    Setări Aplicație
                   </Link>
 
                   <div className="border-t border-border my-4 pt-4">
@@ -185,7 +189,7 @@ export default function DashboardSidebar({ user, profile, isAdmin }: DashboardSi
           <div className="flex items-center space-x-3">
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground">
-                {profile?.full_name || user?.email}
+                {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
               </p>
               <p className="text-xs text-muted-foreground">
                 {isAdmin ? 'Administrator' : 'Utilizator'}

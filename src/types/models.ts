@@ -1,20 +1,44 @@
-import { Database } from './database';
-
 export type UserRole = 'admin' | 'user';
 
-export type Profile = Database['public']['Tables']['profiles']['Row'];
+// MongoDB User interface
+export interface User {
+  _id: string;
+  clerkId: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-export type Workshop = Database['public']['Tables']['workshops']['Row'] & {
-  instructor?: Profile;
-  registrations?: WorkshopRegistration[];
+// MongoDB Workshop interface
+export interface Workshop {
+  id: string;
+  title: string;
+  description: string;
+  date: Date;
+  time: string;
+  location: string;
+  maxParticipants: number;
+  current_participants: number;
+  max_participants: number; // Alias for compatibility
+  instructor: string;
+  status: 'active' | 'cancelled' | 'completed';
+  registrationStatus: 'open' | 'closed';
   // For display in UI
   user_registered?: boolean;
-};
+}
 
-export type WorkshopRegistration = Database['public']['Tables']['workshop_registrations']['Row'] & {
-  workshop?: Workshop;
-  user?: Profile;
-};
+// MongoDB Registration interface
+export interface WorkshopRegistration {
+  _id: string;
+  userId: string; // Clerk user ID
+  workshopId: string; // Workshop ID
+  status: 'confirmed' | 'cancelled';
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export interface AuthUser {
   id: string;
