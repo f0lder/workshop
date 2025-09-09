@@ -9,6 +9,7 @@ interface WorkshopRegistrationButtonProps {
   workshop: Workshop
   userId?: string | null
   onRegistrationChange?: () => Promise<void>
+  onOptimisticUpdate?: (workshopId: string, isRegistered: boolean) => void
 }
 
 // Simple CSS spinner component
@@ -18,7 +19,7 @@ function Spinner() {
   )
 }
 
-export function WorkshopRegistrationButton({ workshop, onRegistrationChange }: WorkshopRegistrationButtonProps) {
+export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate }: WorkshopRegistrationButtonProps) {
   const [isPending, startTransition] = useTransition()
   const { showToast } = useToast()
   
@@ -28,22 +29,37 @@ export function WorkshopRegistrationButton({ workshop, onRegistrationChange }: W
   const isRegistrationClosed = workshop.registrationStatus === 'closed'
   
   async function handleSubmit(formData: FormData) {
+    const action = formData.get('action') as string
+    const willBeRegistered = action === 'register'
+    const workshopId = String(workshop.id || workshop._id || '')
+    
+    // Optimistic update for instant visual feedback
+    if (onOptimisticUpdate) {
+      onOptimisticUpdate(workshopId, willBeRegistered)
+    }
+    
     startTransition(async () => {
       try {
         await registerForWorkshop(formData)
         
-        // Refresh the workshop data to show updated registration status
-        if (onRegistrationChange) {
-          await onRegistrationChange()
-        }
-        
+        // Show success message for immediate feedback
         if (isRegistered) {
           showToast('Te-ai dezînscris cu succes de la workshop', 'info')
         } else {
           showToast('Te-ai înscris cu succes la workshop!', 'success')
         }
+        
+        // No need to refresh - optimistic update already handled the UI
+        
       } catch (error) {
-        showToast('A apărut o eroare. Te rugăm încearcă din nou.', 'error')
+        // Revert optimistic update on error
+        if (onOptimisticUpdate) {
+          onOptimisticUpdate(workshopId, !willBeRegistered)
+        }
+        
+        // Handle specific error messages from the server
+        const errorMessage = error instanceof Error ? error.message : 'A apărut o eroare. Te rugăm încearcă din nou.'
+        showToast(errorMessage, 'error')
         console.error('Registration error:', error)
       }
     })

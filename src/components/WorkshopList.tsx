@@ -31,9 +31,25 @@ export default function WorkshopList() {
     fetchWorkshops()
   }, [])
 
-  // Function to refresh workshop data after registration
+  // Function to refresh workshop data (only used for initial error recovery)
   const refreshWorkshops = async () => {
     await fetchWorkshops()
+  }
+
+  // Function to optimistically update workshop registration status
+  const updateWorkshopRegistration = (workshopId: string, isRegistered: boolean) => {
+    setWorkshops(prev => prev.map(workshop => {
+      if ((workshop.id || workshop._id) === workshopId) {
+        return {
+          ...workshop,
+          user_registered: isRegistered,
+          current_participants: isRegistered 
+            ? (workshop.current_participants || 0) + 1 
+            : Math.max(0, (workshop.current_participants || 0) - 1)
+        }
+      }
+      return workshop
+    }))
   }
 
   if (loading || !isLoaded) {
@@ -253,7 +269,7 @@ export default function WorkshopList() {
                     _id: workshop.id || workshop._id,
                     date: typeof workshop.date === 'string' ? new Date(workshop.date) : workshop.date,
                   } as Workshop} 
-                  onRegistrationChange={refreshWorkshops}
+                  onOptimisticUpdate={updateWorkshopRegistration}
                 />
               ) : (
                 <Link

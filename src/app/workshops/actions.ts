@@ -13,113 +13,87 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
   const action = formData.get('action') as string
 
   if (!clerkUser) {
-    console.error('Authentication required')
-    revalidatePath('/workshops')
-    return
+    throw new Error('Authentication required')
   }
 
-  // Sync user with database
-  await syncUserWithDatabase(clerkUser)
-  
-  // Get app settings to check global registration settings
-  const appSettings = await getAppSettings()
-  
   await connectDB()
 
-  // Check if global registration is enabled
-  if (!appSettings.globalRegistrationEnabled) {
-    console.log('Global registration is disabled')
-    revalidatePath('/workshops')
-    return
-  }
-
-  // Get workshop to check if it's full
-  const workshop = await Workshop.findById(workshopId)
-
-  if (!workshop) {
-    console.error('Workshop not found')
-    revalidatePath('/workshops')
-    return
-  }
-
   try {
+    // Get all data in parallel for faster execution
+    const [appSettings, workshop, existingRegistration, userRegistrationsCount] = await Promise.all([
+      getAppSettings(),
+      Workshop.findById(workshopId),
+      Registration.findOne({ userId: clerkUser.id, workshopId }),
+      Registration.countDocuments({ userId: clerkUser.id, status: 'confirmed' })
+    ])
+
+    if (!workshop) {
+      throw new Error('Workshop not found')
+    }
+
+    // Check global registration settings
+    if (!appSettings.globalRegistrationEnabled) {
+      throw new Error('Global registration is disabled')
+    }
+
     if (action === 'register') {
-      // Check if registrations are open
+      // Validate registration conditions
       if (workshop.registrationStatus === 'closed') {
-        console.log('Registrations are closed for this workshop')
-        revalidatePath('/workshops')
-        return
+        throw new Error('Registrations are closed for this workshop')
       }
 
-      // Check if user has reached maximum workshops limit
-      const userRegistrationsCount = await Registration.countDocuments({ 
-        userId: clerkUser.id, 
-        status: 'confirmed' 
-      })
-      
       if (userRegistrationsCount >= appSettings.maxWorkshopsPerUser) {
-        console.log(`User has reached maximum workshops limit (${appSettings.maxWorkshopsPerUser})`)
-        revalidatePath('/workshops')
-        return
+        throw new Error(`You have reached the maximum workshops limit (${appSettings.maxWorkshopsPerUser})`)
       }
-
-      // Check if already registered
-      const existingRegistration = await Registration.findOne({
-        userId: clerkUser.id,
-        workshopId
-      })
 
       if (existingRegistration) {
-        console.log('Already registered')
-        revalidatePath('/workshops')
-        return
+        throw new Error('Already registered for this workshop')
       }
 
-      // Check if workshop is full
+      // Get current registration count for this workshop
       const currentRegistrations = await Registration.countDocuments({ workshopId })
       if (currentRegistrations >= workshop.maxParticipants) {
-        console.log('Workshop is full')
-        revalidatePath('/workshops')
-        return
+        throw new Error('Workshop is full')
       }
 
-      // Add registration
-      await Registration.create({
-        userId: clerkUser.id,
-        workshopId,
-        status: 'confirmed'
-      })
-
-      // Update participant count
-      await Workshop.findByIdAndUpdate(workshopId, {
-        currentParticipants: currentRegistrations + 1
-      })
+      // Perform registration and update count atomically
+      await Promise.all([
+        Registration.create({
+          userId: clerkUser.id,
+          workshopId,
+          status: 'confirmed'
+        }),
+        Workshop.findByIdAndUpdate(workshopId, {
+          currentParticipants: currentRegistrations + 1
+        })
+      ])
 
     } else if (action === 'cancel') {
-      // Check if cancellation is allowed
       if (!appSettings.allowCancelRegistration) {
-        console.log('Registration cancellation is not allowed')
-        revalidatePath('/workshops')
-        return
+        throw new Error('Registration cancellation is not allowed')
       }
 
-      // Remove registration
-      await Registration.findOneAndDelete({
-        userId: clerkUser.id,
-        workshopId
-      })
+      if (!existingRegistration) {
+        throw new Error('No registration found to cancel')
+      }
 
-      // Update participant count
+      // Get current count and perform cancellation atomically
       const currentRegistrations = await Registration.countDocuments({ workshopId })
-      await Workshop.findByIdAndUpdate(workshopId, {
-        currentParticipants: currentRegistrations
-      })
+      
+      await Promise.all([
+        Registration.findOneAndDelete({ userId: clerkUser.id, workshopId }),
+        Workshop.findByIdAndUpdate(workshopId, {
+          currentParticipants: Math.max(0, currentRegistrations - 1)
+        })
+      ])
     }
+
   } catch (error) {
     console.error('Registration action error:', error)
+    throw error // Re-throw to let the client handle the error
   }
 
-  // Always revalidate at the end
+  // Only revalidate on success
   revalidatePath('/workshops')
   revalidatePath('/dashboard')
 }
