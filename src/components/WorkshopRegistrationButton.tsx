@@ -8,6 +8,7 @@ import { registerForWorkshop } from '@/app/workshops/actions'
 interface WorkshopRegistrationButtonProps {
   workshop: Workshop
   userId?: string | null
+  onRegistrationChange?: () => Promise<void>
 }
 
 // Simple CSS spinner component
@@ -17,7 +18,7 @@ function Spinner() {
   )
 }
 
-export function WorkshopRegistrationButton({ workshop }: WorkshopRegistrationButtonProps) {
+export function WorkshopRegistrationButton({ workshop, onRegistrationChange }: WorkshopRegistrationButtonProps) {
   const [isPending, startTransition] = useTransition()
   const { showToast } = useToast()
   
@@ -30,6 +31,11 @@ export function WorkshopRegistrationButton({ workshop }: WorkshopRegistrationBut
     startTransition(async () => {
       try {
         await registerForWorkshop(formData)
+        
+        // Refresh the workshop data to show updated registration status
+        if (onRegistrationChange) {
+          await onRegistrationChange()
+        }
         
         if (isRegistered) {
           showToast('Te-ai dezînscris cu succes de la workshop', 'info')

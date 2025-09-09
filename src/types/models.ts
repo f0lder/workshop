@@ -20,7 +20,7 @@ export interface Workshop {
   id?: string; // For serialized versions
   title: string;
   description: string;
-  date: Date;
+  date: Date | string; // Support both Date objects and serialized strings
   time: string;
   location: string;
   maxParticipants: number;
