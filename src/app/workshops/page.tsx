@@ -62,7 +62,7 @@ export default async function WorkshopsPage() {
               </div>
               <div className="flex items-center">
                 <FaMapMarkerAlt className="h-5 w-5 mr-2" />
-                <span>Spitalul militar central „Dr. Carol Davila"</span>
+                <span>Spitalul militar central &ldquo;Dr. Carol Davila&rdquo;</span>
               </div>
             </div>
           </div>

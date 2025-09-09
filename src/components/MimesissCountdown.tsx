@@ -118,7 +118,7 @@ export default function MimesissCountdown() {
                 Bun venit la cea de-a V-a ediție a MIMESISS!
               </p>
               <p className="mimesiss-text-secondary mt-2">
-                Conferința este în desfășurare la Spitalul militar central „Dr. Carol Davila"
+                Conferința este în desfășurare la Spitalul militar central &ldquo;Dr. Carol Davila&rdquo;
               </p>
             </div>
           </div>

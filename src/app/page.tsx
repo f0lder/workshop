@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FaCalendarAlt, FaUsers, FaMapMarkerAlt, FaEnvelope, FaPhone } from 'react-icons/fa'
+import { FaCalendarAlt, FaMapMarkerAlt, FaEnvelope, FaPhone } from 'react-icons/fa'
 import { currentUser } from '@clerk/nextjs/server'
 import MimesissCountdown from '@/components/MimesissCountdown'
 
@@ -30,7 +30,7 @@ export default async function HomePage() {
             </div>
             <div className="flex items-center justify-center">
               <FaMapMarkerAlt className="h-5 w-5 text-primary mr-2" />
-              <span className="mimesiss-text-secondary">Spitalul universitar de urgență militar central „Dr. CAROL DAVILA"</span>
+              <span className="mimesiss-text-secondary">Spitalul universitar de urgență militar central &ldquo;Dr. CAROL DAVILA&rdquo;</span>
             </div>
           </div>
 

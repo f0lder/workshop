@@ -41,7 +41,7 @@ export default function InfoPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-3">1. Crează-ți un cont</h3>
                 <p className="mimesiss-text-secondary text-sm">
-                  Apasă pe butonul „Înregistrare" și completează formularul cu datele tale. 
+                  Apasă pe butonul &ldquo;Înregistrare&rdquo; și completează formularul cu datele tale. 
                   Vei primi un e-mail de confirmare pe care trebuie să-l accesezi pentru a activa contul.
                 </p>
               </div>
