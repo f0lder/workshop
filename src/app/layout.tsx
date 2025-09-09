@@ -5,18 +5,23 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import HeaderWrapper from "@/components/HeaderWrapper";
+import "./critical.css";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
+  fallback: ['system-ui', 'arial'],
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: "swap",
+  preload: false, // Less critical font
+  fallback: ['Consolas', 'Monaco', 'monospace'],
 });
 
 export const metadata: Metadata = {
@@ -101,13 +106,20 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className="dark">
+      <html lang="ro" className="dark">
+        <head>
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+          <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+        </head>
         <body
           className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground min-h-screen`}
         >
           <ToastProvider>
             <HeaderWrapper />
-            {children}
+            <main>
+              {children}
+            </main>
           </ToastProvider>
           <SpeedInsights />
           <Analytics />
