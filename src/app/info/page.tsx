@@ -1,0 +1,230 @@
+import Link from 'next/link'
+import { FaUserGraduate, FaFileAlt, FaCreditCard, FaInfoCircle, FaArrowLeft } from 'react-icons/fa'
+
+export default function InfoPage() {
+  return (
+    <div className="mimesiss-hero-bg">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Back Button */}
+        <div className="mb-8">
+          <Link 
+            href="/"
+            className="inline-flex items-center text-primary hover:text-primary/80 font-medium transition duration-200"
+          >
+            <FaArrowLeft className="mr-2" />
+            Înapoi la pagina principală
+          </Link>
+        </div>
+
+        {/* Page Header */}
+        <div className="text-center mb-12">
+          <h1 className="mimesiss-title">
+            Informații MIMESISS 2025
+          </h1>
+          <p className="text-xl mimesiss-text-secondary max-w-3xl mx-auto mt-4">
+            Tot ce trebuie să știi despre înregistrare și participare
+          </p>
+        </div>
+
+        {/* Registration Process */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">
+            Cum să te înregistrezi
+          </h2>
+          
+          <div className="mimesiss-info-grid">
+            {/* Step 1 */}
+            <div className="mimesiss-info-card mimesiss-border-step-1">
+              <div className="text-center">
+                <div className="mimesiss-info-icon">
+                  <FaUserGraduate className="text-primary text-2xl" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-3">1. Crează-ți un cont</h3>
+                <p className="mimesiss-text-secondary text-sm">
+                  Apasă pe butonul „Înregistrare" și completează formularul cu datele tale. 
+                  Vei primi un e-mail de confirmare pe care trebuie să-l accesezi pentru a activa contul.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="mimesiss-info-card mimesiss-border-step-2">
+              <div className="text-center">
+                <div className="mimesiss-info-icon">
+                  <FaInfoCircle className="text-green-500 text-2xl" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-3">2. Alege tipul de participant</h3>
+                <p className="mimesiss-text-secondary text-sm">
+                  Selectează dacă dorești să fii participant activ (cu prezentare) sau pasiv 
+                  (doar participare la evenimente). Fiecare variantă are taxe diferite.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="mimesiss-info-card mimesiss-border-step-3">
+              <div className="text-center">
+                <div className="mimesiss-info-icon">
+                  <FaFileAlt className="text-purple-500 text-2xl" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-3">3. Trimite abstractul</h3>
+                <p className="mimesiss-text-secondary text-sm">
+                  Doar pentru participanții activi. Încarcă abstractul conform ghidului de redactare 
+                  disponibil în secțiunea de informații.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="mimesiss-info-card mimesiss-border-step-4">
+              <div className="text-center">
+                <div className="mimesiss-info-icon">
+                  <FaCreditCard className="text-orange-500 text-2xl" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-3">4. Achită taxa</h3>
+                <p className="mimesiss-text-secondary text-sm">
+                  Plătește taxa de înscriere direct din contul tău prin platforma Stripe. 
+                  Plata este securizată și procesată instant.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Participation Types */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">
+            Tipuri de Participare
+          </h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Passive Participants */}
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-700">
+              <div className="text-center mb-6">
+                <div className="bg-gray-700 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                  <FaUserGraduate className="text-primary text-3xl" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Participanți Pasivi</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-gray-300">
+                  Iau parte la conferințe, workshopuri și evenimentele din program, fără a prezenta lucrări.
+                </p>
+                
+                <div className="bg-gray-700/50 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Beneficii incluse:</h4>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    <li>• Acces la toate conferințele</li>
+                    <li>• Participare la workshopuri</li>
+                    <li>• Materiale de curs</li>
+                    <li>• Certificat de participare</li>
+                    <li>• Coffee break și masa de prânz</li>
+                  </ul>
+                </div>
+                
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-2">_____ RON</div>
+                  <p className="text-gray-400">Taxa de participare</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Participants */}
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-primary relative">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold">
+                  Recomandat
+                </span>
+              </div>
+              
+              <div className="text-center mb-6">
+                <div className="bg-gray-700 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                  <FaFileAlt className="text-primary text-3xl" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Participanți Activi</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-gray-300">
+                  Prezintă o lucrare științifică în una dintre secțiunile disponibile.
+                </p>
+                
+                <div className="bg-gray-700/50 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Secțiuni disponibile:</h4>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    <li>• <strong>Medical</strong> - Lucrări de medicină generală</li>
+                    <li>• <strong>Medico-militar</strong> - Medicină militară specifică</li>
+                    <li>• <strong>E-poster</strong> - Prezentări în format digital</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-gray-700/50 rounded-lg p-4">
+                  <h4 className="font-semibold text-white mb-2">Beneficii suplimentare:</h4>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    <li>• Toate beneficiile participanților pasivi</li>
+                    <li>• Prezentare lucrare științifică</li>
+                    <li>• Feedback de la experți</li>
+                    <li>• Șanse de câștigare a premiilor</li>
+                    <li>• Networking cu specialiști</li>
+                  </ul>
+                </div>
+                
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-2">_____ RON</div>
+                  <p className="text-gray-400">Taxa comună pentru toate secțiunile</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Eligibility */}
+        <div className="bg-gray-800/50 rounded-lg p-8 mb-16 border border-gray-700">
+          <h2 className="text-3xl font-bold text-white mb-6 text-center">
+            Cine poate participa?
+          </h2>
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="text-lg text-gray-300 mb-4">
+              Congresul este deschis tuturor studenților la medicină, atât militari, cât și civili, 
+              care doresc să se implice activ în mediul științific și academic.
+            </p>
+            <div className="bg-gray-700/50 rounded-lg p-6 mt-6">
+              <h3 className="text-xl font-semibold text-white mb-3">Cerințe de participare:</h3>
+              <ul className="text-gray-300 space-y-2">
+                <li>• Student la medicină (an pregătitor - anul VI)</li>
+                <li>• Cont valid pe platforma MIMESISS</li>
+                <li>• Taxa de participare achitată</li>
+                <li>• Pentru participanți activi: abstract conform cerințelor</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Gata să te înregistrezi?
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">
+            Alătură-te celei mai importante conferințe medico-militare pentru studenți!
+          </p>
+          <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
+            <Link
+              href="/auth/signup"
+              className="mimesiss-btn-primary inline-flex items-center"
+            >
+              Înregistrează-te acum
+            </Link>
+            <Link
+              href="/workshops"
+              className="mimesiss-btn-secondary inline-flex items-center"
+            >
+              Vezi programul
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -1,42 +1,54 @@
 import Link from 'next/link'
-import { FaCalendarAlt, FaUsers, FaMapMarkerAlt } from 'react-icons/fa'
+import { FaCalendarAlt, FaUsers, FaMapMarkerAlt, FaEnvelope, FaPhone } from 'react-icons/fa'
 import { currentUser } from '@clerk/nextjs/server'
+import MimesissCountdown from '@/components/MimesissCountdown'
 
 export default async function HomePage() {
   const user = await currentUser()
 
-  // User is available if logged in
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
+    <div className="mimesiss-hero-bg">
       {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <main className="mimesiss-container">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold text-foreground sm:text-5xl md:text-6xl">
-            Discover Amazing
-            <span className="text-primary"> Workshops</span>
+          <h1 className="mimesiss-title">
+            MIMESISS
+            <span className="mimesiss-text-primary"> 2025</span>
           </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-muted-foreground sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Join workshops, learn new skills, and connect with like-minded people. 
-            Our platform makes it easy to find and register for workshops that interest you.
+          <h2 className="mimesiss-subtitle">
+            Military Medicine Scientific Session for Students
+          </h2>
+          <p className="mimesiss-description">
+            Cea de-a V-a ediție a Sesiunii de Comunicări Științifice Medico-Militare
           </p>
-          <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+          
+          {/* Event Details */}
+          <div className="mt-8 mimesiss-card p-6 max-w-2xl mx-auto">
+            <div className="flex items-center justify-center mb-4">
+              <FaCalendarAlt className="h-6 w-6 text-primary mr-3" />
+              <span className="text-xl font-semibold text-white">13-16 NOIEMBRIE 2025</span>
+            </div>
+            <div className="flex items-center justify-center">
+              <FaMapMarkerAlt className="h-5 w-5 text-primary mr-2" />
+              <span className="mimesiss-text-secondary">Spitalul universitar de urgență militar central „Dr. CAROL DAVILA"</span>
+            </div>
+          </div>
+
+          {/* Countdown */}
+          <MimesissCountdown />
+
+          <div className="mt-8 max-w-md mx-auto sm:flex sm:justify-center">
             {user ? (
               // Logged in user CTAs
               <>
                 <div className="rounded-md shadow">
-                  <Link
-                    href="/dashboard"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10"
-                  >
-                    Go to Dashboard
+                  <Link href="/dashboard" className="mimesiss-btn-primary">
+                    Accesează Contul
                   </Link>
                 </div>
                 <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                  <Link
-                    href="/workshops"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-border text-base font-medium rounded-md text-primary bg-card hover:bg-accent md:py-4 md:text-lg md:px-10"
-                  >
-                    Browse Workshops
+                  <Link href="/workshops" className="mimesiss-btn-secondary">
+                    Vezi Programul
                   </Link>
                 </div>
               </>
@@ -44,19 +56,13 @@ export default async function HomePage() {
               // Guest user CTAs
               <>
                 <div className="rounded-md shadow">
-                  <Link
-                    href="/auth/signup"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10"
-                  >
-                    Get Started
+                  <Link href="/auth/signup" className="mimesiss-btn-primary">
+                    Înregistrează-te
                   </Link>
                 </div>
                 <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                  <Link
-                    href="/workshops"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-border text-base font-medium rounded-md text-primary bg-card hover:bg-accent md:py-4 md:text-lg md:px-10"
-                  >
-                    Browse Workshops
+                  <Link href="/info" className="mimesiss-btn-secondary">
+                    Informații
                   </Link>
                 </div>
               </>
@@ -64,37 +70,34 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Features */}
+        {/* Mission Statement */}
+        <div className="mt-20 mimesiss-card-dark p-8 max-w-4xl mx-auto">
+          <h3 className="text-2xl font-bold text-white text-center mb-6">Misiunea Noastră</h3>
+          <p className="mimesiss-text-secondary text-lg leading-relaxed text-center">
+            Misiunea Asociației noastre este ca prin intermediul acestui eveniment să reprezentăm și să sprijinim 
+            studenții la Medicină Militară, oferindu-le o platformă pentru dezvoltare personală și profesională. 
+            Ne străduim să promovăm o cultură a excelenței academice, a cercetării medicale de înaltă calitate 
+            și a valorilor etice și morale în practica medicală militară.
+          </p>
+        </div>
+
+        {/* Contact Information */}
         <div className="mt-20">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="text-center">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-primary-foreground mx-auto">
-                <FaCalendarAlt className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-lg font-medium text-foreground">Easy Scheduling</h3>
-              <p className="mt-2 text-base text-muted-foreground">
-                Browse workshops by date, time, and location. Find the perfect workshop that fits your schedule.
-              </p>
+          <h3 className="text-2xl font-bold text-white text-center mb-8">Contact</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="mimesiss-contact-card">
+              <FaEnvelope className="h-8 w-8 text-primary mx-auto mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Email</h4>
+              <a href="mailto:office.asmm@gmail.com" className="mimesiss-text-secondary hover:text-primary transition duration-200">
+                office.asmm@gmail.com
+              </a>
             </div>
-
-            <div className="text-center">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-primary-foreground mx-auto">
-                <FaUsers className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-lg font-medium text-foreground">Expert Instructors</h3>
-              <p className="mt-2 text-base text-muted-foreground">
-                Learn from experienced professionals and industry experts who are passionate about sharing their knowledge.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-primary-foreground mx-auto">
-                <FaMapMarkerAlt className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-lg font-medium text-foreground">Multiple Locations</h3>
-              <p className="mt-2 text-base text-muted-foreground">
-                Workshops available at various locations, making it convenient for you to attend.
-              </p>
+            <div className="mimesiss-contact-card">
+              <FaPhone className="h-8 w-8 text-primary mx-auto mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Telefon</h4>
+              <a href="tel:0749027151" className="mimesiss-text-secondary hover:text-primary transition duration-200">
+                0749027151
+              </a>
             </div>
           </div>
         </div>

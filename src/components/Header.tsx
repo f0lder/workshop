@@ -50,12 +50,12 @@ export default function Header({ user }: HeaderProps) {
             <nav className="hidden lg:flex items-center space-x-6">
               <Link href="/" className="text-foreground hover:text-foreground/80 transition-colors">
                 Acasă
+              </Link>       
+              <Link href="/info" className="text-foreground hover:text-foreground/80 transition-colors">
+                Informații
               </Link>
               <Link href="/about" className="text-foreground hover:text-foreground/80 transition-colors">
                 Cine suntem
-              </Link>
-              <Link href="/info" className="text-foreground hover:text-foreground/80 transition-colors">
-                Informații
               </Link>
               <Link href="/program" className="text-foreground hover:text-foreground/80 transition-colors">
                 Program
@@ -188,6 +188,17 @@ export default function Header({ user }: HeaderProps) {
                 <FaHome className="h-4 w-4 mr-3" />
                 Acasă
               </Link>
+
+              <Link
+                href="/info"
+                onClick={toggleMobileMenu}
+                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                  }`}
+                style={{ transitionDelay: isMobileMenuOpen ? '200ms' : '0ms' }}
+              >
+                <FaCog className="h-4 w-4 mr-3" />
+                Informații
+              </Link>
               
               <Link
                 href="/workshops"
@@ -211,19 +222,7 @@ export default function Header({ user }: HeaderProps) {
               >
                 <FaUsers className="h-4 w-4 mr-3" />
                 Cine suntem
-              </Link>
-              
-              <Link
-                href="/info"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
-                style={{ transitionDelay: isMobileMenuOpen ? '300ms' : '0ms' }}
-              >
-                <FaCog className="h-4 w-4 mr-3" />
-                Informații
-              </Link>
+              </Link>           
               
               <Link
                 href="/program"
