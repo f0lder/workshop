@@ -31,11 +31,6 @@ export default function WorkshopList() {
     fetchWorkshops()
   }, [])
 
-  // Function to refresh workshop data (only used for initial error recovery)
-  const refreshWorkshops = async () => {
-    await fetchWorkshops()
-  }
-
   // Function to optimistically update workshop registration status
   const updateWorkshopRegistration = (workshopId: string, isRegistered: boolean) => {
     setWorkshops(prev => prev.map(workshop => {

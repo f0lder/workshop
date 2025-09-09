@@ -4,7 +4,6 @@ import { currentUser } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
 import { Workshop, Registration } from '@/models'
 import connectDB from '@/lib/mongodb'
-import { syncUserWithDatabase } from '@/lib/auth'
 import { getAppSettings } from '@/lib/settings'
 
 export async function registerForWorkshop(formData: FormData): Promise<void> {
