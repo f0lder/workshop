@@ -68,7 +68,7 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate }: Wor
   // If registration is closed and user is not registered, show message
   if (isRegistrationClosed && !isRegistered) {
     return (
-      <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border">
+      <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border border-gray-300">
         Înregistrările sunt închise
       </div>
     )
@@ -90,8 +90,8 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate }: Wor
           isFull && !isRegistered
             ? 'bg-gray-400 cursor-not-allowed text-white'
             : isRegistered
-            ? 'bg-red-600 hover:bg-red-700 text-white'
-            : 'bg-blue-600 hover:bg-blue-700 text-white'
+            ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground'
+            : 'bg-primary hover:bg-primary/90 text-primary-foreground'
         }`}
       >
         {isPending && <Spinner />}

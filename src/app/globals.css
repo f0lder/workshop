@@ -4,48 +4,50 @@
 
 @layer base {
   :root {
+    /* MIMESISS Light Theme */
     --background: 0 0% 100%;
-    --foreground: 0 0% 9%;
+    --foreground: 16 100% 4%; /* Almost black #0F0F10 */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
+    --card-foreground: 16 100% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
-    --primary: 0 0% 9%;
+    --popover-foreground: 16 100% 4%;
+    --primary: 13 76% 55%; /* MIMESISS Orange #DF5739 */
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 0 100% 47%; /* MIMESISS Purple #790000 */
+    --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84% 60%;
+    --accent: 13 76% 55%; /* MIMESISS Orange */
+    --accent-foreground: 0 0% 98%;
+    --destructive: 7 100% 50%; /* MIMESISS Red #FF1800 */
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89%;
     --input: 0 0% 89%;
-    --ring: 0 0% 9%;
+    --ring: 13 76% 55%; /* MIMESISS Orange */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 4%;
+    /* MIMESISS Dark Theme */
+    --background: 16 100% 4%; /* MIMESISS Black #0F0F10 */
     --foreground: 0 0% 98%;
-    --card: 0 0% 10%;
+    --card: 0 0% 8%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 10%;
+    --popover: 0 0% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 261 83% 68%;
+    --primary: 13 76% 55%; /* MIMESISS Orange #DF5739 */
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 15%;
+    --secondary: 0 100% 47%; /* MIMESISS Purple #790000 */
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
+    --muted: 0 0% 12%;
     --muted-foreground: 0 0% 64%;
-    --accent: 0 0% 15%;
+    --accent: 13 76% 55%; /* MIMESISS Orange */
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 55%;
+    --destructive: 7 100% 50%; /* MIMESISS Red #FF1800 */
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 261 83% 68%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 13 76% 55%; /* MIMESISS Orange */
   }
 }
 
@@ -83,7 +85,7 @@
 @layer components {
   /* MIMESISS specific components */
   .mimesiss-hero-bg {
-    @apply min-h-screen bg-gradient-to-b from-gray-900 to-black;
+    @apply min-h-screen bg-gradient-to-br from-background via-background/95 to-background;
   }
   
   .mimesiss-container {
@@ -103,11 +105,11 @@
   }
   
   .mimesiss-card {
-    @apply bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700;
+    @apply bg-card/80 backdrop-blur-sm rounded-lg border border-border;
   }
   
   .mimesiss-card-dark {
-    @apply bg-gray-800/30 backdrop-blur-sm rounded-lg border border-gray-700;
+    @apply bg-card/60 backdrop-blur-sm rounded-lg border border-border/50;
   }
   
   .mimesiss-section-card {
@@ -119,7 +121,7 @@
   }
   
   .mimesiss-btn-secondary {
-    @apply w-full flex items-center justify-center px-8 py-3 border border-gray-600 text-base font-medium rounded-md text-gray-300 bg-transparent hover:bg-gray-800 md:py-4 md:text-lg md:px-10 transition duration-200;
+    @apply w-full flex items-center justify-center px-8 py-3 border border-border text-base font-medium rounded-md text-secondary-foreground bg-secondary hover:bg-secondary/80 md:py-4 md:text-lg md:px-10 transition duration-200;
   }
   
   .mimesiss-btn-card {
@@ -127,7 +129,7 @@
   }
   
   .mimesiss-contact-card {
-    @apply bg-gray-800/30 backdrop-blur-sm rounded-lg p-6 text-center border border-gray-700;
+    @apply bg-card/40 backdrop-blur-sm rounded-lg p-6 text-center border border-border;
   }
   
   .mimesiss-info-grid {
@@ -135,15 +137,15 @@
   }
   
   .mimesiss-info-card {
-    @apply bg-gray-800 rounded-lg shadow-lg p-6 text-center;
+    @apply bg-card/80 rounded-lg shadow-lg p-6 text-center border border-border;
   }
   
   .mimesiss-info-icon {
-    @apply bg-gray-700 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4;
+    @apply bg-card/60 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 border border-border;
   }
   
   .mimesiss-section-header {
-    @apply bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg p-8 text-white border border-gray-700;
+    @apply bg-gradient-to-r from-card/90 to-card rounded-lg p-8 text-white border border-border;
   }
   
   .mimesiss-countdown-container {
@@ -151,7 +153,7 @@
   }
   
   .mimesiss-countdown-card {
-    @apply bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 max-w-4xl mx-auto border border-gray-700;
+    @apply bg-card/60 backdrop-blur-sm rounded-lg p-6 max-w-4xl mx-auto border border-border;
   }
   
   .mimesiss-countdown-grid {
@@ -159,7 +161,7 @@
   }
   
   .mimesiss-countdown-item {
-    @apply bg-gray-700/50 rounded-lg p-4;
+    @apply bg-card/70 rounded-lg p-4 border border-border/50;
   }
   
   .mimesiss-countdown-number {
@@ -188,14 +190,14 @@
   }
   
   .mimesiss-border-step-2 {
-    @apply border-t-4 border-green-500;
+    @apply border-t-4 border-border;
   }
   
   .mimesiss-border-step-3 {
-    @apply border-t-4 border-purple-500;
+    @apply border-t-4 border-border;
   }
   
   .mimesiss-border-step-4 {
-    @apply border-t-4 border-orange-500;
+    @apply border-t-4 border-primary;
   }
 }

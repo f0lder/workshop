@@ -71,10 +71,10 @@ export default function WorkshopList() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-500 mb-4">{error}</p>
+        <p className="text-destructive mb-4">{error}</p>
         <button 
           onClick={() => window.location.reload()} 
-          className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
         >
           Reîncarcă
         </button>
@@ -85,8 +85,8 @@ export default function WorkshopList() {
     return (
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
         {/* Medical Section */}
-        <div className="mimesiss-section-card">
-          <div className="bg-primary p-4 text-primary-foreground">
+        <div className="mimesiss-section-card border-l-4 border-border">
+          <div className="bg-gradient-to-r from-secondary to-secondary/80 p-4 text-white">
             <h3 className="text-xl font-semibold">Secțiunea Medical</h3>
           </div>
           <div className="p-6">
@@ -118,8 +118,8 @@ export default function WorkshopList() {
         </div>
 
         {/* Military Medical Section */}
-        <div className="mimesiss-section-card">
-          <div className="bg-blue-600 p-4 text-white">
+        <div className="mimesiss-section-card border-l-4 border-border">
+          <div className="bg-gradient-to-r from-accent to-accent/80 p-4 text-white">
             <h3 className="text-xl font-semibold">Secțiunea Medico-Militară</h3>
           </div>
           <div className="p-6">
@@ -143,7 +143,7 @@ export default function WorkshopList() {
               </div>
             </div>
             <div className="mt-6">
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
+              <button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium py-2 px-4 rounded-md transition duration-200">
                 Înregistrează-te ca participant activ
               </button>
             </div>
@@ -151,8 +151,8 @@ export default function WorkshopList() {
         </div>
 
         {/* E-Poster Section */}
-        <div className="mimesiss-section-card">
-          <div className="bg-purple-600 p-4 text-white">
+        <div className="mimesiss-section-card border-l-4 border-border">
+          <div className="bg-gradient-to-r from-primary to-primary/80 p-4 text-white">
             <h3 className="text-xl font-semibold">Secțiunea E-Poster</h3>
           </div>
           <div className="p-6">
@@ -176,7 +176,7 @@ export default function WorkshopList() {
               </div>
             </div>
             <div className="mt-6">
-              <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
+              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium py-2 px-4 rounded-md transition duration-200">
                 Înregistrează-te ca participant activ
               </button>
             </div>
@@ -241,7 +241,7 @@ export default function WorkshopList() {
 
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <div className="bg-muted rounded-full h-2">
+                  <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
                       className="bg-primary h-2 rounded-full transition-all duration-300"
                       style={{

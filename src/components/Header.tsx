@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { useRouter, usePathname } from 'next/navigation'
 import { useClerk } from '@clerk/nextjs'
 import { UserResource } from '@clerk/types'
 import { 
@@ -25,6 +26,7 @@ interface HeaderProps {
 export default function Header({ user }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
+  const pathname = usePathname()
   const { signOut } = useClerk()
 
   const handleSignOut = async () => {
@@ -36,40 +38,54 @@ export default function Header({ user }: HeaderProps) {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return pathname === '/'
+    }
+    return pathname.startsWith(path)
+  }
+
   return (
     <>
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <div className="mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="text-xl font-bold text-foreground">
-              Mimesiss
+            <Link href="/" className="flex items-center space-x-2">
+              <Image
+                src="/icons/logo_header.png"
+                alt="MIMESISS 2025"
+                width={500}
+                height={200}
+                className="h-10 w-auto"
+                priority
+              />
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6">
-              <Link href="/" className="text-foreground hover:text-foreground/80 transition-colors">
+              <Link href="/" className={`transition-colors relative underline-offset-4 ${isActive('/') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Acasă
               </Link>       
-              <Link href="/info" className="text-foreground hover:text-foreground/80 transition-colors">
+              <Link href="/info" className={`transition-colors relative underline-offset-4 ${isActive('/info') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Informații
               </Link>
-              <Link href="/about" className="text-foreground hover:text-foreground/80 transition-colors">
+              <Link href="/about" className={`transition-colors relative underline-offset-4 ${isActive('/about') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Cine suntem
               </Link>
-              <Link href="/program" className="text-foreground hover:text-foreground/80 transition-colors">
+              <Link href="/program" className={`transition-colors relative underline-offset-4 ${isActive('/program') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Program
               </Link>
-              <Link href="/previous-editions" className="text-foreground hover:text-foreground/80 transition-colors">
+              <Link href="/previous-editions" className={`transition-colors relative underline-offset-4 ${isActive('/previous-editions') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Ediții anterioare
               </Link>
-              <Link href="/contact" className="text-foreground hover:text-foreground/80 transition-colors">
+              <Link href="/contact" className={`transition-colors relative underline-offset-4 ${isActive('/contact') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Date de contact
               </Link>
-              <Link href="/gallery" className="text-foreground hover:text-foreground/80 transition-colors">
+              <Link href="/gallery" className={`transition-colors relative underline-offset-4 ${isActive('/gallery') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Galerie foto
               </Link>
-              <Link href="/sponsors" className="text-foreground hover:text-foreground/80 transition-colors">
+              <Link href="/sponsors" className={`transition-colors relative underline-offset-4 ${isActive('/sponsors') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Sponsori și parteneri
               </Link>
             </nav>
@@ -180,9 +196,9 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
+                } ${isActive('/') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '150ms' : '0ms' }}
               >
                 <FaHome className="h-4 w-4 mr-3" />
@@ -192,8 +208,8 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/info"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                  }`}
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                  } ${isActive('/info') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '200ms' : '0ms' }}
               >
                 <FaCog className="h-4 w-4 mr-3" />
@@ -203,9 +219,9 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/workshops"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
+                } ${isActive('/workshops') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '200ms' : '0ms' }}
               >
                 <FaCalendarAlt className="h-4 w-4 mr-3" />
@@ -215,9 +231,9 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/about"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
+                } ${isActive('/about') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '250ms' : '0ms' }}
               >
                 <FaUsers className="h-4 w-4 mr-3" />
@@ -227,9 +243,9 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/program"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
+                } ${isActive('/program') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '350ms' : '0ms' }}
               >
                 <FaCalendarAlt className="h-4 w-4 mr-3" />
@@ -239,9 +255,9 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/previous-editions"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
+                } ${isActive('/previous-editions') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '400ms' : '0ms' }}
               >
                 <FaChartBar className="h-4 w-4 mr-3" />
@@ -251,9 +267,9 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/contact"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
+                } ${isActive('/contact') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '450ms' : '0ms' }}
               >
                 <FaUser className="h-4 w-4 mr-3" />
@@ -263,9 +279,9 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/gallery"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
+                } ${isActive('/gallery') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '500ms' : '0ms' }}
               >
                 <FaCalendarAlt className="h-4 w-4 mr-3" />
@@ -275,9 +291,9 @@ export default function Header({ user }: HeaderProps) {
               <Link
                 href="/sponsors"
                 onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-all duration-200 transform ${
+                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
+                } ${isActive('/sponsors') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '550ms' : '0ms' }}
               >
                 <FaUserCog className="h-4 w-4 mr-3" />

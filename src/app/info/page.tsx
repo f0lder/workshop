@@ -51,7 +51,7 @@ export default function InfoPage() {
             <div className="mimesiss-info-card mimesiss-border-step-2">
               <div className="text-center">
                 <div className="mimesiss-info-icon">
-                  <FaInfoCircle className="text-green-500 text-2xl" />
+                  <FaInfoCircle className="text-secondary text-2xl" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-3">2. Alege tipul de participant</h3>
                 <p className="mimesiss-text-secondary text-sm">
@@ -65,7 +65,7 @@ export default function InfoPage() {
             <div className="mimesiss-info-card mimesiss-border-step-3">
               <div className="text-center">
                 <div className="mimesiss-info-icon">
-                  <FaFileAlt className="text-purple-500 text-2xl" />
+                  <FaFileAlt className="text-accent text-2xl" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-3">3. Trimite abstractul</h3>
                 <p className="mimesiss-text-secondary text-sm">
@@ -79,7 +79,7 @@ export default function InfoPage() {
             <div className="mimesiss-info-card mimesiss-border-step-4">
               <div className="text-center">
                 <div className="mimesiss-info-icon">
-                  <FaCreditCard className="text-orange-500 text-2xl" />
+                  <FaCreditCard className="text-primary text-2xl" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-3">4. Achită taxa</h3>
                 <p className="mimesiss-text-secondary text-sm">
@@ -99,10 +99,10 @@ export default function InfoPage() {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Passive Participants */}
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-700">
+            <div className="bg-card/80 rounded-lg shadow-lg p-8 border border-border/30">
               <div className="text-center mb-6">
-                <div className="bg-gray-700 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                  <FaUserGraduate className="text-primary text-3xl" />
+                <div className="bg-card/60 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 border border-border/40">
+                  <FaUserGraduate className="text-secondary text-3xl" />
                 </div>
                 <h3 className="text-2xl font-bold text-white">Participanți Pasivi</h3>
               </div>
@@ -112,7 +112,7 @@ export default function InfoPage() {
                   Iau parte la conferințe, workshopuri și evenimentele din program, fără a prezenta lucrări.
                 </p>
                 
-                <div className="bg-gray-700/50 rounded-lg p-4">
+                <div className="bg-card/50 rounded-lg p-4 border border-border/20">
                   <h4 className="font-semibold text-white mb-2">Beneficii incluse:</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
                     <li>• Acces la toate conferințele</li>
@@ -124,14 +124,14 @@ export default function InfoPage() {
                 </div>
                 
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">_____ RON</div>
+                  <div className="text-3xl font-bold text-secondary mb-2">_____ RON</div>
                   <p className="text-gray-400">Taxa de participare</p>
                 </div>
               </div>
             </div>
 
             {/* Active Participants */}
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 border-2 border-primary relative">
+            <div className="bg-card/80 rounded-lg shadow-lg p-8 border-2 border-primary relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold">
                   Recomandat
@@ -139,7 +139,7 @@ export default function InfoPage() {
               </div>
               
               <div className="text-center mb-6">
-                <div className="bg-gray-700 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <div className="bg-card rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 border border-border">
                   <FaFileAlt className="text-primary text-3xl" />
                 </div>
                 <h3 className="text-2xl font-bold text-white">Participanți Activi</h3>
@@ -150,18 +150,18 @@ export default function InfoPage() {
                   Prezintă o lucrare științifică în una dintre secțiunile disponibile.
                 </p>
                 
-                <div className="bg-gray-700/50 rounded-lg p-4">
+                <div className="bg-card/50 rounded-lg p-4 border border-border/30">
                   <h4 className="font-semibold text-white mb-2">Secțiuni disponibile:</h4>
-                  <ul className="text-sm text-gray-300 space-y-1">
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• <strong>Medical</strong> - Lucrări de medicină generală</li>
                     <li>• <strong>Medico-militar</strong> - Medicină militară specifică</li>
                     <li>• <strong>E-poster</strong> - Prezentări în format digital</li>
                   </ul>
                 </div>
                 
-                <div className="bg-gray-700/50 rounded-lg p-4">
+                <div className="bg-card/50 rounded-lg p-4 border border-border/30">
                   <h4 className="font-semibold text-white mb-2">Beneficii suplimentare:</h4>
-                  <ul className="text-sm text-gray-300 space-y-1">
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• Toate beneficiile participanților pasivi</li>
                     <li>• Prezentare lucrare științifică</li>
                     <li>• Feedback de la experți</li>
@@ -172,7 +172,7 @@ export default function InfoPage() {
                 
                 <div className="text-center">
                   <div className="text-3xl font-bold text-primary mb-2">_____ RON</div>
-                  <p className="text-gray-400">Taxa comună pentru toate secțiunile</p>
+                  <p className="text-muted-foreground">Taxa comună pentru toate secțiunile</p>
                 </div>
               </div>
             </div>
@@ -180,7 +180,7 @@ export default function InfoPage() {
         </div>
 
         {/* Eligibility */}
-        <div className="bg-gray-800/50 rounded-lg p-8 mb-16 border border-gray-700">
+        <div className="bg-card/50 rounded-lg p-8 mb-16 border border-border">
           <h2 className="text-3xl font-bold text-white mb-6 text-center">
             Cine poate participa?
           </h2>

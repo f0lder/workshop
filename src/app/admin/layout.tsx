@@ -40,10 +40,10 @@ export default async function AdminLayout({
         </div>
       </div>
 
-      {/* Mobile/Tablet: Single column layout */}
-      <div className="lg:hidden">
+      {/* Mobile/Tablet: Full screen layout with sticky navigation */}
+      <div className="lg:hidden min-h-screen flex flex-col">
         <DashboardSidebar user={user} isAdmin={isAdmin} />
-        <main className="p-4">
+        <main className="flex-1 p-3 sm:p-4 pb-safe">
           {children}
         </main>
       </div>

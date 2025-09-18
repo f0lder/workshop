@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
 import CountdownWrapper from '@/components/CountdownWrapper'
 
@@ -6,23 +7,44 @@ export default async function HomePage() {
   const user = await currentUser()
 
   return (
-    <div className="mimesiss-hero-bg">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
+      {/* Banner Section */}
+      <div className="w-full">
+        {/* Desktop Banner */}
+        <div className="hidden md:block">
+          <div className="relative w-full">
+            <Image
+              src="/banners/desktop.jpeg"
+              alt="MIMESISS 2025 Desktop Banner"
+              width={1200}
+              height={400}
+              className="w-full h-auto object-cover"
+              priority
+            />
+          </div>
+        </div>
+        
+        {/* Mobile Banner */}
+        <div className="block md:hidden">
+          <div className="relative w-full">
+            <Image
+              src="/banners/mobile.jpeg"
+              alt="MIMESISS 2025 Mobile Banner"
+              width={400}
+              height={600}
+              className="w-full h-auto object-cover"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
-      <main className="mimesiss-container">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
-          <h1 className="mimesiss-title">
-            MIMESISS
-            <span className="mimesiss-text-primary"> 2025</span>
-          </h1>
-          <h2 className="mimesiss-subtitle">
-            Military Medicine Scientific Session for Students
-          </h2>
-          <p className="mimesiss-description">
-            Cea de-a V-a ediție a Sesiunii de Comunicări Științifice Medico-Militare
-          </p>
           
           {/* Event Details */}
-          <div className="mt-8 mimesiss-card p-6 max-w-2xl mx-auto">
+          <div className="mt-8 bg-card/50 backdrop-blur-sm rounded-lg border-2 border-border/50 shadow-lg shadow-border/20 p-6 max-w-2xl mx-auto">
             <div className="flex items-center justify-center mb-4">
               <svg className="h-6 w-6 text-primary mr-3" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
@@ -33,7 +55,7 @@ export default async function HomePage() {
               <svg className="h-5 w-5 text-primary mr-2" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
               </svg>
-              <span className="mimesiss-text-secondary">Spitalul universitar de urgență militar central &ldquo;Dr. CAROL DAVILA&rdquo;</span>
+              <span className="text-gray-300">Spitalul universitar de urgență militar central &ldquo;Dr. CAROL DAVILA&rdquo;</span>
             </div>
           </div>
 
@@ -45,12 +67,12 @@ export default async function HomePage() {
               // Logged in user CTAs
               <>
                 <div className="rounded-md shadow">
-                  <Link href="/dashboard" className="mimesiss-btn-primary">
+                  <Link href="/dashboard" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10 transition duration-300">
                     Accesează Contul
                   </Link>
                 </div>
                 <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                  <Link href="/workshops" className="mimesiss-btn-secondary">
+                  <Link href="/workshops" className="w-full flex items-center justify-center px-8 py-3 border-2 border-border text-base font-medium rounded-md text-secondary-foreground bg-secondary hover:bg-secondary/80 md:py-4 md:text-lg md:px-10 transition duration-300">
                     Vezi Programul
                   </Link>
                 </div>
@@ -59,12 +81,12 @@ export default async function HomePage() {
               // Guest user CTAs
               <>
                 <div className="rounded-md shadow">
-                  <Link href="/auth/signup" className="mimesiss-btn-primary">
+                  <Link href="/auth/signup" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10 transition duration-300">
                     Înregistrează-te
                   </Link>
                 </div>
                 <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                  <Link href="/info" className="mimesiss-btn-secondary">
+                  <Link href="/info" className="w-full flex items-center justify-center px-8 py-3 border-2 border-border text-base font-medium rounded-md text-secondary-foreground bg-secondary hover:bg-secondary/80 md:py-4 md:text-lg md:px-10 transition duration-300">
                     Informații
                   </Link>
                 </div>
@@ -74,9 +96,9 @@ export default async function HomePage() {
         </div>
 
         {/* Mission Statement */}
-        <div className="mt-20 mimesiss-card-dark p-8 max-w-4xl mx-auto">
-          <h3 className="text-2xl font-bold text-white text-center mb-6">Misiunea Noastră</h3>
-          <p className="mimesiss-text-secondary text-lg leading-relaxed text-center">
+        <div className="mt-20 bg-gradient-to-r from-secondary/20 to-background/50 backdrop-blur-sm rounded-lg border border-border/30 p-8 max-w-4xl mx-auto">
+          <h3 className="text-2xl font-bold text-accent text-center mb-6">Misiunea Noastră</h3>
+          <p className="text-gray-300 text-lg leading-relaxed text-center">
             Misiunea Asociației noastre este ca prin intermediul acestui eveniment să reprezentăm și să sprijinim 
             studenții la Medicină Militară, oferindu-le o platformă pentru dezvoltare personală și profesională. 
             Ne străduim să promovăm o cultură a excelenței academice, a cercetării medicale de înaltă calitate 

@@ -9,38 +9,39 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        // MIMESISS Brand Colors mapped to design system
+        border: '#DF5739',  // MIMESISS orange for ALL borders
+        input: '#374151',   // Muted gray for input borders (visible but subtle)
+        ring: '#DF5739',    // Orange for focus rings
+        background: '#0F0F10', // MIMESISS black for backgrounds
+        foreground: '#ffffff', // White for text on dark backgrounds
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: '#DF5739',  // Orange as primary
+          foreground: '#ffffff',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: '#790000',  // MIMESISS purple as secondary
+          foreground: '#ffffff',
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          DEFAULT: '#FF1800',  // MIMESISS red for destructive actions only
+          foreground: '#ffffff',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: '#0F0F10',  // MIMESISS black for muted elements
+          foreground: '#9ca3af', // Gray for muted text
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: '#FFC107',  // Yellow for accents
+          foreground: '#000000',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: '#0F0F10',  // MIMESISS black for popovers
+          foreground: '#ffffff',
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+          DEFAULT: '#0F0F10',  // MIMESISS black for cards
+          foreground: '#ffffff',
         },
       },
       borderRadius: {

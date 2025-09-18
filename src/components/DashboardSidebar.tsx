@@ -182,13 +182,14 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
         </div>
       </aside>
 
-      {/* Mobile/Tablet Navigation - Above Content */}
-      <div className="lg:hidden bg-background border-b border-border mb-4">
-        <div className="flex items-center justify-between p-4">
+      {/* Mobile/Tablet Navigation */}
+      <div className="lg:hidden bg-background border-b border-border">
+        {/* Mobile Header */}
+        <div className="flex items-center justify-between p-4 border-b border-border">
           {/* User Info */}
           <div className="flex items-center space-x-3">
-            <div className="flex-1">
-              <p className="text-sm font-medium text-foreground">
+            <div>
+              <p className="text-sm font-medium text-foreground truncate max-w-[200px]">
                 {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -203,108 +204,123 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
             className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-destructive hover:bg-destructive/10 transition-colors"
           >
             <FaSignOutAlt className="h-4 w-4" />
+            <span className="ml-2 hidden sm:inline">Ieșire</span>
           </button>
         </div>
 
-        {/* Mobile Navigation Tabs */}
-        <div className="flex overflow-x-auto px-4 pb-4 space-x-2">
-          {isAdminPage ? (
-            // Admin Navigation Tabs
-            <>
-              <Link
-                href="/admin"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
-                  pathname === '/admin'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                <FaChartBar className="mr-2 h-4 w-4" />
-                Dashboard
-              </Link>
-
-              <Link
-                href="/admin/workshops"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
-                  pathname.startsWith('/admin/workshops')
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                <FaCalendarAlt className="mr-2 h-4 w-4" />
-                Workshop-uri
-              </Link>
-
-              <Link
-                href="/admin/users"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
-                  pathname.startsWith('/admin/users')
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                <FaUsers className="mr-2 h-4 w-4" />
-                Utilizatori
-              </Link>
-
-              <Link
-                href="/dashboard"
-                className="flex items-center px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
-                <FaHome className="mr-2 h-4 w-4" />
-                Dashboard Utilizator
-              </Link>
-            </>
-          ) : (
-            // User Dashboard Navigation Tabs
-            <>
-              <Link
-                href="/dashboard"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
-                  pathname === '/dashboard'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                <FaHome className="mr-2 h-4 w-4" />
-                Dashboard
-              </Link>
-
-              <Link
-                href="/dashboard/profile"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
-                  pathname === '/dashboard/profile'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                <FaUser className="mr-2 h-4 w-4" />
-                Profil
-              </Link>
-
-              <Link
-                href="/workshops"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
-                  pathname === '/workshops'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                <FaCalendarAlt className="mr-2 h-4 w-4" />
-                Workshop-uri
-              </Link>
-
-              {isAdmin && (
+        {/* 2-Column Navigation Grid */}
+        <div className="p-3">
+          <div className="grid grid-cols-2 gap-2">
+            {isAdminPage ? (
+              // Admin Navigation - 2 columns
+              <>
                 <Link
                   href="/admin"
-                  className="flex items-center px-3 py-2 text-sm font-medium rounded-md whitespace-nowrap text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                  className={`flex flex-col items-center p-3 text-xs font-medium rounded-md transition-colors text-center ${
+                    pathname === '/admin'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
                 >
-                  <FaCog className="mr-2 h-4 w-4" />
-                  Administrare
+                  <FaChartBar className="h-5 w-5 mb-1" />
+                  Dashboard
                 </Link>
-              )}
-            </>
-          )}
+
+                <Link
+                  href="/admin/workshops"
+                  className={`flex flex-col items-center p-3 text-xs font-medium rounded-md transition-colors text-center ${
+                    pathname.startsWith('/admin/workshops')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
+                >
+                  <FaCalendarAlt className="h-5 w-5 mb-1" />
+                  Workshop-uri
+                </Link>
+
+                <Link
+                  href="/admin/users"
+                  className={`flex flex-col items-center p-3 text-xs font-medium rounded-md transition-colors text-center ${
+                    pathname.startsWith('/admin/users')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
+                >
+                  <FaUsers className="h-5 w-5 mb-1" />
+                  Utilizatori
+                </Link>
+
+                <Link
+                  href="/admin/settings"
+                  className={`flex flex-col items-center p-3 text-xs font-medium rounded-md transition-colors text-center ${
+                    pathname.startsWith('/admin/settings')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
+                >
+                  <FaCogs className="h-5 w-5 mb-1" />
+                  Setări
+                </Link>
+
+                <Link
+                  href="/dashboard"
+                  className="flex flex-col items-center p-3 text-xs font-medium rounded-md text-foreground hover:bg-accent hover:text-accent-foreground transition-colors text-center col-span-2"
+                >
+                  <FaHome className="h-5 w-5 mb-1" />
+                  Dashboard Utilizator
+                </Link>
+              </>
+            ) : (
+              // User Dashboard Navigation - 2 columns
+              <>
+                <Link
+                  href="/dashboard"
+                  className={`flex flex-col items-center p-3 text-xs font-medium rounded-md transition-colors text-center ${
+                    pathname === '/dashboard'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
+                >
+                  <FaHome className="h-5 w-5 mb-1" />
+                  Dashboard
+                </Link>
+
+                <Link
+                  href="/dashboard/profile"
+                  className={`flex flex-col items-center p-3 text-xs font-medium rounded-md transition-colors text-center ${
+                    pathname === '/dashboard/profile'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
+                >
+                  <FaUser className="h-5 w-5 mb-1" />
+                  Profil
+                </Link>
+
+                <Link
+                  href="/workshops"
+                  className={`flex flex-col items-center p-3 text-xs font-medium rounded-md transition-colors text-center ${
+                    pathname === '/workshops'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
+                >
+                  <FaCalendarAlt className="h-5 w-5 mb-1" />
+                  Workshop-uri
+                </Link>
+
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="flex flex-col items-center p-3 text-xs font-medium rounded-md text-foreground hover:bg-accent hover:text-accent-foreground transition-colors text-center"
+                  >
+                    <FaCog className="h-5 w-5 mb-1" />
+                    Administrare
+                  </Link>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </>
