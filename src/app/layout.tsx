@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import "./critical.css";
@@ -143,6 +144,7 @@ export default function RootLayout({
           </ToastProvider>
           <SpeedInsights />
           <Analytics />
+          <GoogleAnalytics gaId="G-2H44Z5Z7S3" />
         </body>
       </html>
     </ClerkProvider>
