@@ -24,7 +24,7 @@ export interface Workshop {
   time: string;
   location: string;
   maxParticipants: number;
-  current_participants: number;
+  currentParticipants: number;
   instructor: string;
   status: 'active' | 'cancelled' | 'completed';
   registrationStatus?: 'open' | 'closed';
@@ -55,4 +55,10 @@ export interface AuthUser {
     avatar_url?: string;
     [key: string]: unknown;
   };
+}
+
+export interface Registrations{
+  _id: string;
+  userId: string;
+  workshopId: string;
 }

@@ -40,7 +40,7 @@ export default async function EditWorkshopPage({ params }: EditWorkshopPageProps
     time: string
     location: string
     maxParticipants: number
-    current_participants: number
+    currentParticipants: number
     instructor: string
     status: string
     registrationStatus?: string
@@ -59,7 +59,7 @@ export default async function EditWorkshopPage({ params }: EditWorkshopPageProps
     time: workshop.time,
     location: workshop.location,
     maxParticipants: workshop.maxParticipants,
-    currentParticipants: workshop.current_participants,
+    currentParticipants: workshop.currentParticipants,
     instructor: workshop.instructor,
     status: workshop.status,
     registrationStatus: (workshop.registrationStatus || 'open') as 'open' | 'closed'

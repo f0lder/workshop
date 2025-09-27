@@ -35,11 +35,11 @@ export interface Database {
           date: string
           time: string
           location: string
-          max_participants: number
-          current_participants: number
-          instructor_id: string
-          created_at: string
-          updated_at: string
+          maxParticipants: number
+          currentParticipants: number
+          instructorId: string
+          createdAt: string
+          updatedAt: string
         }
         Insert: {
           id?: string
@@ -48,11 +48,11 @@ export interface Database {
           date: string
           time: string
           location: string
-          max_participants: number
-          current_participants?: number
-          instructor_id: string
-          created_at?: string
-          updated_at?: string
+          maxParticipants: number
+          currentParticipants?: number
+          instructorId: string
+          createdAt?: string
+          updatedAt?: string
         }
         Update: {
           id?: string
@@ -61,11 +61,11 @@ export interface Database {
           date?: string
           time?: string
           location?: string
-          max_participants?: number
-          current_participants?: number
-          instructor_id?: string
-          created_at?: string
-          updated_at?: string
+          maxParticipants?: number
+          currentParticipants?: number
+          instructorId?: string
+          createdAt?: string
+          updatedAt?: string
         }
       }
       workshop_registrations: {

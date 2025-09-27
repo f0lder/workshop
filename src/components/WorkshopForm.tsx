@@ -227,7 +227,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   required
                   min={isEdit && workshop ? workshop.currentParticipants : 1}
                   max="100"
-                  defaultValue={workshop?.maxParticipants || defaultSettings?.defaultMaxParticipants || 20}
+                  defaultValue={workshop?.maxParticipants || defaultSettings?.defaultMaxParticipants || 30}
                   className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
                 />
               </div>
@@ -276,6 +276,12 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
               </button>
             </div>
           </form>
+
+          <div className="py-4">
+            <p className="text-xs text-muted-foreground">
+              * Câmpurile marcate cu asterisc sunt obligatorii.
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -38,9 +38,9 @@ export default function WorkshopList() {
         return {
           ...workshop,
           user_registered: isRegistered,
-          current_participants: isRegistered 
-            ? (workshop.current_participants || 0) + 1 
-            : Math.max(0, (workshop.current_participants || 0) - 1)
+          currentParticipants: isRegistered
+            ? (workshop.currentParticipants || 0) + 1
+            : Math.max(0, (workshop.currentParticipants || 0) - 1)
         }
       }
       return workshop
@@ -230,7 +230,7 @@ export default function WorkshopList() {
                 <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.97 2.97 0 0 0 17.15 7H16c-.8 0-1.5.31-2.04.81L12.5 9.5v3l2.5-1.5v5.5H9V9c0-.83-.34-1.58-.88-2.12l-3-3A.996.996 0 0 0 4 4c-.55 0-1 .45-1 1s.45 1 1 1c.28 0 .53-.11.71-.29L6 7v6c0 1.1.9 2 2 2h6v7h4z"/>
                 </svg>
-                {(workshop.current_participants || 0)} / {workshop.maxParticipants || 0} participanți
+                {(workshop.currentParticipants || 0)} / {workshop.maxParticipants || 0} participanți
               </div>
             </div>
 
@@ -245,13 +245,13 @@ export default function WorkshopList() {
                     <div
                       className="bg-primary h-2 rounded-full transition-all duration-300"
                       style={{
-                        width: `${Math.min(100, Math.max(0, ((workshop.current_participants || 0) / (workshop.maxParticipants || 1)) * 100))}%`,
+                        width: `${Math.min(100, Math.max(0, ((workshop.currentParticipants || 0) / (workshop.maxParticipants || 1)) * 100))}%`,
                       }}
                     ></div>
                   </div>
                 </div>
                 <span className="ml-3 text-xs text-muted-foreground">
-                  {Math.round(((workshop.current_participants || 0) / (workshop.maxParticipants || 1)) * 100)}% complet
+                  {Math.round(((workshop.currentParticipants || 0) / (workshop.maxParticipants || 1)) * 100)}% complet
                 </span>
               </div>
             </div>

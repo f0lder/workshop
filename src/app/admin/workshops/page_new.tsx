@@ -89,7 +89,7 @@ export default async function AdminWorkshopsPage() {
                         </div>
                         <div className="flex items-center">
                           <FaUsers className="flex-shrink-0 mr-1.5 h-4 w-4" />
-                          {workshop.current_participants || 0}/{workshop.maxParticipants} participanți
+                          {workshop.currentParticipants || 0}/{workshop.maxParticipants} participanți
                         </div>
                       </div>
                     </div>

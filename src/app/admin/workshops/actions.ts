@@ -2,7 +2,7 @@
 
 import { currentUser } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
-import { Workshop, Registration } from '@/models'
+import { Workshop, Registration, User } from '@/models'
 import connectDB from '@/lib/mongodb'
 import { syncUserWithDatabase } from '@/lib/auth'
 
@@ -223,5 +223,40 @@ export async function toggleRegistrationStatus(workshopId: string) {
   } catch (error) {
     console.error('Error toggling registration status:', error)
     throw new Error('Failed to toggle registration status')
+  }
+}
+
+
+export async function getRegistrations(workshopId: string) {
+  const clerkUser = await currentUser()
+
+  if (!clerkUser) {
+    throw new Error('Authentication required')
+  }
+
+  // Sync user and check if admin
+  const user = await syncUserWithDatabase(clerkUser)
+
+  if (user.role !== 'admin') {
+    throw new Error('Admin access required')
+  }
+
+  await connectDB()
+
+  try {
+    const registrations = await Registration.find({ workshopId }).lean()
+    
+
+    const users = await Promise.all(
+      registrations.map(async (registration) => {
+        const user = await User.findOne({ clerkId: registration.userId }).lean()
+        return user
+      })
+    )
+
+    return users.filter((user): user is NonNullable<typeof user> => !!user) // Filter out null/undefined users
+  } catch (error) {
+    console.error('Error fetching registrations:', error)
+    throw new Error('Failed to fetch registrations')
   }
 }

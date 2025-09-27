@@ -42,7 +42,7 @@ export async function GET() {
         _id: String(workshop._id),
         id: String(workshop._id),
         date: workshop.date.toISOString(),
-        current_participants: workshop.currentParticipants || 0, // Map field name and provide default
+        currentParticipants: workshop.currentParticipants || 0, // Map field name and provide default
         registrationStatus: workshop.registrationStatus || 'open',
         user_registered: isRegistered
       } as unknown as Workshop

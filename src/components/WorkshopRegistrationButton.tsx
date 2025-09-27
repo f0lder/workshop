@@ -25,7 +25,7 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate }: Wor
   
   // Check if user is registered
   const isRegistered = !!workshop.user_registered
-  const isFull = workshop.current_participants >= workshop.maxParticipants
+  const isFull = workshop.currentParticipants >= workshop.maxParticipants
   const isRegistrationClosed = workshop.registrationStatus === 'closed'
   
   async function handleSubmit(formData: FormData) {
