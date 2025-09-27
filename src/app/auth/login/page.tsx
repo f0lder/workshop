@@ -5,6 +5,7 @@ import { useSignIn, useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const { isLoaded, signIn, setActive } = useSignIn()
@@ -119,8 +120,10 @@ export default function LoginPage() {
     <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
+          <Image src="/icons/logo.png" alt="MIMESISS 2025" width={100} height={100} className="mx-auto w-auto" />
+
           <h2 className="mt-6 text-center text-3xl font-bold text-foreground">
-            Conectare la contul dumneavoastră
+            Conecteaza-te
           </h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
             Nu aveți cont?{' '}

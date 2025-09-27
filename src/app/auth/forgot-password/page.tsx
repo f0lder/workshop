@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSignIn, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -89,6 +90,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
+          <Image src="/icons/logo.png" alt="MIMESISS 2025" width={100} height={100} className="mx-auto w-auto" />
           <h2 className="mt-6 text-3xl font-bold text-foreground">
             Resetare Parolă
           </h2>

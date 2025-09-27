@@ -5,6 +5,7 @@ import { useSignUp, useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaEnvelope } from 'react-icons/fa'
+import Image from 'next/image'
 
 export default function SignupPage() {
   const { isLoaded, signUp, setActive } = useSignUp()
@@ -185,6 +186,7 @@ export default function SignupPage() {
       <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
+            <Image src="/icons/logo.png" alt="MIMESISS 2025" width={100} height={100} className="mx-auto w-auto" />
             <h2 className="mt-6 text-center text-3xl font-bold text-foreground">
               Verificați adresa de email
             </h2>
@@ -241,6 +243,7 @@ export default function SignupPage() {
     <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
+          <Image src="/icons/logo.png" alt="MIMESISS 2025" width={100} height={100} className="mx-auto w-auto" />
           <h2 className="mt-6 text-center text-3xl font-bold text-foreground">
             Creați un cont nou
           </h2>

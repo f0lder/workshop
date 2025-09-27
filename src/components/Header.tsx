@@ -53,7 +53,7 @@ export default function Header({ user }: HeaderProps) {
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
               <Image
-                src="/icons/logo_header.png"
+                src="/icons/logo_simple.png"
                 alt="MIMESISS 2025"
                 width={500}
                 height={200}
