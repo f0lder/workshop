@@ -2,6 +2,7 @@
 
 import { currentUser } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
+import {User as UserType} from '@/types/models'
 import { Workshop, Registration, User } from '@/models'
 import connectDB from '@/lib/mongodb'
 import { syncUserWithDatabase } from '@/lib/auth'
@@ -250,7 +251,7 @@ export async function getRegistrations(workshopId: string) {
     const users = await Promise.all(
       registrations.map(async (registration) => {
         const user = await User.findOne({ clerkId: registration.userId }).lean()
-        return user
+        return user as unknown as UserType | null
       })
     )
 

@@ -73,8 +73,8 @@ export default function Header({ user }: HeaderProps) {
               <Link href="/about" className={`transition-colors relative underline-offset-4 ${isActive('/about') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Cine suntem
               </Link>
-              <Link href="/program" className={`transition-colors relative underline-offset-4 ${isActive('/program') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Program
+              <Link href="/workshops" className={`transition-colors relative underline-offset-4 ${isActive('/workshops') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
+                Workshop
               </Link>
               <Link href="/previous-editions" className={`transition-colors relative underline-offset-4 ${isActive('/previous-editions') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
                 Ediții anterioare
@@ -241,15 +241,15 @@ export default function Header({ user }: HeaderProps) {
               </Link>           
               
               <Link
-                href="/program"
+                href="/workshops"
                 onClick={toggleMobileMenu}
                 className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
                   isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/program') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
+                } ${isActive('/workshops') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
                 style={{ transitionDelay: isMobileMenuOpen ? '350ms' : '0ms' }}
               >
                 <FaCalendarAlt className="h-4 w-4 mr-3" />
-                Program
+                Workshop
               </Link>
               
               <Link

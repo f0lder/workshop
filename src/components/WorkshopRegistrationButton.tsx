@@ -10,6 +10,7 @@ interface WorkshopRegistrationButtonProps {
   userId?: string | null
   onRegistrationChange?: () => Promise<void>
   onOptimisticUpdate?: (workshopId: string, isRegistered: boolean) => void
+  isGlobalRegistrationClosed?: boolean
 }
 
 // Simple CSS spinner component
@@ -19,14 +20,13 @@ function Spinner() {
   )
 }
 
-export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate }: WorkshopRegistrationButtonProps) {
+export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlobalRegistrationClosed }: WorkshopRegistrationButtonProps) {
   const [isPending, startTransition] = useTransition()
   const { showToast } = useToast()
   
   // Check if user is registered
   const isRegistered = !!workshop.user_registered
   const isFull = workshop.currentParticipants >= workshop.maxParticipants
-  const isRegistrationClosed = workshop.registrationStatus === 'closed'
   
   async function handleSubmit(formData: FormData) {
     const action = formData.get('action') as string
@@ -65,8 +65,8 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate }: Wor
     })
   }
 
-  // If registration is closed and user is not registered, show message
-  if (isRegistrationClosed && !isRegistered) {
+  if (!isGlobalRegistrationClosed) {
+    
     return (
       <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border border-gray-300">
         Înregistrările sunt închise
@@ -84,7 +84,7 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate }: Wor
       />
       <button
         type="submit"
-        disabled={isPending || (isFull && !isRegistered) || (isRegistrationClosed && !isRegistered)}
+        disabled={isPending || (isFull && !isRegistered) || (!isGlobalRegistrationClosed && !isRegistered)}
         className={`w-full font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2 ${
           isPending ? 'bg-gray-400 text-white cursor-wait' :
           isFull && !isRegistered

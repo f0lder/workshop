@@ -6,7 +6,7 @@ import { useUser } from '@clerk/nextjs'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-export default function WorkshopList() {
+export default function WorkshopList({ isGlobalRegistrationClosed }: { isGlobalRegistrationClosed: boolean }) {
   const { user, isLoaded } = useUser()
   const [workshops, setWorkshops] = useState<Workshop[]>([])
   const [loading, setLoading] = useState(true)
@@ -265,6 +265,7 @@ export default function WorkshopList() {
                     date: typeof workshop.date === 'string' ? new Date(workshop.date) : workshop.date,
                   } as Workshop} 
                   onOptimisticUpdate={updateWorkshopRegistration}
+                  isGlobalRegistrationClosed={isGlobalRegistrationClosed} // Pass global registration status if needed
                 />
               ) : (
                 <Link

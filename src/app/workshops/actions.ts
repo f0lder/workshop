@@ -32,7 +32,7 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
 
     // Check global registration settings
     if (!appSettings.globalRegistrationEnabled) {
-      throw new Error('Global registration is disabled')
+      throw new Error('Inregistrarile sunt inchise in acest moment')
     }
 
     if (action === 'register') {

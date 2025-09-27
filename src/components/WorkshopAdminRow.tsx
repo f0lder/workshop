@@ -1,15 +1,13 @@
 import Link from 'next/link';
-import { Workshop,User } from '@/types/models';
-import WorkshopRegistrationToggle from '@/components/WorkshopRegistrationToggle'
+import { Workshop, User } from '@/types/models';
 import { FaCalendarAlt, FaEdit, FaUsers, FaMapMarkerAlt, FaUser } from 'react-icons/fa'
 import DeleteWorkshopButton from '@/components/DeleteWorkshopButton'
-import {getRegistrations } from '@/app/admin/workshops/actions';
+import { getRegistrations } from '@/app/admin/workshops/actions';
 
 export default async function WorkshopAdminRow({ workshop }: { workshop: Workshop }) {
 
 	// Ensure we always have a User[] even if getRegistrations returns void or an unexpected value
-	const _regs = await getRegistrations(workshop._id?.toString() || workshop.id || '') as unknown;
-	const registrations: User[] = Array.isArray(_regs) ? _regs : [];
+	const registrations = await getRegistrations(workshop._id?.toString() || workshop.id || '');
 
 	return (
 		<li key={workshop._id?.toString() || workshop.id || ''}>
@@ -28,10 +26,6 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 sm:ml-4">
-						<WorkshopRegistrationToggle
-							workshopId={workshop._id?.toString() || workshop.id || ''}
-							currentStatus={workshop.registrationStatus || 'open'}
-						/>
 						<div className="flex space-x-2">
 							<Link
 								href={`/admin/workshops/edit/${workshop._id?.toString() || workshop.id}`}
@@ -69,23 +63,32 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 						</div>
 					)}
 				</div>
-			</div>
 
-			<div>
-				<div className="mt-2 max-h-40 overflow-y-auto border-t border-border pt-2">
+				<div className="mt-2 max-h-40 overflow-y-auto pt-2">
+					<h4 className="text-sm font-medium text-foreground mb-2">Utilizatori înregistrați</h4>
 					{registrations && registrations.length > 0 ? (
-						<ul className="space-y-1">
-							{registrations.map((user: User) => (
-								<li key={user._id} className="flex items-center justify-between py-1">
-									<span className="text-sm text-muted-foreground">{user.email}</span>
-								</li>
-							))}
-						</ul>
+						<table className="min-w-full divide-y divide-border">
+							<thead>
+								<tr>
+									<th colSpan={1} className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Utilizator</th>
+									<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Email</th>
+								</tr>
+							</thead>
+							<tbody className="divide-y divide-border">
+								{registrations.map((user: User) => (
+									<tr key={user._id} className="hover:bg-muted">
+										<td className="px-4 py-2 text-sm text-foreground">{user.firstName} {user.lastName}</td>
+										<td className="px-4 py-2 text-sm text-muted-foreground">{user.email}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
 					) : (
 						<p className="text-sm text-muted-foreground">Niciun utilizator înregistrat</p>
 					)}
 				</div>
 			</div>
+
 		</li>
 	);
 }

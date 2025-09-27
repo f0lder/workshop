@@ -27,6 +27,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mimesiss.ro"),
   title: {
     default: "MIMESISS 2025 - Military Medicine Scientific Session for Students",
     template: "%s | MIMESISS 2025"

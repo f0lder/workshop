@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import WorkshopList from '@/components/WorkshopList'
 import { Suspense } from 'react'
+import { getAppSettings } from '@/lib/settings'
 
 // Skeleton loader for the workshop list
 function WorkshopListSkeleton() {
@@ -24,7 +25,11 @@ function WorkshopListSkeleton() {
   )
 }
 
-export default function WorkshopsPage() {
+export default async function WorkshopsPage() {
+
+  const appSettings = await getAppSettings()
+  const isGlobalRegistrationClosed = appSettings?.globalRegistrationEnabled || false
+
   return (
     <div className="min-h-screen bg-background">
       {/* Main Content */}
@@ -54,7 +59,7 @@ export default function WorkshopsPage() {
 
           {/* Workshop List with Loading */}
           <Suspense fallback={<WorkshopListSkeleton />}>
-            <WorkshopList />
+            <WorkshopList isGlobalRegistrationClosed={isGlobalRegistrationClosed} />
           </Suspense>
 
           {/* Info Section */}
