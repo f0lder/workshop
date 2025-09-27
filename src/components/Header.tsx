@@ -45,6 +45,17 @@ export default function Header({ user }: HeaderProps) {
     return pathname.startsWith(path)
   }
 
+  const links = [
+    { href: '/', label: 'Acasă', icon: FaHome },
+    { href: '/info', label: 'Informații', icon: FaCog },
+    { href: '/about', label: 'Cine suntem', icon: FaUsers },
+    { href: '/workshops', label: 'Workshop', icon: FaCalendarAlt },
+    { href: '/previous-editions', label: 'Ediții anterioare', icon: FaChartBar },
+    { href: '/contact', label: 'Date de contact', icon: FaUser },
+    { href: '/gallery', label: 'Galerie foto', icon: FaCalendarAlt },
+    { href: '/sponsors', label: 'Sponsori și parteneri', icon: FaUserCog },
+  ]
+
   return (
     <>
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -64,30 +75,12 @@ export default function Header({ user }: HeaderProps) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6">
-              <Link href="/" className={`transition-colors relative underline-offset-4 ${isActive('/') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Acasă
-              </Link>       
-              <Link href="/info" className={`transition-colors relative underline-offset-4 ${isActive('/info') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Informații
-              </Link>
-              <Link href="/about" className={`transition-colors relative underline-offset-4 ${isActive('/about') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Cine suntem
-              </Link>
-              <Link href="/workshops" className={`transition-colors relative underline-offset-4 ${isActive('/workshops') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Workshop
-              </Link>
-              <Link href="/previous-editions" className={`transition-colors relative underline-offset-4 ${isActive('/previous-editions') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Ediții anterioare
-              </Link>
-              <Link href="/contact" className={`transition-colors relative underline-offset-4 ${isActive('/contact') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Date de contact
-              </Link>
-              <Link href="/gallery" className={`transition-colors relative underline-offset-4 ${isActive('/gallery') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Galerie foto
-              </Link>
-              <Link href="/sponsors" className={`transition-colors relative underline-offset-4 ${isActive('/sponsors') ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                Sponsori și parteneri
-              </Link>
+              {links.map(({ href, label, icon: Icon }) => (
+                <Link key={href} href={href} className={`transition-colors relative underline-offset-4 ${isActive(href) ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
+                  <Icon className="inline-block mr-2" />
+                  {label}
+                </Link>
+              ))}
             </nav>
 
             {/* Desktop Auth Section */}
@@ -193,112 +186,20 @@ export default function Header({ user }: HeaderProps) {
 
             {/* Navigation Links */}
             <nav className="flex-1 px-6 py-6 space-y-2">
-              <Link
-                href="/"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '150ms' : '0ms' }}
-              >
-                <FaHome className="h-4 w-4 mr-3" />
-                Acasă
-              </Link>
-
-              <Link
-                href="/info"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                  } ${isActive('/info') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '200ms' : '0ms' }}
-              >
-                <FaCog className="h-4 w-4 mr-3" />
-                Informații
-              </Link>
-              
-              <Link
-                href="/workshops"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/workshops') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '200ms' : '0ms' }}
-              >
-                <FaCalendarAlt className="h-4 w-4 mr-3" />
-                Înregistrare
-              </Link>
-              
-              <Link
-                href="/about"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/about') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '250ms' : '0ms' }}
-              >
-                <FaUsers className="h-4 w-4 mr-3" />
-                Cine suntem
-              </Link>           
-              
-              <Link
-                href="/workshops"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/workshops') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '350ms' : '0ms' }}
-              >
-                <FaCalendarAlt className="h-4 w-4 mr-3" />
-                Workshop
-              </Link>
-              
-              <Link
-                href="/previous-editions"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/previous-editions') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '400ms' : '0ms' }}
-              >
-                <FaChartBar className="h-4 w-4 mr-3" />
-                Ediții anterioare
-              </Link>
-              
-              <Link
-                href="/contact"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/contact') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '450ms' : '0ms' }}
-              >
-                <FaUser className="h-4 w-4 mr-3" />
-                Date de contact
-              </Link>
-              
-              <Link
-                href="/gallery"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/gallery') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '500ms' : '0ms' }}
-              >
-                <FaCalendarAlt className="h-4 w-4 mr-3" />
-                Galerie foto
-              </Link>
-              
-              <Link
-                href="/sponsors"
-                onClick={toggleMobileMenu}
-                className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
-                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                } ${isActive('/sponsors') ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
-                style={{ transitionDelay: isMobileMenuOpen ? '550ms' : '0ms' }}
-              >
-                <FaUserCog className="h-4 w-4 mr-3" />
-                Sponsori și parteneri
-              </Link>
+              {links.map(({ href, label, icon: Icon }, index) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={toggleMobileMenu}
+                  className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 transform ${
+                    isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                  } ${isActive(href) ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-primary/20 hover:text-primary'}`}
+                  style={{ transitionDelay: isMobileMenuOpen ? `${(index + 2) * 100}ms` : '0ms' }}
+                >
+                  <Icon className="h-4 w-4 mr-3" />
+                  {label}
+                </Link>
+              ))}
 
               {user ? (
                 // Logged in user actions
