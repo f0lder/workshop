@@ -1,12 +1,17 @@
 import { currentUser } from '@clerk/nextjs/server'
-import { FaCalendarAlt, FaUsers, FaCog } from 'react-icons/fa'
+import { FaCalendarAlt, FaUsers, FaCog, FaCircle } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
+import { getUserRegistrations } from '@/app/workshops/actions'
 
 export default async function DashboardPage() {
   const clerkUser = await currentUser()
-  
+
   if (!clerkUser) return null
+
+  // Get user registrations
+  const userRegistrations = await getUserRegistrations(clerkUser.id)
+
 
   // Sync user with database
   const user = await syncUserWithDatabase(clerkUser)
@@ -126,25 +131,38 @@ export default async function DashboardPage() {
       <div className="bg-card shadow border border-border rounded-lg">
         <div className="px-4 py-5 sm:p-6">
           <h3 className="text-lg leading-6 font-medium text-foreground">
-            Workshop-urile mele
+            Inregistrarile mele
           </h3>
           <div className="mt-5">
-            <div className="text-center py-12">
-              <FaCalendarAlt className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-2 text-sm font-medium text-foreground">Nu ești înregistrat la niciun workshop</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Începe prin a explora workshop-urile disponibile.
-              </p>
-              <div className="mt-6">
-                <Link
-                  href="/workshops"
-                  className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
-                >
-                  <FaCalendarAlt className="mr-2 h-4 w-4" />
-                  Explorează workshop-urile
-                </Link>
-              </div>
-            </div>
+            {userRegistrations.length > 0 ? (
+              <ul className="divide-y divide-border">
+                {userRegistrations.map((workshop) => (
+                  <li key={workshop.id} className="py-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{workshop.title}</p>
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <span>{new Date(workshop.date).toLocaleDateString()}
+                          </span>
+                          <FaCircle className="inline-block size-[8px] fill-current" />
+                          <span>{workshop.location}</span>
+                          <FaCircle className="inline-block size-[8px] fill-current" />
+                          <span>{workshop.currentParticipants} / {workshop.maxParticipants} locuri ocupate</span>
+                        </div>
+                      </div>
+                      <Link
+                        href={`/workshops/${workshop.id}`}
+                        className="text-sm font-medium text-primary hover:underline"
+                      >
+                        Vezi detalii
+                      </Link>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">Nu ai nicio înregistrare la workshopuri.</p>
+            )}
           </div>
         </div>
       </div>

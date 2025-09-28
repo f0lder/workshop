@@ -105,11 +105,11 @@
   }
   
   .mimesiss-card {
-    @apply bg-card/80 backdrop-blur-sm rounded-lg border border-border;
+    @apply bg-card/80 backdrop-blur-sm rounded-lg border-2 border-border;
   }
   
   .mimesiss-card-dark {
-    @apply bg-card/60 backdrop-blur-sm rounded-lg border border-border/50;
+    @apply bg-card/60 backdrop-blur-sm rounded-lg border-2 border-border/50;
   }
   
   .mimesiss-section-card {
@@ -212,4 +212,27 @@
     background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/banners/header.jpeg');
   }
   
+}
+
+ol.regulament-list {
+  counter-reset: art-counter;
+  list-style: none; /* hide default numbering */
+  padding-left: 0;
+}
+
+ol.regulament-list > li {
+  counter-increment: art-counter;
+  margin-left: 0;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 4rem; /* space for the "art N" label, adjust as needed */
+}
+
+ol.regulament-list > li::before {
+  content: "Art. " counter(art-counter);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 600;
+  color: hsl(var(--primary)); /* uses your primary color variable */
 }

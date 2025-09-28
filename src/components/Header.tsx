@@ -14,9 +14,11 @@ import {
   FaHome,
   FaCalendarAlt,
   FaUsers,
-  FaCog,
   FaUserCog,
-  FaChartBar
+  FaChartBar,
+  FaInfoCircle,
+  FaImage,
+  FaUserPlus
 } from 'react-icons/fa'
 
 interface HeaderProps {
@@ -47,12 +49,12 @@ export default function Header({ user }: HeaderProps) {
 
   const links = [
     { href: '/', label: 'Acasă', icon: FaHome },
-    { href: '/info', label: 'Informații', icon: FaCog },
+    { href: '/info', label: 'Informații', icon: FaInfoCircle },
     { href: '/about', label: 'Cine suntem', icon: FaUsers },
-    { href: '/workshops', label: 'Workshop', icon: FaCalendarAlt },
-    { href: '/previous-editions', label: 'Ediții anterioare', icon: FaChartBar },
+    { href: '/workshops', label: 'Ateliere', icon: FaCalendarAlt },
+    { href: '/editii', label: 'Ediții anterioare', icon: FaChartBar },
     { href: '/contact', label: 'Date de contact', icon: FaUser },
-    { href: '/gallery', label: 'Galerie foto', icon: FaCalendarAlt },
+    { href: '/gallery', label: 'Galerie foto', icon: FaImage },
     { href: '/sponsors', label: 'Sponsori și parteneri', icon: FaUserCog },
   ]
 
@@ -77,7 +79,7 @@ export default function Header({ user }: HeaderProps) {
             <nav className="hidden lg:flex items-center space-x-6">
               {links.map(({ href, label, icon: Icon }) => (
                 <Link key={href} href={href} className={`transition-colors relative underline-offset-4 ${isActive(href) ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                  <Icon className="inline-block mr-2" />
+                  <Icon className="mr-2 hidden lg:inline-block" />
                   {label}
                 </Link>
               ))}
@@ -240,7 +242,7 @@ export default function Header({ user }: HeaderProps) {
                     onClick={toggleMobileMenu}
                     className="flex items-center px-3 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
                   >
-                    <FaUserCog className="h-4 w-4 mr-3" />
+                    <FaUserPlus className="h-4 w-4 mr-3" />
                     Înregistrare
                   </Link>
                 </div>

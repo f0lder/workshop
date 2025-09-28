@@ -8,7 +8,7 @@ const MimesissCountdown = dynamic(() => import('./MimesissCountdown'), {
   ssr: false,
   loading: () => (
     <div className="mt-12 p-6 text-center">
-      <div className="mimesiss-card p-8 max-w-4xl mx-auto">
+      <div className="p-8 max-w-4xl mx-auto">
         <h3 className="text-2xl font-bold text-white mb-6">Numărătoarea Inversă</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto">
           {[...Array(4)].map((_, i) => (
@@ -27,7 +27,7 @@ export default function CountdownWrapper() {
   return (
     <Suspense fallback={
       <div className="mt-12 p-6 text-center">
-        <div className="mimesiss-card p-8 max-w-4xl mx-auto">
+        <div className="p-8 max-w-4xl mx-auto">
           <h3 className="text-2xl font-bold text-white mb-6">Numărătoarea Inversă</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto">
             {[...Array(4)].map((_, i) => (

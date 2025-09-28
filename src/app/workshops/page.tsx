@@ -2,6 +2,8 @@ import Link from 'next/link'
 import WorkshopList from '@/components/WorkshopList'
 import { Suspense } from 'react'
 import { getAppSettings } from '@/lib/settings'
+import HeaderContent from '@/components/HeaderContent'
+import { FaCircle } from 'react-icons/fa'
 
 // Skeleton loader for the workshop list
 function WorkshopListSkeleton() {
@@ -31,9 +33,10 @@ export default async function WorkshopsPage() {
   const isGlobalRegistrationClosed = appSettings?.globalRegistrationEnabled || false
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <HeaderContent title="Ateliere MIMESISS 2025" />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="space-y-6">
           {/* Page Header */}
           <div className="mimesiss-section-header">
@@ -63,39 +66,56 @@ export default async function WorkshopsPage() {
           </Suspense>
 
           {/* Info Section */}
-          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">
+          <div className="border border-primary rounded-lg p-6 space-y-8">
+            <h3 className="text-lg font-semibold text-white">
               Informații importante despre înregistrare
             </h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-300">
-              <div>
-                <h4 className="font-medium mb-2">Participanți pasivi:</h4>
-                <ul className="space-y-1">
-                  <li>• Acces la toate conferințele</li>
-                  <li>• Materiale de curs incluse</li>
-                  <li>• Certificat de participare</li>
+              <div className="border-none lg:border-r border-gray-700 pr-4">
+                <h4 className="font-medium mb-2">Participanți pasivi <span> ___ RON </span></h4>
+                <ul className="space-y-1 list-disc list-inside">
+                  <li>Acces la toate conferințele</li>
+                  <li>Materiale de curs incluse</li>
+                  <li>Certificat de participare</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium mb-2">Participanți activi:</h4>
-                <ul className="space-y-1">
-                  <li>• Toate beneficiile participanților pasivi</li>
-                  <li>• Prezentare lucrare științifică</li>
-                  <li>• Șanse de câștigare a premiilor</li>
+                <h4 className="font-medium mb-2">Participanți activi <span> ___ RON </span></h4>
+                <ul className="space-y-1 list-disc list-inside">
+                  <li>Toate beneficiile participanților pasivi</li>
+                  <li>Prezentare lucrare științifică</li>
+                  <li>Șanse de câștigare a premiilor</li>
                 </ul>
               </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-700">
+            <div className="text-primary">
               <Link 
                 href="/info" 
-                className="inline-flex items-center text-primary hover:text-primary/80 font-medium"
+                className="inline-flex items-center hover:text-primary/80 font-medium hover:underline transition duration-200"
               >
-                Vezi toate informațiile despre înregistrare →
+                Vezi toate informațiile despre înregistrare
+              </Link>
+
+              <FaCircle className="inline mx-2" size={6} />
+
+              <Link
+                href="/info"
+                className="inline-flex items-center hover:text-primary/80 font-medium hover:underline transition duration-200"
+              >
+                Regulament
+              </Link>
+
+              <FaCircle className="inline mx-2" size={6} />
+              <Link
+                href="/ghid"
+                className="inline-flex items-center hover:text-primary/80 font-medium hover:underline transition duration-200"
+              >
+                Ghid redactare abstracte
               </Link>
             </div>
           </div>
         </div>
       </main>
-    </div>
+    </>
   )
 }

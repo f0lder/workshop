@@ -1,31 +1,12 @@
+import HeaderContent from '@/components/HeaderContent'
 import Link from 'next/link'
-import { FaUserGraduate, FaFileAlt, FaCreditCard, FaInfoCircle, FaArrowLeft } from 'react-icons/fa'
+import { FaUserGraduate, FaFileAlt, FaCreditCard, FaInfoCircle } from 'react-icons/fa'
 
 export default function InfoPage() {
   return (
-    <div className="mimesiss-hero-bg">
+    <>
+      <HeaderContent title='Informații MIMESISS 2025' />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Back Button */}
-        <div className="mb-8">
-          <Link 
-            href="/"
-            className="inline-flex items-center text-primary hover:text-primary/80 font-medium transition duration-200"
-          >
-            <FaArrowLeft className="mr-2" />
-            Înapoi la pagina principală
-          </Link>
-        </div>
-
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="mimesiss-title">
-            Informații MIMESISS 2025
-          </h1>
-          <p className="text-xl mimesiss-text-secondary max-w-3xl mx-auto mt-4">
-            Tot ce trebuie să știi despre înregistrare și participare
-          </p>
-        </div>
-
         {/* Registration Process */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-white mb-8 text-center">
@@ -72,6 +53,7 @@ export default function InfoPage() {
                   Doar pentru participanții activi. Încarcă abstractul conform ghidului de redactare 
                   disponibil în secțiunea de informații.
                 </p>
+                <Link href="/ghid" className="text-primary hover:underline">Vezi ghidul de redactare</Link>
               </div>
             </div>
 
@@ -114,12 +96,12 @@ export default function InfoPage() {
                 
                 <div className="bg-card/50 rounded-lg p-4 border border-border/20">
                   <h4 className="font-semibold text-white mb-2">Beneficii incluse:</h4>
-                  <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• Acces la toate conferințele</li>
-                    <li>• Participare la workshopuri</li>
-                    <li>• Materiale de curs</li>
-                    <li>• Certificat de participare</li>
-                    <li>• Coffee break și masa de prânz</li>
+                  <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
+                    <li>Acces la toate conferințele</li>
+                    <li>Participare la workshopuri</li>
+                    <li>Materiale de curs</li>
+                    <li>Certificat de participare</li>
+                    <li>Coffee break și masa de prânz</li>
                   </ul>
                 </div>
                 
@@ -147,26 +129,26 @@ export default function InfoPage() {
               
               <div className="space-y-4">
                 <p className="text-gray-300">
-                  Prezintă o lucrare științifică în una dintre secțiunile disponibile.
+                  Prezintă o <Link href="/ghid" className="text-primary hover:underline">lucrare științifică</Link> în una dintre secțiunile disponibile.
                 </p>
                 
                 <div className="bg-card/50 rounded-lg p-4 border border-border/30">
                   <h4 className="font-semibold text-white mb-2">Secțiuni disponibile:</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• <strong>Medical</strong> - Lucrări de medicină generală</li>
-                    <li>• <strong>Medico-militar</strong> - Medicină militară specifică</li>
-                    <li>• <strong>E-poster</strong> - Prezentări în format digital</li>
+                  <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                    <li><strong>Medical</strong> - Lucrări de medicină generală</li>
+                    <li><strong>Medico-militar</strong> - Medicină militară specifică</li>
+                    <li><strong>E-poster</strong> - Prezentări în format digital</li>
                   </ul>
                 </div>
                 
                 <div className="bg-card/50 rounded-lg p-4 border border-border/30">
                   <h4 className="font-semibold text-white mb-2">Beneficii suplimentare:</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Toate beneficiile participanților pasivi</li>
-                    <li>• Prezentare lucrare științifică</li>
-                    <li>• Feedback de la experți</li>
-                    <li>• Șanse de câștigare a premiilor</li>
-                    <li>• Networking cu specialiști</li>
+                  <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                    <li>Toate beneficiile participanților pasivi</li>
+                    <li>Prezentare lucrare științifică</li>
+                    <li>Feedback de la experți</li>
+                    <li>Șanse de câștigare a premiilor</li>
+                    <li>Networking cu specialiști</li>
                   </ul>
                 </div>
                 
@@ -184,18 +166,18 @@ export default function InfoPage() {
           <h2 className="text-3xl font-bold text-white mb-6 text-center">
             Cine poate participa?
           </h2>
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="max-w-3xl mx-auto">
             <p className="text-lg text-gray-300 mb-4">
               Congresul este deschis tuturor studenților la medicină, atât militari, cât și civili, 
               care doresc să se implice activ în mediul științific și academic.
             </p>
-            <div className="bg-gray-700/50 rounded-lg p-6 mt-6">
+            <div className="bg-card/80 pt-4 border-t border-primary">
               <h3 className="text-xl font-semibold text-white mb-3">Cerințe de participare:</h3>
-              <ul className="text-gray-300 space-y-2">
-                <li>• Student la medicină (an pregătitor - anul VI)</li>
-                <li>• Cont valid pe platforma MIMESISS</li>
-                <li>• Taxa de participare achitată</li>
-                <li>• Pentru participanți activi: abstract conform cerințelor</li>
+              <ul className="text-gray-300 space-y-2 list-disc list-inside">
+                <li>Student la medicină (an pregătitor - anul VI)</li>
+                <li>Cont valid pe platforma MIMESISS</li>
+                <li>Taxa de participare achitată</li>
+                <li>Pentru participanți activi: abstract conform cerințelor</li>
               </ul>
             </div>
           </div>
@@ -225,6 +207,6 @@ export default function InfoPage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

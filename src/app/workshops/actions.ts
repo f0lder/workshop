@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { Workshop, Registration } from '@/models'
 import connectDB from '@/lib/mongodb'
 import { getAppSettings } from '@/lib/settings'
+import { Workshop as WorkshopType } from '@/types/models'
 
 export async function registerForWorkshop(formData: FormData): Promise<void> {
   const clerkUser = await currentUser()
@@ -95,4 +96,26 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
   // Only revalidate on success
   revalidatePath('/workshops')
   revalidatePath('/dashboard')
+}
+
+
+export async function getUserRegistrations(userId: string): Promise<WorkshopType[]> {
+  await connectDB()
+
+  try {
+    const registrations = await Registration.find({ userId }).lean()
+
+    if (registrations.length === 0) {
+      return []
+    }
+
+    const workshops = await Workshop.find({
+      _id: { $in: registrations.map(reg => reg.workshopId) }
+    }).sort({ date: 1 }) // Sort by date ascending
+
+    return workshops as WorkshopType[]
+  } catch (error) {
+    console.error('Error fetching user registrations:', error)
+    return []
+  }
 }

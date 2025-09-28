@@ -29,7 +29,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full text-center">
-          <p className="text-foreground">Sunteți deja conectat. Redirecționare...</p>
+          <p className="text-foreground">Redirecționare la dashboard...</p>
         </div>
       </div>
     )

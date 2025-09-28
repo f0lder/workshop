@@ -2,10 +2,10 @@
 
 import { currentUser } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
-import {User as UserType} from '@/types/models'
 import { Workshop, Registration, User } from '@/models'
 import connectDB from '@/lib/mongodb'
 import { syncUserWithDatabase } from '@/lib/auth'
+import { User as UserType } from '@/types/models'
 
 export async function createWorkshop(formData: FormData) {
   const clerkUser = await currentUser()
@@ -228,7 +228,7 @@ export async function toggleRegistrationStatus(workshopId: string) {
 }
 
 
-export async function getRegistrations(workshopId: string) {
+export async function getRegistrations(workshopId: string) : Promise<UserType[]>{
   const clerkUser = await currentUser()
 
   if (!clerkUser) {
@@ -246,16 +246,12 @@ export async function getRegistrations(workshopId: string) {
 
   try {
     const registrations = await Registration.find({ workshopId }).lean()
-    
 
-    const users = await Promise.all(
-      registrations.map(async (registration) => {
-        const user = await User.findOne({ clerkId: registration.userId }).lean()
-        return user as unknown as UserType | null
-      })
-    )
+    const users = await User.find({
+      clerkId: { $in: registrations.map(reg => reg.userId) }
+    })
 
-    return users.filter((user): user is NonNullable<typeof user> => !!user) // Filter out null/undefined users
+    return users as UserType[];
   } catch (error) {
     console.error('Error fetching registrations:', error)
     throw new Error('Failed to fetch registrations')
