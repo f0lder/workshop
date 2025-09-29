@@ -81,107 +81,12 @@ export default function WorkshopList({ isGlobalRegistrationClosed }: { isGlobalR
       </div>
     )
   }
-  if (workshops.length === 0) {
+  if (workshops.length === 0 || !isGlobalRegistrationClosed) {
     return (
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
-        {/* Medical Section */}
-        <div className="mimesiss-section-card border-l-4 border-border">
-          <div className="bg-gradient-to-r from-secondary to-secondary/80 p-4 text-white">
-            <h3 className="text-xl font-semibold">Secțiunea Medical</h3>
-          </div>
-          <div className="p-6">
-            <p className="text-muted-foreground mb-4">
-              Prezentări de lucrări științifice în domeniul medicinei generale, 
-              cercetare medicală și studii clinice.
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center">
-                <svg className="h-4 w-4 mr-2 text-muted-foreground" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
-                  <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                </svg>
-                <span>Program va fi anunțat</span>
-              </div>
-              <div className="flex items-center">
-                <svg className="h-4 w-4 mr-2 text-muted-foreground" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.97 2.97 0 0 0 17.15 7H16c-.8 0-1.5.31-2.04.81L12.5 9.5v3l2.5-1.5v5.5H9V9c0-.83-.34-1.58-.88-2.12l-3-3A.996.996 0 0 0 4 4c-.55 0-1 .45-1 1s.45 1 1 1c.28 0 .53-.11.71-.29L6 7v6c0 1.1.9 2 2 2h6v7h4z"/>
-                </svg>
-                <span>Participanți activi cu abstract</span>
-              </div>
-            </div>
-            <div className="mt-6">
-              <button className="mimesiss-btn-card">
-                Înregistrează-te ca participant activ
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Military Medical Section */}
-        <div className="mimesiss-section-card border-l-4 border-border">
-          <div className="bg-gradient-to-r from-accent to-accent/80 p-4 text-white">
-            <h3 className="text-xl font-semibold">Secțiunea Medico-Militară</h3>
-          </div>
-          <div className="p-6">
-            <p className="text-muted-foreground mb-4">
-              Lucrări specializate în medicina militară, medicină de urgență 
-              în conflict și îngrijirea personalului militar.
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center">
-                <svg className="h-4 w-4 mr-2 text-muted-foreground" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
-                  <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                </svg>
-                <span>Program va fi anunțat</span>
-              </div>
-              <div className="flex items-center">
-                <svg className="h-4 w-4 mr-2 text-muted-foreground" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.97 2.97 0 0 0 17.15 7H16c-.8 0-1.5.31-2.04.81L12.5 9.5v3l2.5-1.5v5.5H9V9c0-.83-.34-1.58-.88-2.12l-3-3A.996.996 0 0 0 4 4c-.55 0-1 .45-1 1s.45 1 1 1c.28 0 .53-.11.71-.29L6 7v6c0 1.1.9 2 2 2h6v7h4z"/>
-                </svg>
-                <span>Participanți activi cu abstract</span>
-              </div>
-            </div>
-            <div className="mt-6">
-              <button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium py-2 px-4 rounded-md transition duration-200">
-                Înregistrează-te ca participant activ
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* E-Poster Section */}
-        <div className="mimesiss-section-card border-l-4 border-border">
-          <div className="bg-gradient-to-r from-primary to-primary/80 p-4 text-white">
-            <h3 className="text-xl font-semibold">Secțiunea E-Poster</h3>
-          </div>
-          <div className="p-6">
-            <p className="text-muted-foreground mb-4">
-              Prezentări în format digital, poster interactiv cu discuții 
-              și sesiuni de întrebări și răspunsuri.
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center">
-                <svg className="h-4 w-4 mr-2 text-muted-foreground" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
-                  <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                </svg>
-                <span>Program va fi anunțat</span>
-              </div>
-              <div className="flex items-center">
-                <svg className="h-4 w-4 mr-2 text-muted-foreground" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.97 2.97 0 0 0 17.15 7H16c-.8 0-1.5.31-2.04.81L12.5 9.5v3l2.5-1.5v5.5H9V9c0-.83-.34-1.58-.88-2.12l-3-3A.996.996 0 0 0 4 4c-.55 0-1 .45-1 1s.45 1 1 1c.28 0 .53-.11.71-.29L6 7v6c0 1.1.9 2 2 2h6v7h4z"/>
-                </svg>
-                <span>Participanți activi cu poster</span>
-              </div>
-            </div>
-            <div className="mt-6">
-              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium py-2 px-4 rounded-md transition duration-200">
-                Înregistrează-te ca participant activ
-              </button>
-            </div>
-          </div>
-        </div>
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">
+          In curand...
+        </p>
       </div>
     )
   }

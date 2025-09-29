@@ -72,7 +72,7 @@ export default async function WorkshopsPage() {
             </h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-300">
               <div className="border-none lg:border-r border-gray-700 pr-4">
-                <h4 className="font-medium mb-2">Participanți pasivi <span> ___ RON </span></h4>
+                <h4 className="font-medium mb-2">Participanți pasivi <span> 170 RON </span></h4>
                 <ul className="space-y-1 list-disc list-inside">
                   <li>Acces la toate conferințele</li>
                   <li>Materiale de curs incluse</li>
@@ -80,7 +80,7 @@ export default async function WorkshopsPage() {
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium mb-2">Participanți activi <span> ___ RON </span></h4>
+                <h4 className="font-medium mb-2">Participanți activi <span> 120 RON </span></h4>
                 <ul className="space-y-1 list-disc list-inside">
                   <li>Toate beneficiile participanților pasivi</li>
                   <li>Prezentare lucrare științifică</li>

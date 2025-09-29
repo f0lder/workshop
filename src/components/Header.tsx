@@ -14,7 +14,6 @@ import {
   FaHome,
   FaCalendarAlt,
   FaUsers,
-  FaUserCog,
   FaChartBar,
   FaInfoCircle,
   FaImage,
@@ -55,7 +54,6 @@ export default function Header({ user }: HeaderProps) {
     { href: '/editii', label: 'Ediții anterioare', icon: FaChartBar },
     { href: '/contact', label: 'Date de contact', icon: FaUser },
     { href: '/gallery', label: 'Galerie foto', icon: FaImage },
-    { href: '/sponsors', label: 'Sponsori și parteneri', icon: FaUserCog },
   ]
 
   return (
@@ -153,7 +151,7 @@ export default function Header({ user }: HeaderProps) {
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-border">
               <Link href="/" className="text-xl font-bold text-foreground">
-                Mimesiss
+                MIMESISS
               </Link>
               <button
                 onClick={toggleMobileMenu}

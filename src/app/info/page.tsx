@@ -106,7 +106,7 @@ export default function InfoPage() {
                 </div>
                 
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-secondary mb-2">_____ RON</div>
+                  <div className="text-3xl font-bold text-secondary mb-2">170 RON</div>
                   <p className="text-gray-400">Taxa de participare</p>
                 </div>
               </div>
@@ -153,7 +153,7 @@ export default function InfoPage() {
                 </div>
                 
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">_____ RON</div>
+                  <div className="text-3xl font-bold text-primary mb-2">120 RON</div>
                   <p className="text-muted-foreground">Taxa comună pentru toate secțiunile</p>
                 </div>
               </div>
