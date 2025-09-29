@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaCircle } from 'react-icons/fa'
+import { FaCircle, FaEnvelope, FaInstagram, FaFacebook } from 'react-icons/fa'
 
 const orgs = [
   { src: '/orgs/1.png', alt: 'Organizator 1' },
@@ -44,6 +44,22 @@ export default function Footer() {
           <Link href="/contact">
             Contact
           </Link>
+        </div>
+
+
+        <div className="flex flex-row justify-center items-center space-x-6">
+          <Link href="mailto:secretariat@asmm-bucuresti.com" aria-label="EMail">
+            <FaEnvelope className="h-6 w-6 text-primary mb-4" />
+          </Link>
+
+          <Link href="https://www.instagram.com/asmm.bucuresti?igsh=MWExZHc0Y3hrNWh1bg==" target="_blank" aria-label="Instagram">
+            <FaInstagram className="h-6 w-6 text-primary mb-4" />
+          </Link>
+
+          <Link href="https://www.facebook.com/share/1CmCN8trYg/?mibextid=wwXIfr" target="_blank" aria-label="Facebook">
+            <FaFacebook className="h-6 w-6 text-primary mb-4" />
+          </Link>
+
         </div>
 
         {/* Copyright */}
