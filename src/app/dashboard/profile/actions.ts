@@ -29,6 +29,11 @@ export async function updateProfile(formData: FormData) {
         ...clerkUser.publicMetadata,
         userType,
         accessLevel,
+      },
+      unsafeMetadata: {
+        ...clerkUser.unsafeMetadata,
+        userType,
+        accessLevel,
       }
     })
 

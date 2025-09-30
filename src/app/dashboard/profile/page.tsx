@@ -21,7 +21,7 @@ export default function ProfilePage() {
     if (user) {
       setFirstName(user.firstName || '')
       setLastName(user.lastName || '')
-      setUserType((user.publicMetadata as { userType?: UserType }).userType || 'student')
+      setUserType((user.unsafeMetadata as { userType?: UserType }).userType || 'student')
       setAccessLevel((user.publicMetadata as { accessLevel?: AccessLevel }).accessLevel || 'unpaid')
     }
   }, [user])
@@ -31,13 +31,13 @@ export default function ProfilePage() {
       try {
         setError('')
         setMessage('')
-        
+
         const result = await updateProfile(formData)
         setMessage(result.message)
-        
+
         // Force refresh user data
         await user?.reload()
-        
+
       } catch (err) {
         console.error('Error updating profile:', err)
         setError(err instanceof Error ? err.message : 'A apărut o eroare la actualizarea profilului.')
@@ -100,7 +100,7 @@ export default function ProfilePage() {
                 {message}
               </div>
             )}
-            
+
             {error && (
               <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
                 {error}
