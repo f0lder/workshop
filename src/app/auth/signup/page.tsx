@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaEnvelope } from 'react-icons/fa'
 import Image from 'next/image'
+import { UserType } from '@/types/models'
 
 export default function SignupPage() {
   const { isLoaded, signUp, setActive } = useSignUp()
@@ -19,6 +20,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [verifying, setVerifying] = useState(false)
   const [code, setCode] = useState('')
+  const [userType, setUserType] = useState<UserType>('student')
   const router = useRouter()
 
   // Redirect if user is already logged in
@@ -41,7 +43,7 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!isLoaded) {
       setError('Clerk nu este încă încărcat. Vă rugăm să așteptați...')
       return
@@ -68,37 +70,26 @@ export default function SignupPage() {
       return
     }
 
-    console.log('Attempting signup with:', { 
-      email, 
-      firstName, 
-      lastName, 
-      passwordLength: password.length 
-    }) // Debug log
-
     try {
       // Create the user with email, password, firstName, and lastName
-      const result = await signUp.create({
+      await signUp.create({
         emailAddress: email,
         password,
         firstName,
         lastName,
+        unsafeMetadata: { userType }
       })
-
-      console.log('Sign up result:', result) // Debug log
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
       setVerifying(true)
     } catch (err: unknown) {
-      console.error('Signup error:', err) // Add logging for debugging
-      
+
       if (err && typeof err === 'object' && 'errors' in err) {
         const errorObj = err as { errors?: Array<{ code: string; message?: string }> }
         if (errorObj.errors?.[0]) {
           const errorCode = errorObj.errors[0].code
           const errorMessage = errorObj.errors[0].message
-          
-          console.log('Error code:', errorCode, 'Message:', errorMessage) // Debug logging
-          
+
           switch (errorCode) {
             case 'form_identifier_exists':
               setError('Această adresă de email este deja înregistrată.')
@@ -138,7 +129,7 @@ export default function SignupPage() {
 
   const handleVerification = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!isLoaded) return
 
     setIsLoading(true)
@@ -200,7 +191,7 @@ export default function SignupPage() {
                 {error}
               </div>
             )}
-            
+
             <div>
               <label htmlFor="code" className="block text-sm font-medium text-foreground mb-2">
                 Cod de verificare
@@ -260,7 +251,7 @@ export default function SignupPage() {
               {error}
             </div>
           )}
-          
+
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -292,12 +283,36 @@ export default function SignupPage() {
                   id="lastName"
                   name="lastName"
                   type="text"
-                  required
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                  placeholder="Nume"
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    placeholder="Nume"
                 />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="userType" className="block text-sm font-medium text-foreground mb-2">
+                Tip utilizator
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaUser className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <select
+                  id="userType"
+                  name="userType"
+                  required
+                  value={userType}
+                  onChange={(e) => setUserType(e.target.value as UserType)}
+                  className="block w-full pl-10 pr-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                >
+                  <option value="">Selectati tipul de utilizator</option>
+                  <option value="student">Student</option>
+                  <option value="elev">Elev</option>
+                  <option value="rezident">Rezident</option>
+                </select>
               </div>
             </div>
 

@@ -119,3 +119,15 @@ export async function getUserRegistrations(userId: string): Promise<WorkshopType
     return []
   }
 }
+
+export async function getWorkshopById(workshopId: string): Promise<WorkshopType | null> {
+  await connectDB()
+
+  try {
+    const workshop = await Workshop.findById(workshopId).lean()
+    return workshop as WorkshopType | null
+  } catch (error) {
+    console.error('Error fetching workshop by ID:', error)
+    return null
+  }
+}

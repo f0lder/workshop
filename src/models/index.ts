@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose'
+import { UserRole, UserType, AccessLevel } from '@/types/models'
 
 // User interface
 export interface IUser extends Document {
@@ -6,7 +7,9 @@ export interface IUser extends Document {
   email: string
   firstName?: string
   lastName?: string
-  role: 'user' | 'admin'
+  role: UserRole
+  userType: UserType
+  accessLevel: AccessLevel
 }
 
 // Workshop interface
@@ -37,6 +40,8 @@ const UserSchema = new Schema<IUser>({
   firstName: { type: String },
   lastName: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  userType: { type: String, enum: ['student', 'elev', 'rezident'], default: 'student' },
+  accessLevel: { type: String, enum: ['unpaid', 'active', 'passive'], default: 'unpaid' },
 }, {
   timestamps: true
 })

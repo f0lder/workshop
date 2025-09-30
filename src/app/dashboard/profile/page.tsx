@@ -4,11 +4,14 @@ import { useState, useTransition, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { FaSave, FaEnvelope, FaUser } from 'react-icons/fa'
 import { updateProfile } from './actions'
+import { UserType, AccessLevel } from '@/types/models'
 
 export default function ProfilePage() {
   const { isLoaded, user } = useUser()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [userType, setUserType] = useState<UserType>('student')
+  const [accessLevel, setAccessLevel] = useState<AccessLevel>('unpaid')
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -18,6 +21,8 @@ export default function ProfilePage() {
     if (user) {
       setFirstName(user.firstName || '')
       setLastName(user.lastName || '')
+      setUserType((user.publicMetadata as { userType?: UserType }).userType || 'student')
+      setAccessLevel((user.publicMetadata as { accessLevel?: AccessLevel }).accessLevel || 'unpaid')
     }
   }, [user])
 
@@ -162,6 +167,25 @@ export default function ProfilePage() {
               />
             </div>
 
+
+            {/* User Type */}
+            <div>
+              <label htmlFor="userType" className="block text-sm font-medium text-foreground mb-2">
+                Schimba tip utilizator in (Curent: {userType})
+              </label>
+              <select
+                id="userType"
+                name="userType"
+                value={userType}
+                onChange={(e) => setUserType(e.target.value as UserType)}
+                className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              >
+                <option value="student">Student</option>
+                <option value="elev">Elev</option>
+                <option value="rezident">Rezident</option>
+              </select>
+            </div>
+
             {/* Save Button */}
             <div className="flex justify-end">
               <button
@@ -207,6 +231,26 @@ export default function ProfilePage() {
               </dt>
               <dd className="mt-1 text-sm text-foreground">
                 {user.updatedAt ? new Date(user.updatedAt).toLocaleDateString('ro-RO') : 'N/A'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Tip utilizator
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
+                {userType === 'student' && 'Student'}
+                {userType === 'elev' && 'Elev'}
+                {userType === 'rezident' && 'Rezident'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Nivel acces
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
+                {accessLevel === 'unpaid' && 'Neplătit'}
+                {accessLevel === 'active' && 'Activ'}
+                {accessLevel === 'passive' && 'Premium'}
               </dd>
             </div>
           </dl>

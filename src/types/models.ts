@@ -1,5 +1,9 @@
 export type UserRole = 'admin' | 'user';
 
+export type UserType = 'student' | 'elev' | 'rezident';
+
+export type AccessLevel = 'unpaid' | 'active' | 'passive';
+
 // Our MongoDB User interface (this is our main user type)
 export interface User {
   _id: string;
@@ -10,6 +14,8 @@ export interface User {
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
+  userType: UserType;
+  accessLevel: AccessLevel;
 }
 
 // For Clerk user type, we'll use the imported type from @clerk/nextjs/server
