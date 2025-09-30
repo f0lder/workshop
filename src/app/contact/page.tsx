@@ -9,20 +9,13 @@ export default function ContactPage() {
 			<HeaderContent title='Contact' />
 			<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
 				{/* Secretariat Information */}
-				<div className="mimesiss-card p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div className="mimesiss-card p-4 space-y-6">
 					<h2 className="text-2xl font-bold text-accent text-center  md:col-span-2" >Echipa de Secretariat</h2>
 					<div className="text-center">
 						<FaEnvelope className="h-8 w-8 text-primary mx-auto mb-4" />
 						<h4 className="text-lg font-semibold text-white mb-2">Email</h4>
 						<Link href="mailto:secretariat@asmm-bucuresti.com" className="mimesiss-text-secondary hover:text-primary transition duration-200">
 							secretariat@asmm-bucuresti.com
-						</Link>
-					</div>
-					<div className="text-center border-t border-primary pt-4 md:pt-0 md:border-t-0 md:border-l">
-						<FaPhone className="h-8 w-8 text-primary mx-auto mb-4" />
-						<h4 className="text-lg font-semibold text-white mb-2">Secretar General: Stancu Ștefania Ionela</h4>
-						<Link href="tel:0742122283" className="mimesiss-text-secondary hover:text-primary transition duration-200">
-							0742122283
 						</Link>
 					</div>
 				</div>

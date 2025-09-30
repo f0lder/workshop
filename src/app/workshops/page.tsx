@@ -99,7 +99,7 @@ export default async function WorkshopsPage() {
               <FaCircle className="inline mx-2" size={6} />
 
               <Link
-                href="/info"
+                href="/reg"
                 className="inline-flex items-center hover:text-primary/80 font-medium hover:underline transition duration-200"
               >
                 Regulament
