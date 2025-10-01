@@ -14,8 +14,7 @@ export default function RegPage() {
 						Sub egida MIMESISS 2025 au loc conferințe și workshop-uri disponibile tuturor studenților care au achitat taxa de înscriere precum și voluntarilor din cadrul proiectului.
 					</li>
 					<li>
-						Tema conferinței MIMESISS 2025 este:
-						“Inovație și Colaborare Interdisciplinară”.
+						Tema conferinței MIMESISS 2025 este: “Conferința Medico-Militară a Studenților: Trenduri Emergente și Inovații în Domeniul Medical”.
 					</li>
 					<li>
 						Participanții sunt obligați să completeze un document GDPR pentru a lua parte la congres, prin care acceptă fotografierea și înregistrarea video a acestora. Menționăm faptul că în urma acestui eveniment științific, fotografiile și înregistrările video vor fi utilizate pe rețelele de socializare ale Asociației Studenților în Medicină Militară cu scopul promovării evenimentului.
@@ -24,7 +23,7 @@ export default function RegPage() {
 						Se consideră participant MIMESISS 2025 studentul care a achiziționat un bilet potrivit categoriei alese:
 						<ol className="list-[lower-alpha] list-outside pl-7">
 							<li>participant activ:
-								Prin intermediul temei de anul acesta  “Inovație și Colaborare Interdisciplinară” ne propunem să contribuim activ la realizarea unui echilibru între domeniul militar și cel medical. Aceștia au oportunitatea de a participa la concursul organizat în cadrul congresului MIMESISS 2025 prin intermediul prezentărilor orale sau e-poster. Scopul nostru este să oferim studenților oportunitatea de a prezenta lucrări științifice în fața unei audiențe accesibile și receptive, alcătuită din personal medical cu vastă experiență în domeniu. Studenții vor trimite către adresa de e-mail a Asociației abstractul lucrării pe care aceștia doresc să o prezinte în cadrul congresului sau e-posterul respectând regulile menționate mai jos.
+								Prin intermediul temei de anul acesta “Conferința Medico-Militară a Studenților: Trenduri Emergente și Inovații în Domeniul Medical” ne propunem să contribuim activ la realizarea unui echilibru între domeniul militar și cel medical. Aceștia au oportunitatea de a participa la concursul organizat în cadrul congresului MIMESISS 2025 prin intermediul prezentărilor orale sau e-poster. Scopul nostru este să oferim studenților oportunitatea de a prezenta lucrări științifice în fața unei audiențe accesibile și receptive, alcătuită din personal medical cu vastă experiență în domeniu. Studenții vor trimite către adresa de e-mail a secretariatului Asociației abstractul lucrării pe care aceștia doresc să o prezinte în cadrul congresului sau e-posterul respectând regulile menționate mai jos.
 							</li>
 							<li>
 								participant pasiv:
@@ -47,7 +46,7 @@ export default function RegPage() {
 					</li>
 
 					<li>
-						Achiziționarea biletului nu asigură diploma de participare. Obligatorii pentru primirea acesteia sunt completarea formularului GDPR și prezența la două dintre workshop-urile disponibile conform repartizării, cât și participarea la cel puțin două dintre conferințele organizate în acest an. Menționăm că participanții au dreptul să asiste la toate conferințele din cadrul congresului.
+						Achiziționarea biletului nu asigură diploma de participare. Obligatorii pentru primirea acesteia sunt completarea formularului GDPR și participarea la toate workshop-urile la care participantul a fost repartizat (echipa MIMESISS 2025 garantează repartizarea la minim 2 workshop-uri), precum și participarea la cel puțin două conferințe organizate în cadrul congresului. Menționăm că participanții au dreptul să asiste la toate conferințele din cadrul congresului.
 					</li>
 
 					<li>
@@ -59,7 +58,7 @@ export default function RegPage() {
 									<li>acces la minim două workshop-uri, în funcție de numărul disponibil de locuri</li>
 									<li>diplomă de participant pasiv, conform Art.9</li>
 									<li>welcome kit</li>
-									<li>acces la pauze destinate consumului de lichide (apă,cafea etc.) și servirea unei gustări</li>
+									<li>acces la pauze destinate consumului de lichide (apă, cafea etc.) și servirea unei gustări</li>
 								</ul>
 							</li>
 
@@ -86,14 +85,58 @@ export default function RegPage() {
 					</li>
 
 					<li>
-						Participanții activi au oportunitatea de a lua parte la concursul din cadrul MIMESISS 2025, fie prin prezentări orale, fie prin e-poster.
+						Concursul științific <br />
+						Secțiuni: prezentări orale și e-postere.
 
 						<ul className="list-decimal list-outside pl-5 my-2">
-							<li>Lucrările sunt evaluate în ziua concursului de către o comisie de experți din domeniul medical și medico-militar;</li>
-							<li>Comisia evaluează lucrările în mod riguros și obiectiv;</li>
-							<li>Durata prezentării orale este de 7 minute, urmând o sesiune de întrebări cu o durată de 3 minute;</li>
-							<li>Toate lucrările studenților vor fi publicate în cartea digitală de abstracte a conferinței: “Abstract eBook MIMESISS 2025”</li>
+							<li>Trimiterea abstractelor și evaluare
+								<ul className="list-disc list-outside pl-5 my-2">
+									<li>Toți participanții activi trimit abstractul la Secretariat@asmm-bucuresti.com până la 01.11.2025.</li>
+									<li>Evaluarea abstractelor se va desfășura între 02.11 - 08.11.2025 de către comisia de experți din domeniul medical și medico-militar.</li>
+									<li>Participanții la prezentări orale își pregătesc materialul pentru congres.</li>
+									<li>Participanții la e-postere trimit posterul digital între 08.11 - 11.11.2025. Organizatorii își rezervă dreptul ca posterul să nu fie acceptat, chiar dacă abstractul a fost aprobat.</li>
 
+								</ul>
+							</li>
+
+							<li>
+								Prezentări orale
+								<ul className="list-disc list-outside pl-5 my-2">
+									<li>Durata prezentării: 7 minute, urmată de 3 minute pentru întrebări.</li>
+								</ul>
+
+							</li>
+
+							<li>
+								E-postere
+								<ul className="list-disc list-outside pl-5 my-2">
+									<li>Posterul digital va fi afișat pe un ecran vizibil în ziua concursului.</li>
+									<li>Evaluarea e-posterelor se face strict pe baza conținutului afișat, fără interacțiunea autorului sau prezentarea publică.</li>
+								</ul>
+							</li>
+
+							<li>
+								Evaluare și premii
+								<ul className="list-decimal list-outside pl-5 my-2">
+									<li>Comisia va evalua prezentările orale în ziua congresului și e-posterele pe baza posterelor afișate.</li>
+									<li>Cele mai bune lucrări vor fi premiate separat pentru fiecare secțiune.</li>
+								</ul>
+							</li>
+
+							<li>
+								Publicații
+								<ul className="list-decimal list-outside pl-5 my-2">
+									<li>Toate lucrările acceptate vor fi incluse în “Abstract eBook MIMESISS 2025”.</li>
+								</ul>
+							</li>
+
+							<li>
+								Drepturi de proprietate intelectuală
+								<ul className="list-decimal list-outside pl-5 my-2">
+									<li>Autorii lucrărilor rămân proprietarii conținutului științific.</li>
+									<li>Organizatorii pot folosi materialele în scopul promovării congresului și publicării în volumul digital de abstracte, fără a modifica conținutul original.</li>
+								</ul>
+							</li>
 						</ul>
 
 					</li>

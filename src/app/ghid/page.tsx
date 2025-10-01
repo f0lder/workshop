@@ -31,11 +31,9 @@ export default function GhidPage() {
 				<div className="flex flex-col gap-4 mt-8">
 					<p>Documentul va avea un maxim de 300-350 de cuvinte (se cere încadrarea textului pe o singură pagină).</p>
 
-					<p>Documentul va fi submis în format Word (.doc) sau PDF (.pdf) începând cu data de ... până la data de ... , la adresa de e-mail ...</p>
+					<p>Documentul va fi submis în format Word (.doc) sau PDF (.pdf) începând cu data de <u>02.10.2025</u> până la data de <u>01.11.2025</u>, la adresa de e-mail <a className="underline" href="mailto:secretariat@asmm-bucuresti.com">secretariat@asmm-bucuresti.com</a></p>
 
-					<p>Evaluarea abstractelor va avea loc în perioada ...</p>
-
-					<p>Rezultatele evaluării vor fi transmise prin e-mail ...</p>
+					<p>Evaluarea abstractelor va avea loc în perioada <u>02.11.2025 - 08.11.2025</u>.</p>
 
 					<p>Doar versiunea finală submisă înainte de deadline va fi acceptată și nu vor mai putea fi aduse modificări ulterioare documentului.</p>
 				</div>
