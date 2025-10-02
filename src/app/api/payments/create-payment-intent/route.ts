@@ -52,22 +52,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Save payment record to database
-    const payment = new Payment({
-      clerkId: user.id,
-      stripeSessionId: paymentIntent.id, // Using PaymentIntent ID as session ID
-      stripePaymentIntentId: paymentIntent.id,
-      amount: ticketDetails.price,
-      currency: 'ron',
-      accessLevel,
-      status: 'pending',
-      metadata: {
-        paymentIntentId: paymentIntent.id,
-        userName: `${user.firstName} ${user.lastName}`.trim(),
-      }
-    });
-
-    await payment.save();
+    // Payment record will be created only when payment succeeds via webhook
 
     return NextResponse.json({ 
       clientSecret: paymentIntent.client_secret 

@@ -28,6 +28,7 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
     { href: '/admin', icon: FaChartBar, label: 'Dashboard Admin' },
     { href: '/admin/workshops', icon: FaCalendarAlt, label: 'Administrare Workshop-uri' },
     { href: '/admin/users', icon: FaUsers, label: 'Administrare Utilizatori' },
+    { href: '/admin/payments', icon: FaCreditCard, label: 'Administrare Plăți' },
     { href: '/admin/settings', icon: FaCogs, label: 'Setări Aplicație' },
   ]
 
