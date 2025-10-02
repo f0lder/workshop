@@ -73,10 +73,46 @@ const RegistrationSchema = new Schema<IRegistration>({
 // Create compound index to prevent duplicate registrations
 RegistrationSchema.index({ userId: 1, workshopId: 1 }, { unique: true })
 
+// Payment interface
+export interface IPayment extends Document {
+  clerkId: string
+  stripeSessionId: string
+  stripePaymentIntentId?: string
+  amount: number
+  currency: string
+  accessLevel: AccessLevel
+  status: 'pending' | 'completed' | 'failed' | 'refunded'
+  metadata?: Record<string, string>
+}
+
+// Payment schema
+const PaymentSchema = new Schema<IPayment>({
+  clerkId: { type: String, required: true, index: true },
+  stripeSessionId: { type: String, required: true, unique: true },
+  stripePaymentIntentId: { type: String },
+  amount: { type: Number, required: true },
+  currency: { type: String, required: true, default: 'ron' },
+  accessLevel: { 
+    type: String, 
+    required: true, 
+    enum: ['active', 'passive'] 
+  },
+  status: { 
+    type: String, 
+    required: true, 
+    enum: ['pending', 'completed', 'failed', 'refunded'],
+    default: 'pending' 
+  },
+  metadata: { type: Schema.Types.Mixed }
+}, {
+  timestamps: true
+})
+
 // Models
 export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema)
 export const Workshop = mongoose.models.Workshop || mongoose.model<IWorkshop>('Workshop', WorkshopSchema)
 export const Registration = mongoose.models.Registration || mongoose.model<IRegistration>('Registration', RegistrationSchema)
+export const Payment = mongoose.models.Payment || mongoose.model<IPayment>('Payment', PaymentSchema)
 
 // Import and export AppSettings separately
 import AppSettings from './AppSettings'

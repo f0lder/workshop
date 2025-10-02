@@ -21,7 +21,6 @@ export default function EditiiPage() {
 					</li>
 				</ul>
 				<div className="grid grid-cols-3 gap-4">
-					<Image src="/old/2.jpeg" alt="Description 1" width={1284} height={915} className="object-cover col-span-3" />
 					<Image src="/old/3.jpeg" alt="Description 2" width={1600} height={1067} className="object-cover col-span-3" />
 					<Image src="/old/1.jpeg" alt="Description 3" width={500} height={300} className="object-cover" />
 					<Image src="/old/4.jpeg" alt="Description 4" width={500} height={300} className="object-cover" />

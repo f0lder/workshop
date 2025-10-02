@@ -68,3 +68,18 @@ export interface Registrations{
   userId: string;
   workshopId: string;
 }
+
+// Payment interface for client-side usage
+export interface Payment {
+  _id: string;
+  clerkId: string;
+  stripeSessionId: string;
+  stripePaymentIntentId?: string;
+  amount: number;
+  currency: string;
+  accessLevel: AccessLevel;
+  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  metadata?: Record<string, string>;
+  createdAt: Date;
+  updatedAt: Date;
+}

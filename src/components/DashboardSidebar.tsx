@@ -5,7 +5,8 @@ import {
   FaChartBar,
   FaUsers,
   FaHome,
-  FaCogs
+  FaCogs,
+  FaCreditCard
 } from 'react-icons/fa'
 import { User } from '@/types/models'
 import SignOutButton from '@/components/signOutButton'
@@ -20,6 +21,7 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
     { href: '/dashboard', icon: FaHome, label: 'Dashboard' },
     { href: '/dashboard/profile', icon: FaUser, label: 'Profil' },
     { href: '/workshops', icon: FaCalendarAlt, label: 'Workshop-uri' },
+    { href: '/payment', icon: FaCreditCard, label: 'Cumpără Bilet' },
   ]
 
   const adminLinks = [
