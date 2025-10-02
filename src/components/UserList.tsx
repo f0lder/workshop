@@ -2,23 +2,11 @@
 
 import { useState, useTransition } from 'react'
 import { FaUser, FaCrown, FaEdit, FaSave, FaTimes, FaTrash } from 'react-icons/fa'
-import Image from 'next/image'
 import { updateUserRole, deleteUser } from '@/app/admin/users/actions'
-
-interface CombinedUser {
-  id: string
-  email: string
-  firstName: string
-  lastName: string
-  role: 'user' | 'admin'
-  createdAt: number
-  lastSignInAt: number | null
-  imageUrl: string
-  mongoId?: string
-}
+import { User } from '@/types/models'
 
 interface UserListProps {
-  users: CombinedUser[]
+  users: User[]
   currentUserId: string
 }
 
@@ -102,9 +90,9 @@ export default function UserList({ users, currentUserId }: UserListProps) {
     setError('')
   }
 
-  const formatDate = (timestamp: number | null) => {
-    if (!timestamp) return 'Niciodată'
-    return new Date(timestamp).toLocaleDateString('ro-RO', {
+  const formatDate = (date: Date | number | null) => {
+    if (!date) return 'Niciodată'
+    return new Date(date).toLocaleDateString('ro-RO', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -113,7 +101,7 @@ export default function UserList({ users, currentUserId }: UserListProps) {
     })
   }
 
-  const getDisplayName = (user: CombinedUser) => {
+  const getDisplayName = (user: User) => {
     if (user.firstName || user.lastName) {
       return `${user.firstName} ${user.lastName}`.trim()
     }
@@ -160,25 +148,15 @@ export default function UserList({ users, currentUserId }: UserListProps) {
           </thead>
           <tbody className="bg-card divide-y divide-border">
             {users.map((user) => {
-              const isCurrentUser = user.id === currentUserId
+              const isCurrentUser = user.clerkId === currentUserId
               return (
-              <tr key={user.id} className={`hover:bg-muted/50 ${isCurrentUser ? 'bg-blue-50/10 border-l-4 border-l-blue-500' : ''}`}>
+              <tr key={user.clerkId} className={`hover:bg-muted/50 ${isCurrentUser ? 'bg-blue-50/10 border-l-4 border-l-blue-500' : ''}`}>
                 <td className="px-3 sm:px-6 py-4">
                   <div className="flex items-center">
                     <div className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
-                      {user.imageUrl ? (
-                        <Image 
-                          className="h-8 w-8 sm:h-10 sm:w-10 rounded-full" 
-                          src={user.imageUrl} 
-                          alt=""
-                          width={40}
-                          height={40}
-                        />
-                      ) : (
-                        <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-muted flex items-center justify-center">
-                          <FaUser className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
-                        </div>
-                      )}
+                      <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-muted flex items-center justify-center">
+                        <FaUser className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                      </div>
                     </div>
                     <div className="ml-2 sm:ml-4 min-w-0 flex-1">
                       <div className="text-sm font-medium text-foreground flex items-center">
@@ -199,7 +177,7 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                   <div className="text-sm text-foreground">{user.email}</div>
                 </td>
                 <td className="px-3 sm:px-6 py-4">
-                  {editingUserId === user.id ? (
+                  {editingUserId === user.clerkId ? (
                     <div className="flex items-center space-x-1 sm:space-x-2">
                       <select
                         value={newRole}
@@ -211,7 +189,7 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                         <option value="admin">Admin</option>
                       </select>
                       <button
-                        onClick={() => handleSaveRole(user.id)}
+                        onClick={() => handleSaveRole(user.clerkId)}
                         disabled={isPending}
                         className="p-1 text-green-600 hover:text-green-800 disabled:opacity-50"
                       >
@@ -237,7 +215,7 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                         <span className="sm:hidden">{user.role === 'admin' ? 'Admin' : 'User'}</span>
                       </span>
                       <button
-                        onClick={() => handleEditRole(user.id, user.role)}
+                        onClick={() => handleEditRole(user.clerkId, user.role)}
                         disabled={isPending || deletingUserId !== null || isCurrentUser}
                         className={`p-1 disabled:opacity-50 disabled:cursor-not-allowed ${
                           isCurrentUser 
@@ -255,10 +233,10 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                   {formatDate(user.createdAt)}
                 </td>
                 <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {formatDate(user.lastSignInAt)}
+                  N/A
                 </td>
                 <td className="px-3 sm:px-6 py-4 text-sm text-muted-foreground">
-                  {deletingUserId === user.id ? (
+                  {deletingUserId === user.clerkId ? (
                     <div className="relative">
                       <div className="absolute right-0 top-0 z-10 w-64 sm:w-80 bg-card border border-red-200 rounded-lg shadow-lg p-3 sm:p-4">
                         <div className="flex items-center mb-2 sm:mb-3">
@@ -271,7 +249,7 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                         </p>
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => confirmDeleteUser(user.id)}
+                            onClick={() => confirmDeleteUser(user.clerkId)}
                             disabled={isPending}
                             className="px-2 sm:px-3 py-1 sm:py-2 bg-red-600 text-white text-xs sm:text-sm rounded hover:bg-red-700 disabled:opacity-50 flex items-center"
                           >
@@ -301,13 +279,13 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                   ) : (
                     <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
                       <span className={`px-1.5 sm:px-2 py-1 text-xs rounded ${
-                        user.mongoId ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                        user._id ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
                       }`}>
-                        <span className="hidden sm:inline">{user.mongoId ? 'Sincronizat' : 'Doar în Clerk'}</span>
-                        <span className="sm:hidden">{user.mongoId ? 'Sync' : 'Clerk'}</span>
+                        <span className="hidden sm:inline">{user._id ? 'Sincronizat' : 'Doar în Clerk'}</span>
+                        <span className="sm:hidden">{user._id ? 'Sync' : 'Clerk'}</span>
                       </span>
                       <button
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => handleDeleteUser(user.clerkId)}
                         disabled={isPending || editingUserId !== null || isCurrentUser}
                         className={`p-1 disabled:opacity-50 disabled:cursor-not-allowed ${
                           isCurrentUser 
