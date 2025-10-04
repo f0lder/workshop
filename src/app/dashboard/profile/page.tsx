@@ -283,7 +283,7 @@ export default function ProfilePage() {
               <dd className="mt-1 text-sm text-foreground">
                 {accessLevel === 'unpaid' && 'Neplătit'}
                 {accessLevel === 'active' && 'Activ'}
-                {accessLevel === 'passive' && 'Premium'}
+                {accessLevel === 'passive' && 'Pasiv'}
               </dd>
             </div>
           </dl>
