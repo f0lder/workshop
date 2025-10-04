@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { stripe } from '@/lib/stripe';
 import { TICKET_PRICES, TicketType } from '@/lib/pricing';
 import connectDB from '@/lib/mongodb';
 import { Payment } from '@/models';
+import { getUser } from '@/app/dashboard/profile/actions';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const userData = await getUser(user.id);
     const { accessLevel } = await req.json() as { accessLevel: TicketType };
 
     if (!accessLevel || !TICKET_PRICES[accessLevel]) {
@@ -37,15 +39,20 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    // Create PaymentIntent
+    // Create PaymentIntent with customer data
     const paymentIntent = await stripe.paymentIntents.create({
       amount: ticketDetails.price,
       currency: 'ron',
       description: `${ticketDetails.name} - MIMESISS 2025`,
+      receipt_email: userData?.email || '',
       metadata: {
         clerkId: user.id,
         accessLevel,
         userName: `${user.firstName} ${user.lastName}`.trim(),
+        userEmail: userData?.email || '',
+        userType: userData?.userType || 'student',
+        eventName: 'MIMESISS 2025',
+        eventLocation: 'București, România',
       },
       automatic_payment_methods: {
         enabled: true,
@@ -53,7 +60,6 @@ export async function POST(req: NextRequest) {
     });
 
     // Payment record will be created only when payment succeeds via webhook
-
     return NextResponse.json({ 
       clientSecret: paymentIntent.client_secret 
     });

@@ -19,10 +19,8 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 	};
 
 	const handlePaymentSuccess = () => {
-		setShowCheckout(false);
-		setSelectedTicket(null);
-		// Refresh the page to update user access level
-		window.location.reload();
+		// Redirect to success page instead of reloading
+		window.location.href = '/payment/success';
 	};
 
 	const handlePaymentError = (error: string) => {
@@ -38,6 +36,13 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 		return (
 			<div className="space-y-6 max-w-md mx-auto">
 				<div className="text-center">
+					<button
+						onClick={() => setShowCheckout(false)}
+						className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 mx-auto"
+					>
+						<FaArrowLeft className="h-3 w-3" />
+						Înapoi la selecția biletelor
+					</button>
 					<h2 className="text-2xl font-bold text-foreground mb-2">
 						Finalizare plată - {TICKET_PRICES[selectedTicket].name}
 					</h2>
@@ -51,14 +56,7 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 								<span>{feature}</span>
 							</li>
 						))}
-					</ul>
-					<button
-						onClick={() => setShowCheckout(false)}
-						className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 mx-auto"
-					>
-						<FaArrowLeft className="h-3 w-3" />
-						Înapoi la selecția biletelor
-					</button>
+					</ul>				
 				</div>
 
 				<EmbeddedCheckout

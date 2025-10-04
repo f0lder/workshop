@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import {
 	Elements,
@@ -8,6 +8,7 @@ import {
 	useStripe,
 	useElements
 } from '@stripe/react-stripe-js';
+import Link from 'next/link';
 import { FaSpinner } from 'react-icons/fa';
 
 // Load Stripe outside of component render to avoid recreating
@@ -28,18 +29,16 @@ function CheckoutForm({ onSuccess, onError }: { onSuccess?: () => void; onError?
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
-		if (!stripe || !elements) {
+		if (!stripe || !elements || isLoading) {
 			return;
 		}
 
 		setIsLoading(true);
 		setMessage('');
 
-		const { error } = await stripe.confirmPayment({
+		const { error, paymentIntent } = await stripe.confirmPayment({
 			elements,
-			confirmParams: {
-				return_url: `${window.location.origin}/payment/success`,
-			},
+			redirect: 'if_required',
 		});
 
 		if (error) {
@@ -50,7 +49,8 @@ function CheckoutForm({ onSuccess, onError }: { onSuccess?: () => void; onError?
 				setMessage('A apărut o eroare neașteptată');
 				onError?.(error.message || 'A apărut o eroare neașteptată');
 			}
-		} else {
+		} else if (paymentIntent && paymentIntent.status === 'succeeded') {
+			// Payment succeeded, handle success locally
 			onSuccess?.();
 		}
 
@@ -98,29 +98,39 @@ export default function EmbeddedCheckout({ accessLevel, onSuccess, onError }: Em
 	const [clientSecret, setClientSecret] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
+	const initialized = useRef(false);
 
 	useEffect(() => {
-		// Create PaymentIntent on component mount
-		fetch('/api/payments/create-payment-intent', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ accessLevel }),
-		})
-			.then((res) => res.json())
-			.then((data) => {
+		if (initialized.current || clientSecret) return;
+		initialized.current = true;
+
+		const createPaymentIntent = async () => {
+			try {
+				const res = await fetch('/api/payments/create-payment-intent', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ accessLevel }),
+				});
+				
+				const data = await res.json();
+				
 				if (data.error) {
 					setError(data.error);
+					initialized.current = false; // Allow retry
 				} else {
 					setClientSecret(data.clientSecret);
 				}
-				setLoading(false);
-			})
-			.catch((err) => {
+			} catch (err) {
 				console.error('Error creating payment intent:', err);
 				setError('Failed to initialize payment');
+				initialized.current = false; // Allow retry
+			} finally {
 				setLoading(false);
-			});
-	}, [accessLevel]);
+			}
+		};
+
+		createPaymentIntent();
+	}, [accessLevel, clientSecret]); // Re-run if accessLevel changes or on retry
 
 	if (loading) {
 		return (
@@ -133,8 +143,22 @@ export default function EmbeddedCheckout({ accessLevel, onSuccess, onError }: Em
 
 	if (error) {
 		return (
-			<div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
-				{error}
+			<div className="p-8 text-center">
+				<div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md mb-4">
+					{error}
+				</div>
+				<button 
+					onClick={() => {
+						setError('');
+						setLoading(true);
+						initialized.current = false;
+						// Trigger re-run of useEffect
+						setClientSecret('');
+					}}
+					className="text-primary hover:underline"
+				>
+					Încearcă din nou
+				</button>
 			</div>
 		);
 	}
@@ -186,9 +210,9 @@ export default function EmbeddedCheckout({ accessLevel, onSuccess, onError }: Em
 		<div className="max-w-md mx-auto">
 			{clientSecret && (
 				<>
-					<div>
-						Completati formularul de GDPR
-					</div>
+					<p className='mb-4 text-sm text-muted-foreground'>
+						Înainte de efectuarea plății taxei de participare, vă rugăm să descărcați și să completați formularul GDPR (disponibil <Link href="/docs/gdpr.pdf" target='_blank' className="text-primary underline">aici</Link>) și să îl trimiteți împreună cu dovada plății la adresa de e-mail a secretariatului: <Link href="mailto:secretariat@asmm-bucuresti.com" className="text-primary underline">secretariat@asmm-bucuresti.com</Link>. Validarea înscrierii se va face doar după primirea ambelor documente.
+					</p>
 					<Elements options={options} stripe={stripePromise}>
 						<CheckoutForm onSuccess={onSuccess} onError={onError} />
 					</Elements>
