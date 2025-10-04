@@ -71,10 +71,6 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 							<h4 className="text-xs text-muted-foreground uppercase mb-1">Participanți curenți</h4>
 							<div className="font-medium">{workshop.currentParticipants ?? 0}</div>
 						</div>
-						<div>
-							<h4 className="text-xs text-muted-foreground uppercase mb-1">Status înregistrare</h4>
-							<div className="font-medium">{workshop.registrationStatus ?? "—"}</div>
-						</div>
 					</div>
 
 					<div className="mt-4">

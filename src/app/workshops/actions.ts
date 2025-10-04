@@ -38,9 +38,6 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
 
     if (action === 'register') {
       // Validate registration conditions
-      if (workshop.registrationStatus === 'closed') {
-        throw new Error('Registrations are closed for this workshop')
-      }
 
       if (userRegistrationsCount >= appSettings.maxWorkshopsPerUser) {
         throw new Error(`You have reached the maximum workshops limit (${appSettings.maxWorkshopsPerUser})`)

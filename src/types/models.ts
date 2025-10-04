@@ -20,7 +20,6 @@ export interface User {
 
 // For Clerk user type, we'll use the imported type from @clerk/nextjs/server
 
-// MongoDB Workshop interface (works for both lean queries and regular documents)
 export interface Workshop {
   _id?: string | { toString(): string }; // MongoDB ObjectId
   id?: string; // For serialized versions
@@ -33,7 +32,7 @@ export interface Workshop {
   currentParticipants: number;
   instructor: string;
   status: 'active' | 'cancelled' | 'completed';
-  registrationStatus?: 'open' | 'closed';
+  wsType: 'workshop' | 'conferinta';
   user_registered?: boolean; // For display in UI
   createdAt?: Date;
   updatedAt?: Date;

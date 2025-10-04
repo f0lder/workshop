@@ -24,6 +24,8 @@ export async function updateSettings(formData: FormData) {
     const updates = {
       // Workshop settings
       globalRegistrationEnabled: formData.get('globalRegistrationEnabled') === 'on',
+      paymentsEnabled: formData.get('paymentsEnabled') === 'on',
+      workshopVisibleToPublic: formData.get('workshopVisibleToPublic') === 'on',
       requireApprovalForRegistration: formData.get('requireApprovalForRegistration') === 'on',
       allowCancelRegistration: formData.get('allowCancelRegistration') === 'on',
       maxWorkshopsPerUser: parseInt(formData.get('maxWorkshopsPerUser') as string) || 10,

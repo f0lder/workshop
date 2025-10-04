@@ -30,7 +30,6 @@ export async function createWorkshop(formData: FormData) {
   const time = formData.get('time') as string
   const location = formData.get('location') as string
   const instructor = formData.get('instructor') as string
-  const registrationStatus = formData.get('registrationStatus') as 'open' | 'closed'
   const maxParticipants = parseInt(formData.get('maxParticipants') as string)
 
   // Validate required fields
@@ -49,7 +48,6 @@ export async function createWorkshop(formData: FormData) {
       maxParticipants,
       currentParticipants: 0,
       instructor,
-      registrationStatus: registrationStatus || 'open'
     })
 
     // Revalidate the admin workshops page
@@ -85,7 +83,6 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
   const time = formData.get('time') as string
   const location = formData.get('location') as string
   const instructor = formData.get('instructor') as string
-  const registrationStatus = formData.get('registrationStatus') as 'open' | 'closed'
   const maxParticipants = parseInt(formData.get('maxParticipants') as string)
 
   // Validate required fields
@@ -117,7 +114,6 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
         location,
         maxParticipants,
         instructor,
-        registrationStatus: registrationStatus || 'open'
       },
       { new: true }
     )
@@ -170,60 +166,6 @@ export async function deleteWorkshop(workshopId: string) {
   } catch (error) {
     console.error('Error deleting workshop:', error)
     throw new Error('Failed to delete workshop')
-  }
-}
-
-export async function toggleRegistrationStatus(workshopId: string) {
-  const clerkUser = await currentUser()
-  
-  if (!clerkUser) {
-    throw new Error('Authentication required')
-  }
-
-  // Sync user and check if admin
-  const user = await syncUserWithDatabase(clerkUser)
-  
-  if (user.role !== 'admin') {
-    throw new Error('Admin access required')
-  }
-
-  await connectDB()
-
-  try {
-    // Get the current workshop
-    const workshop = await Workshop.findById(workshopId)
-    
-    if (!workshop) {
-      throw new Error('Workshop not found')
-    }
-
-    // Toggle the registration status (handle undefined/null case)
-    const currentStatus = workshop.registrationStatus || 'open'
-    const newRegistrationStatus = currentStatus === 'open' ? 'closed' : 'open'
-    
-    // Update the workshop
-    const updatedWorkshop = await Workshop.findByIdAndUpdate(
-      workshopId,
-      { registrationStatus: newRegistrationStatus },
-      { new: true }
-    )
-
-    if (!updatedWorkshop) {
-      throw new Error('Failed to update workshop')
-    }
-
-    // Revalidate the admin workshops page
-    revalidatePath('/admin/workshops')
-    revalidatePath('/workshops')
-    
-    return { 
-      success: true, 
-      newStatus: newRegistrationStatus,
-      message: `Înregistrările au fost ${newRegistrationStatus === 'open' ? 'deschise' : 'închise'} pentru acest workshop.`
-    }
-  } catch (error) {
-    console.error('Error toggling registration status:', error)
-    throw new Error('Failed to toggle registration status')
   }
 }
 

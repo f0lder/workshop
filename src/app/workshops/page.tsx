@@ -31,6 +31,7 @@ export default async function WorkshopsPage() {
 
   const appSettings = await getAppSettings()
   const isGlobalRegistrationClosed = appSettings?.globalRegistrationEnabled || false
+  const workshopVisibleToPublic = appSettings?.workshopVisibleToPublic || false
 
   return (
     <>
@@ -62,7 +63,7 @@ export default async function WorkshopsPage() {
 
           {/* Workshop List with Loading */}
           <Suspense fallback={<WorkshopListSkeleton />}>
-            <WorkshopList isGlobalRegistrationClosed={isGlobalRegistrationClosed} />
+            <WorkshopList workshopVisibleToPublic={workshopVisibleToPublic} isGlobalRegistrationClosed={isGlobalRegistrationClosed} />
           </Suspense>
 
           {/* Info Section */}

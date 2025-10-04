@@ -4,6 +4,9 @@ export interface IAppSettings extends Document {
   _id: string
   // Global workshop settings
   globalRegistrationEnabled: boolean
+  paymentsEnabled?: boolean
+  workshopVisibleToPublic?: boolean
+
   requireApprovalForRegistration: boolean
   maxWorkshopsPerUser: number
   allowCancelRegistration: boolean
@@ -31,6 +34,16 @@ const AppSettingsSchema = new Schema<IAppSettings>({
   globalRegistrationEnabled: {
     type: Boolean,
     default: true,
+    required: true
+  },
+  paymentsEnabled: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
+  workshopVisibleToPublic: {
+    type: Boolean,
+    default: false,
     required: true
   },
   requireApprovalForRegistration: {

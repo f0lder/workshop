@@ -179,14 +179,20 @@ export default function EmbeddedCheckout({ accessLevel, onSuccess, onError }: Em
 	const options = {
 		clientSecret,
 		appearance,
+		locale: 'ro' as const,
 	};
 
 	return (
 		<div className="max-w-md mx-auto">
 			{clientSecret && (
-				<Elements options={options} stripe={stripePromise}>
-					<CheckoutForm onSuccess={onSuccess} onError={onError} />
-				</Elements>
+				<>
+					<div>
+						Completati formularul de GDPR
+					</div>
+					<Elements options={options} stripe={stripePromise}>
+						<CheckoutForm onSuccess={onSuccess} onError={onError} />
+					</Elements>
+				</>
 			)}
 		</div>
 	);

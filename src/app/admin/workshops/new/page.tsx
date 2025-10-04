@@ -20,6 +20,9 @@ export default async function NewWorkshopPage() {
 
   // Get app settings for defaults
   const settings = await getAppSettings()
+  
+  // Convert Mongoose document to plain object for Client Component
+  const plainSettings = JSON.parse(JSON.stringify(settings))
 
-  return <WorkshopForm mode="create" defaultSettings={settings} />
+  return <WorkshopForm mode="create" defaultSettings={plainSettings} />
 }

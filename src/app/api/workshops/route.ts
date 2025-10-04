@@ -43,7 +43,6 @@ export async function GET() {
         id: String(workshop._id),
         date: workshop.date.toISOString(),
         currentParticipants: workshop.currentParticipants || 0, // Map field name and provide default
-        registrationStatus: workshop.registrationStatus || 'open',
         user_registered: isRegistered
       } as unknown as Workshop
     })

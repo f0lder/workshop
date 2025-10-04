@@ -100,6 +100,22 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
             />
 
             <ToggleSwitch
+              id="paymentsEnabled"
+              name="paymentsEnabled"
+              label="Permite plățile pentru workshop-uri"
+              description="Când este activat, utilizatorii pot efectua plăți pentru workshop-uri."
+              defaultChecked={initialSettings.paymentsEnabled}
+            />
+
+            <ToggleSwitch
+              id="workshopVisibleToPublic"
+              name="workshopVisibleToPublic"
+              label="Workshop-uri vizibile publicului"
+              description="Când este activat, workshop-urile sunt vizibile publicului."
+              defaultChecked={initialSettings.workshopVisibleToPublic}
+            />
+
+            <ToggleSwitch
               id="requireApprovalForRegistration"
               name="requireApprovalForRegistration"
               label="Necesită aprobare pentru înregistrări"

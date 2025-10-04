@@ -20,7 +20,6 @@ interface WorkshopFormProps {
     currentParticipants: number
     instructor: string
     status: string
-    registrationStatus: 'open' | 'closed'
   }
 }
 
@@ -193,26 +192,6 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   placeholder="Numele instructorului"
                 />
               </div>
-            </div>
-
-            <div>
-              <label htmlFor="registrationStatus" className="block text-sm font-medium text-foreground">
-                Status înregistrări *
-              </label>
-              <div className="mt-1">
-                <select
-                  name="registrationStatus"
-                  id="registrationStatus"
-                  defaultValue={workshop?.registrationStatus || 'open'}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-                >
-                  <option value="open">Deschise - participanții se pot înregistra</option>
-                  <option value="closed">Închise - înregistrările sunt oprite</option>
-                </select>
-              </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Controlează dacă participanții se pot înregistra la acest workshop.
-              </p>
             </div>
 
             <div>

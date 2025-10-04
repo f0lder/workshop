@@ -43,7 +43,6 @@ export default async function EditWorkshopPage({ params }: EditWorkshopPageProps
     currentParticipants: number
     instructor: string
     status: string
-    registrationStatus?: string
   } | null
 
   if (!workshop) {
@@ -62,7 +61,6 @@ export default async function EditWorkshopPage({ params }: EditWorkshopPageProps
     currentParticipants: workshop.currentParticipants,
     instructor: workshop.instructor,
     status: workshop.status,
-    registrationStatus: (workshop.registrationStatus || 'open') as 'open' | 'closed'
   }
 
   return <WorkshopForm mode="edit" workshop={workshopData} />
