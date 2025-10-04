@@ -5,7 +5,7 @@ import { User } from '@/models'
 import { User as UserInterface } from '@/types/models'
 import { isUserAdmin } from '@/lib/auth'
 import { clerkClient } from '@clerk/nextjs/server'
-import UserList from '@/components/UserList'
+import UserListWrapper from '@/components/UserListWrapper'
 
 export default async function AdminUsersPage() {
   const clerkUser = await currentUser()
@@ -66,7 +66,7 @@ export default async function AdminUsersPage() {
             Toți utilizatorii ({users.length})
           </h2>
         </div>
-        <UserList users={users} currentUserId={clerkUser.id} />
+        <UserListWrapper initialUsers={users} currentUserId={clerkUser.id} />
       </div>
     </div>
   )

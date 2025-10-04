@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { FaUser, FaCrown, FaEdit, FaSave, FaTimes, FaTrash } from 'react-icons/fa'
+import { FaUser, FaCrown, FaEdit, FaSave, FaTrash } from 'react-icons/fa'
 import { updateUserRole, deleteUser } from '@/app/admin/users/actions'
-import { User } from '@/types/models'
+import { User,UserType,AccessLevel } from '@/types/models'
 
 interface UserListProps {
   users: User[]
   currentUserId: string
+  onRefresh?: () => Promise<void>
 }
 
 function Spinner() {
@@ -16,37 +17,50 @@ function Spinner() {
   )
 }
 
-export default function UserList({ users, currentUserId }: UserListProps) {
+export default function UserList({ users, currentUserId, onRefresh }: UserListProps) {
   const [editingUserId, setEditingUserId] = useState<string | null>(null)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
-  const [newRole, setNewRole] = useState<'user' | 'admin'>('user')
+  const [editData, setEditData] = useState<{
+    role: 'user' | 'admin',
+    userType: UserType | '',
+    accessLevel: AccessLevel
+  }>({ role: 'user', userType: '', accessLevel: 'unpaid' })
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  const handleEditRole = (userId: string, currentRole: 'user' | 'admin') => {
-    setEditingUserId(userId)
-    setNewRole(currentRole)
+  const handleEdit = (user: User) => {
+    setEditingUserId(user.clerkId)
+    setEditData({
+      role: user.role,
+      userType: user.userType || '',
+      accessLevel: user.accessLevel || 'unpaid'
+    })
     setMessage('')
     setError('')
   }
 
-  const handleSaveRole = async (userId: string) => {
+  const handleSave = async (userId: string) => {
     startTransition(async () => {
       try {
         setError('')
         const formData = new FormData()
         formData.append('userId', userId)
-        formData.append('role', newRole)
+        formData.append('role', editData.role)
+        formData.append('userType', editData.userType)
+        formData.append('accessLevel', editData.accessLevel)
 
         const result = await updateUserRole(formData)
         setMessage(result.message)
         setEditingUserId(null)
 
-        // Refresh the page to show updated data
-        window.location.reload()
+        // Refresh the component data
+        if (onRefresh) {
+          await onRefresh()
+        }
+
       } catch (err) {
-        console.error('Error updating user role:', err)
+        console.error('Error updating user:', err)
         setError(err instanceof Error ? err.message : 'A apărut o eroare.')
       }
     })
@@ -75,8 +89,10 @@ export default function UserList({ users, currentUserId }: UserListProps) {
         setMessage(result.message)
         setDeletingUserId(null)
 
-        // Refresh the page to show updated data
-        window.location.reload()
+        // Refresh the component data
+        if (onRefresh) {
+          await onRefresh()
+        }
       } catch (err) {
         console.error('Error deleting user:', err)
         setError(err instanceof Error ? err.message : 'A apărut o eroare.')
@@ -180,55 +196,14 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                     <div className="text-sm text-foreground">{user.email}</div>
                   </td>
                   <td className="px-3 sm:px-6 py-4">
-                    {editingUserId === user.clerkId ? (
-                      <div className="flex items-center space-x-1 sm:space-x-2">
-                        <select
-                          value={newRole}
-                          onChange={(e) => setNewRole(e.target.value as 'user' | 'admin')}
-                          className="text-xs sm:text-sm border border-input bg-background rounded px-1 sm:px-2 py-1"
-                          disabled={isPending}
-                        >
-                          <option value="user">User</option>
-                          <option value="admin">Admin</option>
-                        </select>
-                        <button
-                          onClick={() => handleSaveRole(user.clerkId)}
-                          disabled={isPending}
-                          className="p-1 text-green-600 hover:text-green-800 disabled:opacity-50"
-                        >
-                          {isPending ? <Spinner /> : <FaSave className="h-3 w-3 sm:h-4 sm:w-4" />}
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          disabled={isPending}
-                          className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-50"
-                        >
-                          <FaTimes className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center space-x-1 sm:space-x-2">
-                        <span className={`inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'admin'
-                            ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                            : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                          }`}>
-                          {user.role === 'admin' && <FaCrown className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />}
-                          <span className="hidden sm:inline">{user.role === 'admin' ? 'Administrator' : 'Utilizator'}</span>
-                          <span className="sm:hidden">{user.role === 'admin' ? 'Admin' : 'User'}</span>
-                        </span>
-                        <button
-                          onClick={() => handleEditRole(user.clerkId, user.role)}
-                          disabled={isPending || deletingUserId !== null || isCurrentUser}
-                          className={`p-1 disabled:opacity-50 disabled:cursor-not-allowed ${isCurrentUser
-                              ? 'text-muted-foreground'
-                              : 'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300'
-                            }`}
-                          title={isCurrentUser ? 'Nu vă puteți modifica propriul rol' : 'Editează rol'}
-                        >
-                          <FaEdit className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </button>
-                      </div>
-                    )}
+                    <span className={`inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'admin'
+                        ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                        : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                      }`}>
+                      {user.role === 'admin' && <FaCrown className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />}
+                      <span className="hidden sm:inline">{user.role === 'admin' ? 'Administrator' : 'Utilizator'}</span>
+                      <span className="sm:hidden">{user.role === 'admin' ? 'Admin' : 'User'}</span>
+                    </span>
                   </td>
                   <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {formatDate(user.createdAt)}
@@ -241,7 +216,75 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                     {user.accessLevel || 'N/A'}
                   </td>
                   <td className="px-3 sm:px-6 py-4 text-sm text-muted-foreground">
-                    {deletingUserId === user.clerkId ? (
+                    {editingUserId === user.clerkId ? (
+                      <div className="relative">
+                        <div className="absolute right-0 top-0 z-20 w-80 sm:w-96 bg-card border border-border rounded-lg shadow-lg p-4">
+                          <h3 className="text-sm font-semibold text-foreground mb-3">Editează utilizator</h3>
+                          
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs font-medium text-muted-foreground mb-1">Rol</label>
+                              <select
+                                value={editData.role}
+                                onChange={(e) => setEditData({...editData, role: e.target.value as 'user' | 'admin'})}
+                                className="w-full text-sm border border-input bg-background rounded px-2 py-1"
+                                disabled={isPending}
+                              >
+                                <option value="user">Utilizator</option>
+                                <option value="admin">Administrator</option>
+                              </select>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-xs font-medium text-muted-foreground mb-1">Tip utilizator</label>
+                              <select
+                                value={editData.userType}
+                                onChange={(e) => setEditData({...editData, userType: e.target.value as UserType})}
+                                className="w-full text-sm border border-input bg-background rounded px-2 py-1"
+                                disabled={isPending}
+                              >
+                                <option value="">Selectează tip</option>
+                                <option value="student">Student</option>
+                                <option value="elev">Elev</option>
+                                <option value="rezident">Rezident</option>
+                              </select>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-xs font-medium text-muted-foreground mb-1">Nivel acces</label>
+                              <select
+                                value={editData.accessLevel}
+                                onChange={(e) => setEditData({...editData, accessLevel: e.target.value as AccessLevel})}
+                                className="w-full text-sm border border-input bg-background rounded px-2 py-1"
+                                disabled={isPending}
+                              >
+                                <option value="unpaid">Neplătit</option>
+                                <option value="active">Activ</option>
+                                <option value="passive">Pasiv</option>
+                              </select>
+                            </div>
+                          </div>
+                          
+                          <div className="flex space-x-2 mt-4">
+                            <button
+                              onClick={() => handleSave(user.clerkId)}
+                              disabled={isPending}
+                              className="px-3 py-1 bg-primary text-primary-foreground text-sm rounded hover:bg-primary/90 disabled:opacity-50 flex items-center"
+                            >
+                              {isPending ? <Spinner /> : <FaSave className="h-3 w-3 mr-1" />}
+                              Salvează
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              disabled={isPending}
+                              className="px-3 py-1 bg-muted text-foreground text-sm rounded hover:bg-muted/80 disabled:opacity-50"
+                            >
+                              Anulează
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : deletingUserId === user.clerkId ? (
                       <div className="relative">
                         <div className="absolute right-0 top-0 z-10 w-64 sm:w-80 bg-card border border-red-200 rounded-lg shadow-lg p-3 sm:p-4">
                           <div className="flex items-center mb-2 sm:mb-3">
@@ -288,6 +331,17 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                           <span className="hidden sm:inline">{user._id ? 'Sincronizat' : 'Doar în Clerk'}</span>
                           <span className="sm:hidden">{user._id ? 'Sync' : 'Clerk'}</span>
                         </span>
+                        <button
+                          onClick={() => handleEdit(user)}
+                          disabled={isPending || deletingUserId !== null || isCurrentUser}
+                          className={`p-1 disabled:opacity-50 disabled:cursor-not-allowed ${isCurrentUser
+                              ? 'text-muted-foreground'
+                              : 'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300'
+                            }`}
+                          title={isCurrentUser ? 'Nu vă puteți modifica propriile date' : 'Editează utilizator'}
+                        >
+                          <FaEdit className="h-3 w-3 sm:h-4 sm:w-4" />
+                        </button>
                         <button
                           onClick={() => handleDeleteUser(user.clerkId)}
                           disabled={isPending || editingUserId !== null || isCurrentUser}

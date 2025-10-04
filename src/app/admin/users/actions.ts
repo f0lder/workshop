@@ -6,6 +6,20 @@ import connectDB from '@/lib/mongodb'
 import { User } from '@/models'
 import { isUserAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { UserType, AccessLevel } from '@/types/models'
+
+// Type definitions for update operations
+interface UserUpdateData {
+  role: 'user' | 'admin'
+  userType?: UserType | null
+  accessLevel?: AccessLevel
+}
+
+interface ClerkMetadataUpdate {
+  role: 'user' | 'admin'
+  userType?: UserType | null
+  [key: string]: string | null | undefined
+}
 
 export async function updateUserRole(formData: FormData) {
   try {
@@ -22,6 +36,8 @@ export async function updateUserRole(formData: FormData) {
 
     const userId = formData.get('userId') as string
     const newRole = formData.get('role') as 'user' | 'admin'
+    const userType = formData.get('userType') as string
+    const accessLevel = formData.get('accessLevel') as 'unpaid' | 'active' | 'passive'
 
     if (!userId || !newRole) {
       throw new Error('Date invalide.')
@@ -31,17 +47,36 @@ export async function updateUserRole(formData: FormData) {
       throw new Error('Rol invalid.')
     }
 
+    if (accessLevel && !['unpaid', 'active', 'passive'].includes(accessLevel)) {
+      throw new Error('Nivel de acces invalid.')
+    }
+
+    if (userType && !['student', 'elev', 'rezident', ''].includes(userType)) {
+      throw new Error('Tip utilizator invalid.')
+    }
+
     // Don't allow changing own role
     if (userId === clerkUser.id) {
-      throw new Error('Nu vă puteți modifica propriul rol.')
+      throw new Error('Nu vă puteți modifica propriile date.')
     }
 
     await connectDB()
 
-    // Update role in MongoDB
+    // Prepare update data
+    const updateData: UserUpdateData = { role: newRole }
+    
+    if (userType !== undefined) {
+      updateData.userType = (userType as UserType) || null
+    }
+    
+    if (accessLevel) {
+      updateData.accessLevel = accessLevel
+    }
+
+    // Update user data in MongoDB
     const updatedUser = await User.findOneAndUpdate(
       { clerkId: userId },
-      { role: newRole },
+      updateData,
       { new: true, upsert: true }
     )
 
@@ -51,19 +86,40 @@ export async function updateUserRole(formData: FormData) {
 
     // Update role in Clerk's public metadata
     const client = await clerkClient()
+    const metadataUpdate: ClerkMetadataUpdate = { role: newRole }
+    
+    if (userType !== undefined) {
+      metadataUpdate.userType = (userType as UserType) || null
+    }
+    
     await client.users.updateUserMetadata(userId, {
-      publicMetadata: {
-        role: newRole
-      }
+      publicMetadata: metadataUpdate
     })
+
+    // Build success message
+    const updates = []
+    updates.push(`rol: ${newRole === 'admin' ? 'Administrator' : 'Utilizator'}`)
+    
+    if (userType !== undefined) {
+      updates.push(`tip: ${userType || 'nespecificat'}`)
+    }
+    
+    if (accessLevel) {
+      const accessLevelText = {
+        'unpaid': 'neplătit',
+        'active': 'activ',
+        'passive': 'pasiv'
+      }[accessLevel]
+      updates.push(`acces: ${accessLevelText}`)
+    }
 
     return { 
       success: true, 
-      message: `Rolul utilizatorului a fost actualizat cu succes la "${newRole === 'admin' ? 'Administrator' : 'Utilizator'}".` 
+      message: `Datele utilizatorului au fost actualizate cu succes (${updates.join(', ')}).` 
     }
   } catch (error) {
-    console.error('Error updating user role:', error)
-    throw new Error(error instanceof Error ? error.message : 'A apărut o eroare la actualizarea rolului.')
+    console.error('Error updating user:', error)
+    throw new Error(error instanceof Error ? error.message : 'A apărut o eroare la actualizarea datelor utilizatorului.')
   }
 }
 

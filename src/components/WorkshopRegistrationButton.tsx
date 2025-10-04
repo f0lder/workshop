@@ -4,10 +4,11 @@ import { Workshop } from '@/types/models'
 import { useTransition } from 'react'
 import { useToast } from '@/components/ui/ToastProvider'
 import { registerForWorkshop } from '@/app/workshops/actions'
+import { useMongoUser } from '@/hooks/useMongoUser'
+import Link from 'next/link'
 
 interface WorkshopRegistrationButtonProps {
   workshop: Workshop
-  userId?: string | null
   onRegistrationChange?: () => Promise<void>
   onOptimisticUpdate?: (workshopId: string, isRegistered: boolean) => void
   isGlobalRegistrationClosed?: boolean
@@ -21,9 +22,33 @@ function Spinner() {
 }
 
 export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlobalRegistrationClosed }: WorkshopRegistrationButtonProps) {
+  const { user: mongoUser, isLoading: isLoadingUser, error } = useMongoUser()
   const [isPending, startTransition] = useTransition()
   const { showToast } = useToast()
-  
+
+  // Show loading state while user data is loading
+  if (isLoadingUser) {
+    return (
+      <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border border-gray-300">
+        <Spinner /> Se încarcă...
+      </div>
+    )
+  }
+
+  // Show error state if user data failed to load
+  if (error) {
+    return (
+      <div className="w-full text-center py-2 px-4 bg-red-100 text-red-600 rounded-md border border-red-300">
+        Eroare la încărcarea datelor utilizatorului
+      </div>
+    )
+  }
+
+  // If no user is logged in, don't show the button
+  if (!mongoUser) {
+    return null
+  }
+
   // Check if user is registered
   const isRegistered = !!workshop.user_registered
   const isFull = workshop.currentParticipants >= workshop.maxParticipants
@@ -74,6 +99,20 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
     )
   }
   
+  // If user has unpaid access level, show link to payment page
+  if (mongoUser.accessLevel === 'unpaid') {
+    return (
+      <Link href="/payment" className="w-full">
+        <button
+          type="button"
+          className="w-full font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white"
+        >
+          Cumpără bilet pentru a te înregistra
+        </button>
+      </Link>
+    )
+  }
+
   return (
     <form action={handleSubmit}>
       <input type="hidden" name="workshopId" value={workshop.id} />

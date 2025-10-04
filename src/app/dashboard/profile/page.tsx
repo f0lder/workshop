@@ -5,6 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { FaSave, FaEnvelope, FaUser } from 'react-icons/fa'
 import { updateProfile } from './actions'
 import { UserType, AccessLevel } from '@/types/models'
+import { useMongoUser } from '@/hooks/useMongoUser'
 
 export default function ProfilePage() {
   const { isLoaded, user } = useUser()
@@ -16,15 +17,47 @@ export default function ProfilePage() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  // Update state when user data loads
+  const { user: mongoUser, isLoading: isMongoUserLoading, error: mongoUserError, refetch } = useMongoUser()
+
+  // Update state when user data loads - ALWAYS call this hook
   useEffect(() => {
-    if (user) {
-      setFirstName(user.firstName || '')
-      setLastName(user.lastName || '')
-      setUserType((user.unsafeMetadata as { userType?: UserType }).userType || 'student')
-      setAccessLevel((user.publicMetadata as { accessLevel?: AccessLevel }).accessLevel || 'unpaid')
+    if (user && mongoUser) {
+      setFirstName(mongoUser.firstName ?? '')
+      setLastName(mongoUser.lastName ?? '')
+      setUserType((mongoUser.userType as UserType | undefined) ?? 'student')
+      setAccessLevel((mongoUser.accessLevel as AccessLevel | undefined) ?? 'unpaid')
     }
-  }, [user])
+  }, [user, mongoUser])
+
+  // Handle loading state AFTER all hooks are called
+  if (isMongoUserLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent"></div>
+          <span className="text-muted-foreground">Se încarcă profilul...</span>
+        </div>
+      </div>
+    )
+  }
+
+  // Handle error state
+  if (!mongoUser && mongoUserError) {
+    console.error('Error loading MongoDB user data:', mongoUserError)
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="text-red-500 mb-2">Eroare la încărcarea datelor</div>
+          <button 
+            onClick={() => refetch()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Încearcă din nou
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
