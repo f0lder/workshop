@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { getUser } from '@/app/dashboard/profile/actions';
+import { syncUserWithDatabase } from '@/lib/auth';
+import connectDB from '@/lib/mongodb';
 
 export async function GET(
 	req: NextRequest,
@@ -14,8 +15,12 @@ export async function GET(
 	if (!currentUserData) {
 		redirect('/dashboard/profile');
 	}
+	await connectDB();
 
-	const userData = await getUser(currentUserData.id);
+	const userData = await syncUserWithDatabase(currentUserData);
+
+	console.log('User data fetched for QR redirect:', userData);
+
 	if (!userData) {
 		// If user not found, redirect to profile
 		redirect('/dashboard/profile');
