@@ -5,7 +5,19 @@ const isProtectedRoute = createRouteMatcher([
   '/admin(.*)',
 ])
 
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/auth/(.*)',
+  '/api/payments/webhook(.*)', // Exclude webhook from auth
+  '/api/payments/webhook-test(.*)', // Exclude test webhook from auth
+])
+
 export default clerkMiddleware(async (auth, req) => {
+  // Skip auth for public routes (including webhooks)
+  if (isPublicRoute(req)) {
+    return
+  }
+  
   if (isProtectedRoute(req)) {
     await auth.protect()
   }

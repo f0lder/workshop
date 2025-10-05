@@ -121,8 +121,24 @@ export async function POST(req: NextRequest) {
       console.log('Unhandled event type:', event.type);
   }
 
-  return NextResponse.json({ received: true });
+  return NextResponse.json({ received: true }, { 
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
 }
 
 // Disable body parsing to get raw body for webhook verification
 export const runtime = 'nodejs';
+
+// Explicitly handle OPTIONS for CORS
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Allow': 'POST',
+      'Content-Type': 'application/json',
+    },
+  });
+}
