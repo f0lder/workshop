@@ -30,7 +30,11 @@ export interface IWorkshop extends Document {
 export interface IRegistration extends Document {
   userId: string // Clerk user ID
   workshopId: string // Workshop ID
-  status: 'confirmed' | 'cancelled'
+  attendance: {
+    confirmed: boolean
+    confirmedAt?: Date
+    confirmedBy?: string // Admin user ID who confirmed
+  }
 }
 
 // User schema
@@ -65,7 +69,11 @@ const WorkshopSchema = new Schema<IWorkshop>({
 const RegistrationSchema = new Schema<IRegistration>({
   userId: { type: String, required: true },
   workshopId: { type: String, required: true },
-  status: { type: String, enum: ['confirmed', 'cancelled'], default: 'confirmed' },
+  attendance: {
+    confirmed: { type: Boolean, default: false },
+    confirmedAt: { type: Date },
+    confirmedBy: { type: String }, // Admin user ID who confirmed
+  }
 }, {
   timestamps: true
 })

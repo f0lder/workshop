@@ -43,7 +43,11 @@ export interface WorkshopRegistration {
   _id: string;
   userId: string; // Clerk user ID
   workshopId: string; // Workshop ID
-  status: 'confirmed' | 'cancelled';
+  attendance: {
+    confirmed: boolean;
+    confirmedAt?: Date | string;
+    confirmedBy?: string; // Admin user ID who confirmed
+  };
   createdAt: Date;
   updatedAt: Date;
 }

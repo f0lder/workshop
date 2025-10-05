@@ -1,0 +1,125 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { currentUser } from '@clerk/nextjs/server';
+import connectDB from '@/lib/mongodb';
+import { User, Registration } from '@/models';
+import { getUser } from '@/app/dashboard/profile/actions';
+
+export async function GET(
+	req: NextRequest,
+	{ params }: { params: Promise<{ userId: string }> }
+) {
+	try {
+		const { userId } = await params;
+		const currentUserData = await currentUser();
+
+		if (!currentUserData) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		const userData = await getUser(currentUserData.id);
+
+		// Check if current user is admin
+		const isAdmin = userData?.role === 'admin';
+		if (!isAdmin) {
+			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+		}
+
+		await connectDB();
+
+		// Get user data
+		const user = await User.findOne({ clerkId: userId });
+		if (!user) {
+			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+		}
+
+		// Get user registrations with workshop details
+		const registrations = await Registration.find({ userId })
+			.populate('workshopId')
+			.exec();
+
+		// Transform the data to include workshop details in the expected format
+		const transformedRegistrations = registrations.map(reg => ({
+			_id: reg._id,
+			workshopId: reg.workshopId._id,
+			workshop: {
+				_id: reg.workshopId._id,
+				title: reg.workshopId.title,
+				date: reg.workshopId.date,
+				time: reg.workshopId.time,
+				location: reg.workshopId.location,
+				instructor: reg.workshopId.instructor
+			},
+			status: reg.status,
+			attendance: reg.attendance || { confirmed: false }
+		}));
+
+		return NextResponse.json({
+			user: {
+				id: user.clerkId,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				email: user.email,
+				userType: user.userType,
+				accessLevel: user.accessLevel
+			},
+			registrations: transformedRegistrations
+		});
+
+	} catch (error) {
+		console.error('Error fetching attendance data:', error);
+		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+	}
+}
+
+export async function PATCH(
+	req: NextRequest,
+) {
+	try {
+		const currentUserData = await currentUser();
+
+		if (!currentUserData) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		// Check if current user is admin
+		const userData = await getUser(currentUserData.id);
+		const isAdmin = userData?.role === 'admin';
+		if (!isAdmin) {
+			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+		}
+
+		const { registrationId, confirmed } = await req.json();
+
+		if (!registrationId || confirmed === undefined) {
+			return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+		}
+
+		await connectDB();
+
+		// Update the registration attendance
+		const updateData = {
+			'attendance.confirmed': confirmed,
+			'attendance.confirmedAt': confirmed ? new Date() : null,
+			'attendance.confirmedBy': confirmed ? currentUserData.id : null
+		};
+
+		const registration = await Registration.findByIdAndUpdate(
+			registrationId,
+			updateData,
+			{ new: true }
+		);
+
+		if (!registration) {
+			return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
+		}
+
+		return NextResponse.json({
+			success: true,
+			message: `Prezența a fost ${confirmed ? 'confirmată' : 'anulată'}`
+		});
+
+	} catch (error) {
+		console.error('Error updating attendance:', error);
+		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+	}
+}

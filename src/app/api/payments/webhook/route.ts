@@ -5,20 +5,10 @@ import { Payment, User } from '@/models';
 import { AccessLevel } from '@/types/models';
 
 export async function POST(req: NextRequest) {
-  console.log('🔥 Webhook received!', new Date().toISOString());
-  
   const body = await req.text();
   const signature = req.headers.get('stripe-signature');
 
-  console.log('Webhook details:', {
-    hasBody: !!body,
-    bodyLength: body.length,
-    hasSignature: !!signature,
-    headers: Object.fromEntries(req.headers.entries())
-  });
-
   if (!signature) {
-    console.error('❌ No Stripe signature found');
     return NextResponse.json({ error: 'No signature' }, { status: 400 });
   }
 
@@ -26,9 +16,14 @@ export async function POST(req: NextRequest) {
 
   try {
     event = constructEvent(body, signature);
-    console.log('✅ Webhook signature verified, event type:', event.type);
   } catch (err) {
-    console.error('❌ Webhook signature verification failed:', err);
+    console.error('Webhook signature verification failed:', {
+      error: err instanceof Error ? err.message : 'Unknown error',
+      hasWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
+      webhookSecretLength: process.env.STRIPE_WEBHOOK_SECRET?.length || 0,
+      signatureHeader: signature.substring(0, 20) + '...',
+      bodyLength: body.length
+    });
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 

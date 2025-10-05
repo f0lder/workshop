@@ -24,9 +24,9 @@ export async function GET() {
         _id: String(reg._id),
         userId: reg.userId,
         workshopId: String(reg.workshopId),
-        status: reg.status,
         createdAt: reg.createdAt,
-        updatedAt: reg.updatedAt
+        updatedAt: reg.updatedAt,
+        attendance: reg.attendance || { confirmed: false }
       }))
     }
 

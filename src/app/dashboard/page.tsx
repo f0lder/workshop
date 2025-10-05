@@ -3,6 +3,7 @@ import { FaCalendarAlt, FaUsers, FaCog, FaCircle } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
 import { getUserRegistrations } from '@/app/workshops/actions'
+import SimpleUserQRCode from '@/components/SimpleUserQRCode'
 
 export default async function DashboardPage() {
   const clerkUser = await currentUser()
@@ -87,6 +88,45 @@ export default async function DashboardPage() {
                     {user.role === 'admin' ? 'Administrator' : 'Utilizator'}
                   </dd>
                 </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* User QR Code Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <SimpleUserQRCode 
+            userId={clerkUser.id} 
+            userName={clerkUser.firstName && clerkUser.lastName ? `${clerkUser.firstName} ${clerkUser.lastName}` : undefined}
+          />
+        </div>
+        <div className="space-y-4">
+          <div className="mimesiss-card p-4">
+            <h4 className="font-semibold text-foreground mb-2">Cum funcționează?</h4>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Administratorii scanează codul tău QR</li>
+              <li>• Prezența ta este confirmată automat</li>
+              <li>• Poți descărca codul pentru uz personal</li>
+            </ul>
+          </div>
+          <div className="mimesiss-card p-4">
+            <h4 className="font-semibold text-foreground mb-2">Informații Profil</h4>
+            <div className="text-sm space-y-2">
+              <div>
+                <span className="text-muted-foreground">Tip utilizator:</span>
+                <span className="ml-2 font-medium text-foreground">{user.userType}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Nivel acces:</span>
+                <span className="ml-2 font-medium text-foreground">{user.accessLevel}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Rol:</span>
+                <span className="ml-2 font-medium text-foreground">
+                  {user.role === 'admin' ? 'Administrator' : 'Utilizator'}
+                </span>
               </div>
             </div>
           </div>

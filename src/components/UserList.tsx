@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { FaUser, FaCrown, FaEdit, FaSave, FaTrash } from 'react-icons/fa'
+import { FaUser, FaCrown, FaEdit, FaSave, FaTrash, FaEllipsisV, FaClipboardCheck, FaQrcode, FaTimes } from 'react-icons/fa'
 import { updateUserRole, deleteUser } from '@/app/admin/users/actions'
-import { User,UserType,AccessLevel } from '@/types/models'
+import { User, UserType, AccessLevel } from '@/types/models'
+import { useRouter } from 'next/navigation'
+import SimpleUserQRCode from './SimpleUserQRCode'
 
 interface UserListProps {
   users: User[]
@@ -20,6 +22,8 @@ function Spinner() {
 export default function UserList({ users, currentUserId, onRefresh }: UserListProps) {
   const [editingUserId, setEditingUserId] = useState<string | null>(null)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
+  const [qrPopupUserId, setQrPopupUserId] = useState<string | null>(null)
   const [editData, setEditData] = useState<{
     role: 'user' | 'admin',
     userType: UserType | '',
@@ -28,6 +32,8 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  
+  const router = useRouter()
 
   const handleEdit = (user: User) => {
     setEditingUserId(user.clerkId)
@@ -104,6 +110,28 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
     setDeletingUserId(null)
     setMessage('')
     setError('')
+  }
+
+  const handleAttendancePage = (userId: string) => {
+    setDropdownOpen(null)
+    router.push(`/admin/attendance/${userId}`)
+  }
+
+  const handleShowQR = (userId: string) => {
+    setDropdownOpen(null)
+    setQrPopupUserId(userId)
+  }
+
+  const closeQRPopup = () => {
+    setQrPopupUserId(null)
+  }
+
+  const toggleDropdown = (userId: string) => {
+    setDropdownOpen(dropdownOpen === userId ? null : userId)
+  }
+
+  const closeDropdown = () => {
+    setDropdownOpen(null)
   }
 
   const formatDate = (date: Date | number | null) => {
@@ -325,34 +353,78 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
                         </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                      <div className="flex items-center space-x-2">
                         <span className={`px-1.5 sm:px-2 py-1 text-xs rounded ${user._id ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
                           }`}>
                           <span className="hidden sm:inline">{user._id ? 'Sincronizat' : 'Doar în Clerk'}</span>
                           <span className="sm:hidden">{user._id ? 'Sync' : 'Clerk'}</span>
                         </span>
-                        <button
-                          onClick={() => handleEdit(user)}
-                          disabled={isPending || deletingUserId !== null || isCurrentUser}
-                          className={`p-1 disabled:opacity-50 disabled:cursor-not-allowed ${isCurrentUser
-                              ? 'text-muted-foreground'
-                              : 'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300'
-                            }`}
-                          title={isCurrentUser ? 'Nu vă puteți modifica propriile date' : 'Editează utilizator'}
-                        >
-                          <FaEdit className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUser(user.clerkId)}
-                          disabled={isPending || editingUserId !== null || isCurrentUser}
-                          className={`p-1 disabled:opacity-50 disabled:cursor-not-allowed ${isCurrentUser
-                              ? 'text-muted-foreground'
-                              : 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300'
-                            }`}
-                          title={isCurrentUser ? 'Nu vă puteți șterge propriul cont' : 'Șterge utilizator'}
-                        >
-                          <FaTrash className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </button>
+                        
+                        <div className="relative">
+                          <button
+                            onClick={() => toggleDropdown(user.clerkId)}
+                            disabled={isPending || editingUserId !== null || deletingUserId !== null}
+                            className="p-2 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Acțiuni"
+                          >
+                            <FaEllipsisV className="h-4 w-4" />
+                          </button>
+                          
+                          {dropdownOpen === user.clerkId && (
+                            <>
+                              {/* Backdrop to close dropdown */}
+                              <div 
+                                className="fixed inset-0 z-10" 
+                                onClick={closeDropdown}
+                              />
+                              <div className="absolute right-0 top-8 z-20 w-48 bg-card border border-border rounded-lg shadow-lg py-1">
+                                <button
+                                  onMouseDown={() => {
+                                    handleEdit(user)
+                                    closeDropdown()
+                                  }}
+                                  disabled={isCurrentUser}
+                                  className={`w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center disabled:opacity-50 disabled:cursor-not-allowed ${
+                                    isCurrentUser ? 'text-muted-foreground' : 'text-foreground'
+                                  }`}
+                                >
+                                  <FaEdit className="h-3 w-3 mr-2" />
+                                  Editează
+                                </button>
+                                
+                                <button
+                                  onMouseDown={() => handleAttendancePage(user.clerkId)}
+                                  className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center text-foreground"
+                                >
+                                  <FaClipboardCheck className="h-3 w-3 mr-2" />
+                                  Prezență
+                                </button>
+                                
+                                <button
+                                  onMouseDown={() => handleShowQR(user.clerkId)}
+                                  className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center text-foreground"
+                                >
+                                  <FaQrcode className="h-3 w-3 mr-2" />
+                                  Cod QR
+                                </button>
+                                
+                                <button
+                                  onMouseDown={() => {
+                                    handleDeleteUser(user.clerkId)
+                                    closeDropdown()
+                                  }}
+                                  disabled={isCurrentUser}
+                                  className={`w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center disabled:opacity-50 disabled:cursor-not-allowed ${
+                                    isCurrentUser ? 'text-muted-foreground' : 'text-red-600 hover:text-red-800'
+                                  }`}
+                                >
+                                  <FaTrash className="h-3 w-3 mr-2" />
+                                  Șterge
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
                     )}
                   </td>
@@ -366,6 +438,45 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
       {users.length === 0 && (
         <div className="text-center py-8">
           <p className="text-muted-foreground">Nu au fost găsiți utilizatori.</p>
+        </div>
+      )}
+
+      {/* QR Code Popup Modal */}
+      {qrPopupUserId && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="mimesiss-card max-w-lg w-full mx-4 relative">
+            {/* Close button */}
+            <button
+              onClick={closeQRPopup}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors z-10 p-1 rounded-full hover:bg-muted"
+            >
+              <FaTimes className="h-5 w-5" />
+            </button>
+            
+            {/* QR Code Content */}
+            <div className="pt-6">
+              <div className="text-center mb-4">
+                <h3 className="text-xl font-semibold text-foreground">
+                  Cod QR pentru {(() => {
+                    const user = users.find(u => u.clerkId === qrPopupUserId);
+                    return user ? getDisplayName(user) : 'Utilizator';
+                  })()}
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Scanează pentru a confirma prezența
+                </p>
+              </div>
+              
+              {/* Only render QR component when popup is open */}
+              <SimpleUserQRCode 
+                userId={qrPopupUserId} 
+                userName={(() => {
+                  const user = users.find(u => u.clerkId === qrPopupUserId);
+                  return user ? getDisplayName(user) : undefined;
+                })()} 
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
