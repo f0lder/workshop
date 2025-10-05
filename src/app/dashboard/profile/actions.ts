@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { syncUserWithDatabase } from '@/lib/auth'
 import { User, UserType, AccessLevel } from '@/types/models'
 import { User as MongoUser } from '@/models'
+import connectDB from '@/lib/mongodb'
 
 export async function updateProfile(formData: FormData) {
   const clerkUser = await currentUser()
@@ -55,10 +56,18 @@ export async function updateProfile(formData: FormData) {
 
 
 export async function getUser(userId: string): Promise<User | null> {
-  const user = await MongoUser.findOne({ clerkId: userId }).lean() as User | null
-  if (user) {
-    return user
-  }
+  try {
+    // Ensure database connection with timeout
+    const connection = await connectDB();
+    if (!connection || connection.connection.readyState !== 1) {
+      console.error('Database connection failed in getUser');
+      return null;
+    }
 
-  return null
+    const user = await MongoUser.findOne({ clerkId: userId }).maxTimeMS(5000).lean() as User | null;
+    return user;
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return null;
+  }
 }
