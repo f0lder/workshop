@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
-import { User, Registration } from '@/models';
-import { getUser } from '@/app/dashboard/profile/actions';
+import { Registration } from '@/models';
+import { syncUserWithDatabase } from '@/lib/auth';
 
 export async function GET(
 	req: NextRequest,
@@ -16,25 +16,12 @@ export async function GET(
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const userData = await getUser(currentUserData.id);
+		const userData = await syncUserWithDatabase(currentUserData);
 
 		// Check if current user is admin
 		const isAdmin = userData?.role === 'admin';
 		if (!isAdmin) {
 			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-		}
-
-		// Ensure database connection with timeout
-		const connection = await connectDB();
-		if (!connection || connection.connection.readyState !== 1) {
-			console.error('Database connection failed');
-			return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
-		}
-
-		// Get user data with timeout handling
-		const user = await User.findOne({ clerkId: userId }).maxTimeMS(5000);
-		if (!user) {
-			return NextResponse.json({ error: 'User not found' }, { status: 404 });
 		}
 
 		// Get user registrations with workshop details
@@ -61,12 +48,12 @@ export async function GET(
 
 		return NextResponse.json({
 			user: {
-				id: user.clerkId,
-				firstName: user.firstName,
-				lastName: user.lastName,
-				email: user.email,
-				userType: user.userType,
-				accessLevel: user.accessLevel
+				id: userData.clerkId,
+				firstName: userData.firstName,
+				lastName: userData.lastName,
+				email: userData.email,
+				userType: userData.userType,
+				accessLevel: userData.accessLevel
 			},
 			registrations: transformedRegistrations
 		});
@@ -88,7 +75,7 @@ export async function PATCH(
 		}
 
 		// Check if current user is admin
-		const userData = await getUser(currentUserData.id);
+		const userData = await syncUserWithDatabase(currentUserData);
 		const isAdmin = userData?.role === 'admin';
 		if (!isAdmin) {
 			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
