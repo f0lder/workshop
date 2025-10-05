@@ -10,6 +10,7 @@ const isPublicRoute = createRouteMatcher([
   '/auth/(.*)',
   '/api/payments/webhook(.*)', // Exclude webhook from auth
   '/api/payments/webhook-test(.*)', // Exclude test webhook from auth
+  '/qr/(.*)', // QR code routes should be public
 ])
 
 export default clerkMiddleware(async (auth, req) => {

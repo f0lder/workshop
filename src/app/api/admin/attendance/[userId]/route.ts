@@ -24,10 +24,15 @@ export async function GET(
 			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 		}
 
-		await connectDB();
+		// Ensure database connection with timeout
+		const connection = await connectDB();
+		if (!connection || connection.connection.readyState !== 1) {
+			console.error('Database connection failed');
+			return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+		}
 
-		// Get user data
-		const user = await User.findOne({ clerkId: userId });
+		// Get user data with timeout handling
+		const user = await User.findOne({ clerkId: userId }).maxTimeMS(5000);
 		if (!user) {
 			return NextResponse.json({ error: 'User not found' }, { status: 404 });
 		}
@@ -35,6 +40,7 @@ export async function GET(
 		// Get user registrations with workshop details
 		const registrations = await Registration.find({ userId })
 			.populate('workshopId')
+			.maxTimeMS(5000)
 			.exec();
 
 		// Transform the data to include workshop details in the expected format
@@ -94,7 +100,12 @@ export async function PATCH(
 			return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
 		}
 
-		await connectDB();
+		// Ensure database connection with timeout
+		const connection = await connectDB();
+		if (!connection || connection.connection.readyState !== 1) {
+			console.error('Database connection failed');
+			return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+		}
 
 		// Update the registration attendance
 		const updateData = {
@@ -106,7 +117,7 @@ export async function PATCH(
 		const registration = await Registration.findByIdAndUpdate(
 			registrationId,
 			updateData,
-			{ new: true }
+			{ new: true, maxTimeMS: 5000 }
 		);
 
 		if (!registration) {
