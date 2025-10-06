@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    // Connect to database
+    await connectDB();
 
     const userData = await User.findOne({ clerkId: user.id }).lean() as UserInterface | null;
     const { accessLevel } = await req.json() as { accessLevel: TicketType };
@@ -23,9 +25,6 @@ export async function POST(req: NextRequest) {
     }
 
     const ticketDetails = TICKET_PRICES[accessLevel];
-
-    // Connect to database
-    await connectDB();
 
     // Check if user already has a completed payment for this access level
     const existingPayment = await Payment.findOne({
