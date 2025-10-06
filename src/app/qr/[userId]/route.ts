@@ -22,8 +22,8 @@ export async function GET(
 	console.log('User data fetched for QR redirect:', userData);
 
 	if (!userData) {
-		// If user not found, redirect to profile
-		redirect('/dashboard/profile');
+		// If user not found, redirect sign-in
+		redirect('/auth/sign-in');
 	}
 
 	// Check if current user is admin

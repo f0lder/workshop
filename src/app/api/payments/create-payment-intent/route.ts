@@ -4,7 +4,8 @@ import { stripe } from '@/lib/stripe';
 import { TICKET_PRICES, TicketType } from '@/lib/pricing';
 import connectDB from '@/lib/mongodb';
 import { Payment } from '@/models';
-import { getUser } from '@/app/dashboard/profile/actions';
+import { User} from '@/models';
+import { User as UserInterface } from '@/types/models';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userData = await getUser(user.id);
+    const userData = await User.findOne({ clerkId: user.id }).lean() as UserInterface | null;
     const { accessLevel } = await req.json() as { accessLevel: TicketType };
 
     if (!accessLevel || !TICKET_PRICES[accessLevel]) {

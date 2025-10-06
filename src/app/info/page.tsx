@@ -1,8 +1,13 @@
 import HeaderContent from '@/components/HeaderContent'
 import Link from 'next/link'
 import { FaUserGraduate, FaFileAlt, FaCreditCard, FaInfoCircle } from 'react-icons/fa'
+import { getAppSettings } from '@/lib/settings'
 
-export default function InfoPage() {
+export default async function InfoPage() {
+  const settings = await getAppSettings();
+
+  const paymentenabled = settings ?? false;
+
   return (
     <>
       <HeaderContent title='Informații MIMESISS 2025' />
@@ -106,9 +111,15 @@ export default function InfoPage() {
                 </div>
                 
                 <div className="text-center">
+                  
                   <div className="text-3xl font-bold text-secondary mb-2">170 RON</div>
                   <p className="text-gray-400">Taxa de participare</p>
                 </div>
+                {paymentenabled && (
+                  <Link href="/payment" className="mimesiss-btn-primary items-center">
+                    Cumpara bilet
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -156,6 +167,12 @@ export default function InfoPage() {
                   <div className="text-3xl font-bold text-primary mb-2">120 RON</div>
                   <p className="text-muted-foreground">Taxa comună pentru toate secțiunile</p>
                 </div>
+
+                {paymentenabled && (
+                  <Link href="/payment" className="mimesiss-btn-primary items-center">
+                    Cumpara bilet
+                  </Link>
+                )}
               </div>
             </div>
           </div>
