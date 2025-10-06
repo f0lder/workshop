@@ -4,13 +4,13 @@ import { stripe } from '@/lib/stripe';
 import { TICKET_PRICES, TicketType } from '@/lib/pricing';
 import connectDB from '@/lib/mongodb';
 import { Payment } from '@/models';
-import { User} from '@/models';
+import { User } from '@/models';
 import { User as UserInterface } from '@/types/models';
 
 export async function POST(req: NextRequest) {
   try {
     const user = await currentUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (existingPayment) {
-      return NextResponse.json({ 
-        error: 'Aveți deja un bilet de acest tip' 
+      return NextResponse.json({
+        error: 'Aveți deja un bilet de acest tip'
       }, { status: 400 });
     }
 
@@ -61,8 +61,8 @@ export async function POST(req: NextRequest) {
     });
 
     // Payment record will be created only when payment succeeds via webhook
-    return NextResponse.json({ 
-      clientSecret: paymentIntent.client_secret 
+    return NextResponse.json({
+      clientSecret: paymentIntent.client_secret
     });
 
   } catch (error) {
