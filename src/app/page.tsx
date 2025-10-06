@@ -3,10 +3,13 @@ import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
 import CountdownWrapper from '@/components/CountdownWrapper'
 import { FaCalendar, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa'
+import { getAppSettings } from '@/lib/settings'
 
 export default async function HomePage() {
   const user = await currentUser()
+  const settings = await getAppSettings();
 
+  const paymentsEnabled = settings?.paymentsEnabled ?? false;
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
       {/* Banner Section */}
@@ -61,6 +64,11 @@ export default async function HomePage() {
           {user ? (
             // Logged in user CTAs
             <>
+            {paymentsEnabled && (
+              <Link href="/payment" className="mimesiss-btn-primary">
+                Cumpără Bilet
+              </Link>
+            )}
               <Link href="/dashboard" className="mimesiss-btn-primary">
                 Accesează Contul
               </Link>
@@ -73,7 +81,7 @@ export default async function HomePage() {
             // Guest user CTAs
             <>
               <Link href="/auth/signup" className="mimesiss-btn-primary">
-                Înregistrează-te
+                Înregistrează-te pentru a cumpara bilet
               </Link>
 
               <Link href="/info" className="mimesiss-btn-secondary">

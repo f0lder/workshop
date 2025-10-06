@@ -51,21 +51,16 @@ export default function LoginPage() {
     setIsLoading(true)
     setError('')
 
-    console.log('Attempting login with:', { email, passwordLength: password.length }) // Debug log
-
     try {
       const result = await signIn.create({
         identifier: email,
         password,
       })
 
-      console.log('Sign in result:', result) // Debug log
-
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
         router.push('/dashboard')
       } else {
-        console.log('Sign in incomplete, status:', result.status) // Debug log
         setError('Nu s-a putut finaliza autentificarea. Vă rugăm să încercați din nou.')
       }
     } catch (err: unknown) {

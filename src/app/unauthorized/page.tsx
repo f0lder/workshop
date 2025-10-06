@@ -1,45 +1,39 @@
 import Link from 'next/link'
-import { FaShieldAlt, FaArrowLeft } from 'react-icons/fa'
+import { FaShieldAlt, FaHome, FaTachometerAlt } from 'react-icons/fa'
 
 export default function UnauthorizedPage() {
   return (
-    <div className="min-h-screen bg-muted flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="text-center">
-          <FaShieldAlt className="mx-auto h-24 w-24 text-red-500" />
-          <h2 className="mt-6 text-3xl font-extrabold text-foreground">
-            Access Denied
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            You don&apos;t have permission to access this page.
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-background flex flex-col justify-center py-12 px-4">
+      <div className="max-w-md mx-auto w-full">
+        {/* Main Error Card */}
+        <div className="mimesiss-card p-8 text-center">
+          <div className="mb-6">
+            <FaShieldAlt className="mx-auto h-20 w-20 text-destructive mb-4" />
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Acces Refuzat
+            </h1>
+            <p className="text-muted-foreground">
+              Nu aveți permisiunea de a accesa această pagină.
+            </p>
+          </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-card py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <div className="space-y-6">
-            <div className="text-center">
-              <p className="text-foreground">
-                This page requires administrator privileges. If you believe you should have access, 
-                please contact your system administrator.
-              </p>
-            </div>
-
-            <div className="flex flex-col space-y-3">
+          <div className="space-y-4">
+            {/* Action Buttons */}
+            <div className="space-y-3 pt-4">
               <Link
                 href="/dashboard"
-                className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full inline-flex justify-center items-center px-6 py-3 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                Go to Dashboard
+                <FaTachometerAlt className="h-4 w-4 mr-2" />
+                Mergi la Dashboard
               </Link>
               
               <Link
                 href="/"
-                className="w-full flex justify-center items-center py-2 px-4 border border-input rounded-md shadow-sm text-sm font-medium text-foreground bg-card hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full inline-flex justify-center items-center px-6 py-3 bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                <FaArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
+                <FaHome className="h-4 w-4 mr-2" />
+                Înapoi la Pagina Principală
               </Link>
             </div>
           </div>

@@ -86,13 +86,6 @@ export async function POST(req: NextRequest) {
           await user.save();
         }
 
-        console.log('PaymentIntent completed successfully:', {
-          paymentIntentId: paymentIntent.id,
-          clerkId,
-          accessLevel,
-          amount: paymentIntent.amount
-        });
-
       } catch (error) {
         console.error('Error processing completed PaymentIntent:', error);
         return NextResponse.json({ error: 'Processing failed' }, { status: 500 });

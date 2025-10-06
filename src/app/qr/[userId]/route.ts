@@ -19,8 +19,6 @@ export async function GET(
 
 	const userData = await syncUserWithDatabase(currentUserData);
 
-	console.log('User data fetched for QR redirect:', userData);
-
 	if (!userData) {
 		// If user not found, redirect sign-in
 		redirect('/auth/sign-in');
@@ -34,6 +32,6 @@ export async function GET(
 		redirect(`/admin/attendance/${userId}`);
 	} else {
 		// Regular user: redirect to their profile
-		redirect('/dashboard/profile');
+		redirect('/dashboard');
 	}
 }
