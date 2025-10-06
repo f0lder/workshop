@@ -9,6 +9,7 @@ import { Workshop as WorkshopType } from '@/types/models'
 
 export async function registerForWorkshop(formData: FormData): Promise<void> {
   const clerkUser = await currentUser()
+  
   const workshopId = formData.get('workshopId') as string
   const action = formData.get('action') as string
 
@@ -24,7 +25,7 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
       getAppSettings(),
       Workshop.findById(workshopId),
       Registration.findOne({ userId: clerkUser.id, workshopId }),
-      Registration.countDocuments({ userId: clerkUser.id, status: 'confirmed' })
+      Registration.countDocuments({ userId: clerkUser.id })
     ])
 
     if (!workshop) {
@@ -118,6 +119,12 @@ export async function getUserRegistrations(userId: string): Promise<WorkshopType
 }
 
 export async function getWorkshopById(workshopId: string): Promise<WorkshopType | null> {
+  // Validate ObjectId format before making database query
+  if (!workshopId || workshopId.length !== 24 || !/^[0-9a-fA-F]{24}$/.test(workshopId)) {
+    console.log('Invalid ObjectId format:', workshopId)
+    return null
+  }
+
   await connectDB()
 
   try {
@@ -126,5 +133,37 @@ export async function getWorkshopById(workshopId: string): Promise<WorkshopType 
   } catch (error) {
     console.error('Error fetching workshop by ID:', error)
     return null
+  }
+}
+
+export async function getIsRegisteredForWorkshop( workshopId: string): Promise<boolean> {
+
+
+  const clerkUser = await currentUser()
+
+  if (!clerkUser) {
+    return false
+  }
+
+  await connectDB()
+
+  try {
+    const registration = await Registration.findOne({ userId: clerkUser.id, workshopId }).lean()
+    return registration !== null
+  } catch (error) {
+    console.error('Error checking workshop registration:', error)
+    return false
+  }
+}
+
+export async function getAllWorkshops(): Promise<WorkshopType[]> {
+  await connectDB()
+
+  try {
+    const workshops = await Workshop.find({}).sort({ date: 1 }).lean()
+    return workshops as unknown as WorkshopType[]
+  } catch (error) {
+    console.error('Error fetching workshops:', error)
+    return []
   }
 }

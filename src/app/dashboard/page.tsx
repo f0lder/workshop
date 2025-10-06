@@ -182,11 +182,19 @@ export default async function DashboardPage() {
                       <div>
                         <p className="text-sm font-medium text-foreground">{workshop.title}</p>
                         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                          <span>{new Date(workshop.date).toLocaleDateString()}
-                          </span>
-                          <FaCircle className="inline-block size-[8px] fill-current" />
-                          <span>{workshop.location}</span>
-                          <FaCircle className="inline-block size-[8px] fill-current" />
+                          {workshop.date && (
+                            <>
+                              <span>{new Date(workshop.date).toLocaleDateString()}</span>
+                              <FaCircle className="inline-block size-[8px] fill-current" />
+                            </>
+                          )}
+                          {workshop.location && (
+                            <>
+                              
+                              <span>{workshop.location}</span>
+                              <FaCircle className="inline-block size-[8px] fill-current" />
+                            </>
+                          )}
                           <span>{workshop.currentParticipants} / {workshop.maxParticipants} locuri ocupate</span>
                         </div>
                       </div>

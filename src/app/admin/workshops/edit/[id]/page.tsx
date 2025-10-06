@@ -5,6 +5,7 @@ import { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Workshop } from '@/models'
 import WorkshopForm from '@/components/WorkshopForm'
+import { Workshop as WorkshopType } from '@/types/models'
 
 interface EditWorkshopPageProps {
   params: Promise<{
@@ -32,36 +33,14 @@ export default async function EditWorkshopPage({ params }: EditWorkshopPageProps
   await connectDB()
 
   // Fetch the workshop
-  const workshop = await Workshop.findById(id).lean() as {
-    _id: { toString(): string }
-    title: string
-    description: string
-    date: Date
-    time: string
-    location: string
-    maxParticipants: number
-    currentParticipants: number
-    instructor: string
-    status: string
-  } | null
+  const workshop = await Workshop.findById(id).lean() as WorkshopType | null
 
   if (!workshop) {
     notFound()
   }
 
-  // Convert the workshop data to a serializable format
-  const workshopData = {
-    id: workshop._id.toString(),
-    title: workshop.title,
-    description: workshop.description,
-    date: workshop.date.toISOString().split('T')[0], // Convert to YYYY-MM-DD format
-    time: workshop.time,
-    location: workshop.location,
-    maxParticipants: workshop.maxParticipants,
-    currentParticipants: workshop.currentParticipants,
-    instructor: workshop.instructor,
-    status: workshop.status,
-  }
+  // Prepare workshop data for the form
+  const workshopJSON = JSON.parse(JSON.stringify(workshop))
 
-  return <WorkshopForm mode="edit" workshop={workshopData} />
+  return <WorkshopForm mode="edit" workshop={workshopJSON} />
 }

@@ -33,7 +33,6 @@ export interface Workshop {
   instructor: string;
   status: 'active' | 'cancelled' | 'completed';
   wsType: 'workshop' | 'conferinta';
-  user_registered?: boolean; // For display in UI
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -1,17 +1,21 @@
 import { getWorkshopById } from "../actions";
 import HeaderContent from "@/components/HeaderContent";
+import { WorkshopRegistrationButton } from "@/components/WorkshopRegistrationButton";
 import type { Workshop } from "@/types/models";
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaChalkboardTeacher, FaUsers, FaInfoCircle } from 'react-icons/fa';
+import { getAppSettings } from "@/lib/settings";
+import { getIsRegisteredForWorkshop } from "../actions";
 
 function formatDate(value?: Date | string) {
 	if (!value) return "—";
 	const d = value instanceof Date ? value : new Date(value);
-	return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(d);
+	return new Intl.DateTimeFormat('ro-RO', { dateStyle: "long" }).format(d);
 }
 
 function formatDateTime(value?: Date | string) {
 	if (!value) return "—";
 	const d = value instanceof Date ? value : new Date(value);
-	return new Intl.DateTimeFormat(undefined, {
+	return new Intl.DateTimeFormat('ro-RO', {
 		dateStyle: "medium",
 		timeStyle: "short",
 	}).format(d);
@@ -20,87 +24,163 @@ function formatDateTime(value?: Date | string) {
 export default async function WorkshopPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
 
+	const appSettings = await getAppSettings()
+	const isGlobalRegistrationClosed = appSettings?.globalRegistrationEnabled || false
+
 	const workshop = (await getWorkshopById(id)) as Workshop | null;
 
 	if (!workshop) {
-		return <h1>Workshop not found</h1>;
+		return (
+			<div className="min-h-screen bg-background flex items-center justify-center">
+				<div className="mimesiss-card p-8 text-center">
+					<FaInfoCircle className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+					<h1 className="text-2xl font-bold text-foreground mb-2">Workshop negăsit</h1>
+					<p className="text-muted-foreground">Workshop-ul căutat nu există sau a fost șters.</p>
+				</div>
+			</div>
+		);
 	}
 
+	// Serialize the workshop data for client components
+	const wsJSON = JSON.parse(JSON.stringify(workshop));
+
+	const isRegistered = workshop ? await getIsRegisteredForWorkshop(workshop._id?.toString() ?? '') : false;
+
 	const workshopDate = workshop.date ? new Date(workshop.date) : undefined;
+	const availableSpots = workshop.maxParticipants - workshop.currentParticipants;
+	const isWorkshopFull = availableSpots <= 0;
+
 	return (
 		<>
-			<HeaderContent title={`Atelier: ${workshop.title}`} />
-			<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-				{/* Basic Info */}
+			<HeaderContent title={`Workshop: ${workshop.title}`} />
+			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+				{/* Hero Section */}
+				<div className="mimesiss-card p-8">
+					<div className="text-center mb-6">
+						<h1 className="text-3xl font-bold text-foreground mb-3">{workshop.title}</h1>
+						<p className="text-lg text-muted-foreground leading-relaxed">{workshop.description}</p>
+					</div>
+
+					{/* Registration Button */}
+					<div className="flex justify-center mb-6">
+						<WorkshopRegistrationButton workshop={wsJSON} isGlobalRegistrationClosed={isGlobalRegistrationClosed} isRegistered={isRegistered} />
+					</div>
+
+					{/* Status Badge */}
+					<div className="flex justify-center">
+						<span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${workshop.status === 'active' ? 'bg-primary/10 text-primary border border-primary/20' :
+							workshop.status === 'completed' ? 'bg-green-100 text-green-800 border border-green-200' :
+								'bg-red-100 text-red-800 border border-red-200'
+							}`}>
+							{workshop.status === 'active' ? 'Activ' :
+								workshop.status === 'completed' ? 'Finalizat' :
+									workshop.status === 'cancelled' ? 'Anulat' : workshop.status}
+						</span>
+					</div>
+				</div>
+
+				{/* Workshop Details */}
 				<div className="mimesiss-card p-6">
-					<h2 className="text-2xl font-bold text-accent mb-2">{workshop.title}</h2>
-					<p className="text-sm text-muted-foreground mb-4">{workshop.description}</p>
+					<h2 className="text-xl font-semibold text-foreground mb-6 flex items-center">
+						<FaInfoCircle className="mr-2 text-primary" />
+						Detalii Workshop
+					</h2>
 
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<div>
-							<h4 className="text-xs text-muted-foreground uppercase mb-1">Date</h4>
-							<div className="font-medium">{formatDate(workshopDate)}</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div className="flex items-center p-4 bg-muted/30 rounded-lg">
+							<FaCalendarAlt className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+							<div>
+								<h4 className="text-sm font-medium text-muted-foreground mb-1">Data</h4>
+								<div className="font-semibold text-foreground">{formatDate(workshopDate)}</div>
+							</div>
 						</div>
 
-						<div>
-							<h4 className="text-xs text-muted-foreground uppercase mb-1">Time</h4>
-							<div className="font-medium">{workshop.time ?? "—"}</div>
+						<div className="flex items-center p-4 bg-muted/30 rounded-lg">
+							<FaClock className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+							<div>
+								<h4 className="text-sm font-medium text-muted-foreground mb-1">Ora</h4>
+								<div className="font-semibold text-foreground">{workshop.time || "De stabilit"}</div>
+							</div>
 						</div>
 
-						<div>
-							<h4 className="text-xs text-muted-foreground uppercase mb-1">Location</h4>
-							<div className="font-medium">{workshop.location ?? "—"}</div>
+						<div className="flex items-center p-4 bg-muted/30 rounded-lg">
+							<FaMapMarkerAlt className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+							<div>
+								<h4 className="text-sm font-medium text-muted-foreground mb-1">Locația</h4>
+								<div className="font-semibold text-foreground">{workshop.location || "De stabilit"}</div>
+							</div>
 						</div>
 
-						<div>
-							<h4 className="text-xs text-muted-foreground uppercase mb-1">Instructor</h4>
-							<div className="font-medium">{workshop.instructor ?? "—"}</div>
+						<div className="flex items-center p-4 bg-muted/30 rounded-lg">
+							<FaChalkboardTeacher className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+							<div>
+								<h4 className="text-sm font-medium text-muted-foreground mb-1">Instructor</h4>
+								<div className="font-semibold text-foreground">{workshop.instructor || "De stabilit"}</div>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				{/* Participation & Status */}
+				{/* Participation Info */}
 				<div className="mimesiss-card p-6">
-					<h3 className="text-xl font-bold text-accent mb-4">Participare</h3>
-					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-						<div>
-							<h4 className="text-xs text-muted-foreground uppercase mb-1">Max participanți</h4>
-							<div className="font-medium">{workshop.maxParticipants ?? "—"}</div>
+					<h2 className="text-xl font-semibold text-foreground mb-6 flex items-center">
+						<FaUsers className="mr-2 text-primary" />
+						Informații Participare
+					</h2>
+
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+						<div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/10">
+							<div className="text-2xl font-bold text-primary mb-1">{workshop.maxParticipants}</div>
+							<div className="text-sm text-muted-foreground">Locuri disponibile</div>
 						</div>
-						<div>
-							<h4 className="text-xs text-muted-foreground uppercase mb-1">Participanți curenți</h4>
-							<div className="font-medium">{workshop.currentParticipants ?? 0}</div>
+
+						<div className="text-center p-4 bg-muted/30 rounded-lg">
+							<div className="text-2xl font-bold text-foreground mb-1">{workshop.currentParticipants}</div>
+							<div className="text-sm text-muted-foreground">Participanți înscriși</div>
+						</div>
+
+						<div className="text-center p-4 bg-muted/30 rounded-lg">
+							<div className={`text-2xl font-bold mb-1 ${isWorkshopFull ? 'text-destructive' : 'text-green-600'}`}>
+								{availableSpots}
+							</div>
+							<div className="text-sm text-muted-foreground">Locuri rămase</div>
 						</div>
 					</div>
 
-					<div className="mt-4">
-						<h4 className="text-xs text-muted-foreground uppercase mb-1">Status atelier</h4>
-						<div className="font-medium">{workshop.status ?? "—"}</div>
+					{isWorkshopFull && (
+						<div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+							<p className="text-sm text-destructive text-center font-medium">
+								⚠️ Workshop-ul este complet rezervat
+							</p>
+						</div>
+					)}
+				</div>
+
+				{/* Type and Additional Info */}
+				{(workshop.wsType || workshop.createdAt) && (
+					<div className="mimesiss-card p-6">
+						<h2 className="text-xl font-semibold text-foreground mb-6">Informații Suplimentare</h2>
+
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							{workshop.wsType && (
+								<div>
+									<h4 className="text-sm font-medium text-muted-foreground mb-2">Tip Eveniment</h4>
+									<span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-secondary/10 text-secondary border border-secondary/20">
+										{workshop.wsType === 'workshop' ? 'Workshop' :
+											workshop.wsType === 'conferinta' ? 'Conferință' : workshop.wsType}
+									</span>
+								</div>
+							)}
+
+							{workshop.createdAt && (
+								<div>
+									<h4 className="text-sm font-medium text-muted-foreground mb-2">Creat la</h4>
+									<div className="text-foreground">{formatDateTime(workshop.createdAt)}</div>
+								</div>
+							)}
+						</div>
 					</div>
-				</div>
-
-				{/* Metadata */}
-				<div className="mimesiss-card p-6">
-					<h3 className="text-xl font-bold text-accent mb-4">Meta</h3>
-					<dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<div>
-							<dt className="text-xs text-muted-foreground uppercase">Created at</dt>
-							<dd className="font-medium">{formatDateTime(workshop.createdAt)}</dd>
-						</div>
-
-						<div>
-							<dt className="text-xs text-muted-foreground uppercase">Updated at</dt>
-							<dd className="font-medium">{formatDateTime(workshop.updatedAt)}</dd>
-						</div>
-
-						<div>
-							<dt className="text-xs text-muted-foreground uppercase">Raw _id</dt>
-							<dd className="font-medium">
-								{workshop._id ? (typeof workshop._id === "string" ? workshop._id : workshop._id.toString()) : "—"}
-							</dd>
-						</div>
-					</dl>
-				</div>
+				)}
 			</div>
 		</>
 	);

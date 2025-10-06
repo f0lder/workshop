@@ -53,12 +53,12 @@ const UserSchema = new Schema<IUser>({
 const WorkshopSchema = new Schema<IWorkshop>({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  date: { type: Date, required: true },
-  time: { type: String, required: true },
-  location: { type: String, required: true },
+  date: { type: Date, required: false },
+  time: { type: String, required: false },
+  location: { type: String, required: false },
   maxParticipants: { type: Number, required: true, min: 1 },
   currentParticipants: { type: Number, default: 0, min: 0 },
-  instructor: { type: String, required: true },
+  instructor: { type: String, required: false },
   status: { type: String, enum: ['active', 'cancelled', 'completed'], default: 'active' },
   wsType: { type: String, enum: ['workshop', 'conferinta'], default: 'workshop' },
 }, {

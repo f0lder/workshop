@@ -5,6 +5,9 @@ import { getAppSettings } from '@/lib/settings'
 import HeaderContent from '@/components/HeaderContent'
 import { FaCircle } from 'react-icons/fa'
 
+// Force dynamic rendering since we're fetching data from database
+export const dynamic = 'force-dynamic'
+
 // Skeleton loader for the workshop list
 function WorkshopListSkeleton() {
   return (
@@ -30,7 +33,6 @@ function WorkshopListSkeleton() {
 export default async function WorkshopsPage() {
 
   const appSettings = await getAppSettings()
-  const isGlobalRegistrationClosed = appSettings?.globalRegistrationEnabled || false
   const workshopVisibleToPublic = appSettings?.workshopVisibleToPublic || false
 
   return (
@@ -63,7 +65,7 @@ export default async function WorkshopsPage() {
 
           {/* Workshop List with Loading */}
           <Suspense fallback={<WorkshopListSkeleton />}>
-            <WorkshopList workshopVisibleToPublic={workshopVisibleToPublic} isGlobalRegistrationClosed={isGlobalRegistrationClosed} />
+            <WorkshopList workshopVisibleToPublic={workshopVisibleToPublic} />
           </Suspense>
 
           {/* Info Section */}

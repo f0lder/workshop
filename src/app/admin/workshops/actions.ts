@@ -31,23 +31,40 @@ export async function createWorkshop(formData: FormData) {
   const location = formData.get('location') as string
   const instructor = formData.get('instructor') as string
   const maxParticipants = parseInt(formData.get('maxParticipants') as string)
+  const wsType = formData.get('type') as string
 
   // Validate required fields
-  if (!title || !description || !date || !time || !location || !instructor || !maxParticipants) {
+  if (!title || !description || !maxParticipants || !wsType) {
     throw new Error('All required fields must be filled')
   }
 
   try {
+    // Parse and validate date
+    let parsedDate = null;
+    if (date && date.trim()) {
+      const dateObj = new Date(date);
+      if (!isNaN(dateObj.getTime())) {
+        parsedDate = dateObj;
+      }
+    }
+
+    // Validate wsType enum
+    const validWsTypes = ['workshop', 'conferinta'];
+    const normalizedWsType = wsType?.toLowerCase();
+    const finalWsType = validWsTypes.includes(normalizedWsType) ? normalizedWsType : 'workshop';
+
     // Create the workshop
     const workshop = await Workshop.create({
       title,
       description,
-      date: new Date(date),
-      time,
-      location,
+      date: parsedDate,
+      time: time || null,
+      location: location || '',
       maxParticipants,
       currentParticipants: 0,
-      instructor,
+      instructor: instructor || '',
+      wsType: finalWsType,
+      status: 'active',
     })
 
     // Revalidate the admin workshops page
@@ -56,7 +73,8 @@ export async function createWorkshop(formData: FormData) {
     return { success: true, workshopId: workshop._id.toString() }
   } catch (error) {
     console.error('Error creating workshop:', error)
-    throw new Error('Failed to create workshop')
+    const message = error instanceof Error ? error.message : 'Unknown error occurred'
+    throw new Error('Failed to create workshop: ' + message)
   }
 }
 
@@ -78,15 +96,16 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
 
   // Extract form data
   const title = formData.get('title') as string
-  const description = formData.get('description') as string
-  const date = formData.get('date') as string
-  const time = formData.get('time') as string
-  const location = formData.get('location') as string
-  const instructor = formData.get('instructor') as string
-  const maxParticipants = parseInt(formData.get('maxParticipants') as string)
+  const description = formData.get('description') as string ?? ''
+  const date = formData.get('date') as string ?? ''
+  const time = formData.get('time') as string ?? ''
+  const location = formData.get('location') as string ?? ''
+  const instructor = formData.get('instructor') as string ?? ''
+  const maxParticipants = parseInt(formData.get('maxParticipants') as string) ?? 0
+  const wsType = formData.get('type') as string ?? 'workshop'
 
   // Validate required fields
-  if (!title || !description || !date || !time || !location || !instructor || !maxParticipants) {
+  if (!title || !description || !maxParticipants) {
     throw new Error('All required fields must be filled')
   }
 
@@ -103,17 +122,32 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
       throw new Error(`Maximum participants cannot be less than current participants (${existingWorkshop.currentParticipants})`)
     }
 
+    // Parse and validate date
+    let parsedDate = null;
+    if (date && date.trim()) {
+      const dateObj = new Date(date);
+      if (!isNaN(dateObj.getTime())) {
+        parsedDate = dateObj;
+      }
+    }
+
+    // Validate wsType enum
+    const validWsTypes = ['workshop', 'conferinta'];
+    const normalizedWsType = wsType?.toLowerCase();
+    const finalWsType = validWsTypes.includes(normalizedWsType) ? normalizedWsType : 'workshop';
+
     // Update the workshop
     const workshop = await Workshop.findByIdAndUpdate(
       workshopId,
       {
         title,
         description,
-        date: new Date(date),
-        time,
-        location,
+        date: parsedDate,
+        time: time || null,
+        location: location || '',
         maxParticipants,
-        instructor,
+        instructor: instructor || '',
+        wsType: finalWsType,
       },
       { new: true }
     )

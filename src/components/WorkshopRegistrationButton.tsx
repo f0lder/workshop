@@ -11,7 +11,8 @@ interface WorkshopRegistrationButtonProps {
   workshop: Workshop
   onRegistrationChange?: () => Promise<void>
   onOptimisticUpdate?: (workshopId: string, isRegistered: boolean) => void
-  isGlobalRegistrationClosed?: boolean
+  isGlobalRegistrationClosed?: boolean,
+  isRegistered: boolean
 }
 
 // Simple CSS spinner component
@@ -21,7 +22,7 @@ function Spinner() {
   )
 }
 
-export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlobalRegistrationClosed }: WorkshopRegistrationButtonProps) {
+export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlobalRegistrationClosed, isRegistered }: WorkshopRegistrationButtonProps) {
   const { user: mongoUser, isLoading: isLoadingUser, error } = useMongoUser()
   const [isPending, startTransition] = useTransition()
   const { showToast } = useToast()
@@ -50,7 +51,6 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
   }
 
   // Check if user is registered
-  const isRegistered = !!workshop.user_registered
   const isFull = workshop.currentParticipants >= workshop.maxParticipants
   
   async function handleSubmit(formData: FormData) {
@@ -115,7 +115,7 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
 
   return (
     <form action={handleSubmit}>
-      <input type="hidden" name="workshopId" value={workshop.id} />
+      <input type="hidden" name="workshopId" value={workshop._id?.toString()} />
       <input 
         type="hidden" 
         name="action" 

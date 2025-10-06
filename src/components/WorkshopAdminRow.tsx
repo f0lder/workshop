@@ -17,7 +17,7 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 						<div className="space-y-2">
 							<div>
 								<p className="text-sm font-medium text-foreground">
-									{workshop.title}
+									{workshop.title} <span className="border border-primary rounded-full p-1 bg-primary/45">{workshop.wsType}</span>
 								</p>
 								<p className="text-sm text-muted-foreground line-clamp-2">
 									{workshop.description}
@@ -39,19 +39,22 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 								workshopId={workshop._id?.toString() || workshop.id || ''}
 								workshopTitle={workshop.title}
 							/>
-
 						</div>
 					</div>
 				</div>
 				<div className="mt-3 flex flex-col sm:flex-row sm:items-center text-sm text-muted-foreground space-y-2 sm:space-y-0 sm:space-x-4">
-					<div className="flex items-center">
-						<FaCalendarAlt className="flex-shrink-0 mr-1.5 h-4 w-4" />
-						<span className="truncate">{new Date(workshop.date).toLocaleDateString('ro-RO')} la {workshop.time}</span>
-					</div>
-					<div className="flex items-center">
-						<FaMapMarkerAlt className="flex-shrink-0 mr-1.5 h-4 w-4" />
-						<span className="truncate">{workshop.location}</span>
-					</div>
+					{workshop.date && (
+						<div className="flex items-center">
+							<FaCalendarAlt className="flex-shrink-0 mr-1.5 h-4 w-4" />
+							<span className="truncate">{new Date(workshop.date).toLocaleDateString('ro-RO')} la {workshop.time}</span>
+						</div>
+					)}
+					{workshop.location && (
+						<div className="flex items-center">
+							<FaMapMarkerAlt className="flex-shrink-0 mr-1.5 h-4 w-4" />
+							<span className="truncate">{workshop.location}</span>
+						</div>
+					)}
 					<div className="flex items-center">
 						<FaUsers className="flex-shrink-0 mr-1.5 h-4 w-4" />
 						<span>{workshop.currentParticipants || 0}/{workshop.maxParticipants} participanți</span>

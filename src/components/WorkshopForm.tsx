@@ -5,22 +5,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createWorkshop, updateWorkshop } from '@/app/admin/workshops/actions'
 import type { IAppSettings } from '@/models/AppSettings'
+import { Workshop } from '@/types/models'
 
 interface WorkshopFormProps {
   mode: 'create' | 'edit'
   defaultSettings?: IAppSettings
-  workshop?: {
-    id: string
-    title: string
-    description: string
-    date: string
-    time: string
-    location: string
-    maxParticipants: number
-    currentParticipants: number
-    instructor: string
-    status: string
-  }
+  workshop?: Workshop
 }
 
 // Simple CSS spinner component
@@ -49,7 +39,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
         setSuccess('')
         
         if (isEdit && workshop) {
-          await updateWorkshop(workshop.id, formData)
+          await updateWorkshop(workshop._id?.toString() ?? '', formData)
         } else {
           await createWorkshop(formData)
         }
@@ -126,18 +116,30 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
               </div>
             </div>
 
+            <div>
+              <label htmlFor="type" className="block text-sm font-medium text-foreground">
+                Tip workshop *
+              </label>
+              <div className="mt-1">
+                <select name="type" id="type" defaultValue={workshop?.wsType || ''} className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm">
+                  <option defaultValue="workshop">Workshop</option>
+                  <option value="conferinta">Conferință</option>
+               </select>
+              </div>
+            </div>
+              
+
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="date" className="block text-sm font-medium text-foreground">
-                  Data *
+                  Data
                 </label>
                 <div className="mt-1">
                   <input
                     type="date"
                     name="date"
                     id="date"
-                    required
-                    defaultValue={workshop?.date || ''}
+                    defaultValue={workshop?.date?.toString() || ''}
                     className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
                   />
                 </div>
@@ -145,15 +147,14 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
 
               <div>
                 <label htmlFor="time" className="block text-sm font-medium text-foreground">
-                  Ora *
+                  Ora
                 </label>
                 <div className="mt-1">
                   <input
                     type="time"
                     name="time"
                     id="time"
-                    required
-                    defaultValue={workshop?.time || ''}
+                    defaultValue={workshop?.time?.toString() || ''}
                     className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
                   />
                 </div>
@@ -162,14 +163,13 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
 
             <div>
               <label htmlFor="location" className="block text-sm font-medium text-foreground">
-                Locație *
+                Locație
               </label>
               <div className="mt-1">
                 <input
                   type="text"
                   name="location"
                   id="location"
-                  required
                   defaultValue={workshop?.location || ''}
                   className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
                   placeholder="ex. Sala de conferințe A, Online"
@@ -179,14 +179,13 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
 
             <div>
               <label htmlFor="instructor" className="block text-sm font-medium text-foreground">
-                Instructor *
+                Instructor
               </label>
               <div className="mt-1">
                 <input
                   type="text"
                   name="instructor"
                   id="instructor"
-                  required
                   defaultValue={workshop?.instructor || ''}
                   className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
                   placeholder="Numele instructorului"

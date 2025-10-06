@@ -41,7 +41,7 @@ export async function GET() {
         ...workshop,
         _id: String(workshop._id),
         id: String(workshop._id),
-        date: workshop.date.toISOString(),
+        date: workshop.date,
         currentParticipants: workshop.currentParticipants || 0, // Map field name and provide default
         user_registered: isRegistered
       } as unknown as Workshop
