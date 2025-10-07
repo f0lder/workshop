@@ -45,43 +45,47 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
     )
   }
 
-  // If no user is logged in, don't show the button
+  // If no user is logged in, show a link to register or login
   if (!mongoUser) {
-    return null
+    return (
+      <Link href="/auth/login" className="w-full font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground">
+        Autentifică-te pentru a te înregistra
+      </Link>
+    )
   }
 
   // Check if user is registered
   const isFull = workshop.currentParticipants >= workshop.maxParticipants
-  
+
   async function handleSubmit(formData: FormData) {
     const action = formData.get('action') as string
     const willBeRegistered = action === 'register'
     const workshopId = String(workshop.id || workshop._id || '')
-    
+
     // Optimistic update for instant visual feedback
     if (onOptimisticUpdate) {
       onOptimisticUpdate(workshopId, willBeRegistered)
     }
-    
+
     startTransition(async () => {
       try {
         await registerForWorkshop(formData)
-        
+
         // Show success message for immediate feedback
         if (isRegistered) {
           showToast('Te-ai dezînscris cu succes de la workshop', 'info')
         } else {
           showToast('Te-ai înscris cu succes la workshop!', 'success')
         }
-        
+
         // No need to refresh - optimistic update already handled the UI
-        
+
       } catch (error) {
         // Revert optimistic update on error
         if (onOptimisticUpdate) {
           onOptimisticUpdate(workshopId, !willBeRegistered)
         }
-        
+
         // Handle specific error messages from the server
         const errorMessage = error instanceof Error ? error.message : 'A apărut o eroare. Te rugăm încearcă din nou.'
         showToast(errorMessage, 'error')
@@ -91,14 +95,14 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
   }
 
   if (!isGlobalRegistrationClosed) {
-    
+
     return (
       <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border border-gray-300">
         Înregistrările sunt închise
       </div>
     )
   }
-  
+
   // If user has unpaid access level, show link to payment page
   if (mongoUser.accessLevel === 'unpaid') {
     return (
@@ -116,30 +120,29 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
   return (
     <form action={handleSubmit}>
       <input type="hidden" name="workshopId" value={workshop._id?.toString()} />
-      <input 
-        type="hidden" 
-        name="action" 
-        value={isRegistered ? 'cancel' : 'register'} 
+      <input
+        type="hidden"
+        name="action"
+        value={isRegistered ? 'cancel' : 'register'}
       />
       <button
         type="submit"
         disabled={isPending || (isFull && !isRegistered) || (!isGlobalRegistrationClosed && !isRegistered)}
-        className={`w-full font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2 ${
-          isPending ? 'bg-gray-400 text-white cursor-wait' :
-          isFull && !isRegistered
-            ? 'bg-gray-400 cursor-not-allowed text-white'
-            : isRegistered
-            ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground'
-            : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-        }`}
+        className={`w-full font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2 ${isPending ? 'bg-gray-400 text-white cursor-wait' :
+            isFull && !isRegistered
+              ? 'bg-gray-400 cursor-not-allowed text-white'
+              : isRegistered
+                ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground'
+                : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+          }`}
       >
         {isPending && <Spinner />}
         {isPending ? 'Se procesează...' :
           isFull && !isRegistered
             ? 'Workshop complet'
             : isRegistered
-            ? 'Anulează înregistrarea'
-            : 'Înregistrează-te acum'
+              ? 'Anulează înregistrarea'
+              : 'Înregistrează-te acum'
         }
       </button>
     </form>
