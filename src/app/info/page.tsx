@@ -71,7 +71,7 @@ export default async function InfoPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-3">4. Completeaza formularul GDPR</h3>
                 <p className="mimesiss-text-secondary text-sm">
-                  Înainte de plata taxei, descărcați și completați formularul <Link href="/docs/gdpr.pdf" className="text-primary hover:underline">GDPR</Link> și trimiteți-l împreună cu dovada plății la secretariat@asmm-bucuresti.com. Înscrierea se validează după primirea ambelor documente.
+                  Înainte de plata taxei, descărcați și completați formularul <Link href="/docs/gdpr.pdf" className="text-primary hover:underline">GDPR</Link> și trimiteți-l împreună cu dovada plății la <Link href="mailto:secretariat@asmm-bucuresti.com" className="text-primary hover:underline">secretariat@asmm-bucuresti.com</Link>. Înscrierea se validează după primirea ambelor documente.
                 </p>
               </div>
             </div>
