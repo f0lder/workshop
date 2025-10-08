@@ -1,6 +1,7 @@
 import HeaderContent from '@/components/HeaderContent'
 import Link from 'next/link'
 import { FaUserGraduate, FaFileAlt, FaCreditCard, FaInfoCircle } from 'react-icons/fa'
+import { RiContractFill } from 'react-icons/ri'
 import { getAppSettings } from '@/lib/settings'
 
 export default async function InfoPage() {
@@ -66,11 +67,24 @@ export default async function InfoPage() {
             <div className="mimesiss-info-card mimesiss-border-step-4">
               <div className="text-center">
                 <div className="mimesiss-info-icon">
+                  <RiContractFill className="text-secondary text-2xl" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-3">4. Completeaza formularul GDPR</h3>
+                <p className="mimesiss-text-secondary text-sm">
+                  Înainte de plata taxei, descărcați și completați formularul <Link href="/docs/gdpr.pdf" className="text-primary hover:underline">GDPR</Link> și trimiteți-l împreună cu dovada plății la secretariat@asmm-bucuresti.com. Înscrierea se validează după primirea ambelor documente.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div className="mimesiss-info-card mimesiss-border-step-4">
+              <div className="text-center">
+                <div className="mimesiss-info-icon">
                   <FaCreditCard className="text-primary text-2xl" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-3">4. Achită taxa</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">5. Achită taxa</h3>
                 <p className="mimesiss-text-secondary text-sm">
-                  Plătește taxa de înscriere direct din contul tău prin platforma Stripe. 
+                  Plătește taxa de înscriere direct din contul tău prin platforma Stripe.
                   Plata este securizată și procesată instant.
                 </p>
               </div>
