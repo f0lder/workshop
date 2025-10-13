@@ -50,9 +50,12 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 	const availableSpots = workshop.maxParticipants - workshop.currentParticipants;
 	const isWorkshopFull = availableSpots <= 0;
 
+	const wType = workshop.wsType === 'workshop' ? 'Workshop' :
+		workshop.wsType === 'conferinta' ? 'Conferință' : workshop.wsType;
+
 	return (
 		<>
-			<HeaderContent title={`Workshop: ${workshop.title}`} />
+			<HeaderContent title={`${wType}: ${workshop.title}`} />
 			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 				{/* Hero Section */}
 				<div className="mimesiss-card p-8">

@@ -13,7 +13,6 @@ export default async function DashboardPage() {
   // Get user registrations
   const userRegistrations = await getUserRegistrations(clerkUser.id)
 
-
   // Sync user with database
   const user = await syncUserWithDatabase(clerkUser)
 

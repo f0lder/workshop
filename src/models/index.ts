@@ -37,6 +37,13 @@ export interface IRegistration extends Document {
   }
 }
 
+export interface ITicket extends Document {
+  name: string // Ticket name
+  price: number // Ticket price in RON
+  features: string[] // List of features
+  description?: string // Optional detailed description
+}
+
 // User schema
 const UserSchema = new Schema<IUser>({
   clerkId: { type: String, required: true, unique: true },
@@ -100,18 +107,27 @@ const PaymentSchema = new Schema<IPayment>({
   stripePaymentIntentId: { type: String },
   amount: { type: Number, required: true },
   currency: { type: String, required: true, default: 'ron' },
-  accessLevel: { 
-    type: String, 
-    required: true, 
-    enum: ['active', 'passive'] 
+  accessLevel: {
+    type: String,
+    required: true,
+    enum: ['active', 'passive']
   },
-  status: { 
-    type: String, 
-    required: true, 
+  status: {
+    type: String,
+    required: true,
     enum: ['pending', 'completed', 'failed', 'refunded'],
-    default: 'pending' 
+    default: 'pending'
   },
   metadata: { type: Schema.Types.Mixed }
+}, {
+  timestamps: true
+})
+
+const TicketSchema = new Schema<ITicket>({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  price: { type: Number, required: true },
+  features: { type: [String], required: true },
 }, {
   timestamps: true
 })
@@ -121,6 +137,7 @@ export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSc
 export const Workshop = mongoose.models.Workshop || mongoose.model<IWorkshop>('Workshop', WorkshopSchema)
 export const Registration = mongoose.models.Registration || mongoose.model<IRegistration>('Registration', RegistrationSchema)
 export const Payment = mongoose.models.Payment || mongoose.model<IPayment>('Payment', PaymentSchema)
+export const Ticket = mongoose.models.Ticket || mongoose.model<ITicket>('Ticket', TicketSchema)
 
 // Import and export AppSettings separately
 import AppSettings from './AppSettings'

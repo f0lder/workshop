@@ -6,7 +6,8 @@ import {
   FaUsers,
   FaHome,
   FaCogs,
-  FaCreditCard
+  FaCreditCard,
+  FaTicketAlt
 } from 'react-icons/fa'
 import { User } from '@/types/models'
 import SignOutButton from '@/components/signOutButton'
@@ -28,6 +29,7 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
     { href: '/admin', icon: FaChartBar, label: 'Dashboard Admin' },
     { href: '/admin/workshops', icon: FaCalendarAlt, label: 'Administrare Workshop-uri' },
     { href: '/admin/users', icon: FaUsers, label: 'Administrare Utilizatori' },
+    { href: '/admin/tickets', icon: FaTicketAlt, label: 'Administrare Bilete' },
     { href: '/admin/payments', icon: FaCreditCard, label: 'Administrare Plăți' },
     { href: '/admin/settings', icon: FaCogs, label: 'Setări Aplicație' },
   ]

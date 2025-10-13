@@ -85,3 +85,14 @@ export interface Payment {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface Ticket {
+  _id?: string | { toString(): string }; // MongoDB ObjectId
+  id?: string; // For serialized versions
+  title: string; // Ticket name
+  description: string; // Ticket description
+  price: number; // Ticket price in RON
+  features: string[]; // List of features
+  createdAt?: Date;
+  updatedAt?: Date;
+}
