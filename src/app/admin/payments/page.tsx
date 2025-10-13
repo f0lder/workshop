@@ -5,6 +5,7 @@ import { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Payment, User } from '@/models'
 import { FaCreditCard, FaEuroSign, FaUsers, FaCheckCircle, FaClock, FaTimes } from 'react-icons/fa'
+import DeletePaymentButton from './DeletePaymentButton'
 
 // Payment statistics interface
 interface PaymentStats {
@@ -288,6 +289,9 @@ export default async function PaymentsPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   ID Stripe
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Acțiuni
+                </th>
               </tr>
             </thead>
             <tbody className="bg-card divide-y divide-border">
@@ -355,6 +359,12 @@ export default async function PaymentsPage() {
                       payment.stripePaymentIntentId.substring(0, 15) + '...' :
                       payment.stripeSessionId.substring(0, 15) + '...'
                     }
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    <DeletePaymentButton 
+                      paymentId={payment._id} 
+                      userName={payment.user ? `${payment.user.firstName} ${payment.user.lastName}`.trim() : undefined}
+                    />
                   </td>
                 </tr>
               ))}
