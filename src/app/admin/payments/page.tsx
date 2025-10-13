@@ -37,7 +37,9 @@ interface PaymentWithUser {
   stripePaymentIntentId?: string
   amount: number
   currency: string
-  accessLevel: 'active' | 'passive'
+  accessLevel: string
+  ticketId: string
+  ticketType: string
   status: 'pending' | 'completed' | 'failed' | 'refunded'
   createdAt: Date
   updatedAt: Date
@@ -50,14 +52,14 @@ interface PaymentWithUser {
 
 export default async function PaymentsPage() {
   const clerkUser = await currentUser()
-  
+
   if (!clerkUser) {
     redirect('/auth/login')
   }
 
   // Sync user and check if admin
   const user: UserType = await syncUserWithDatabase(clerkUser)
-  
+
   if (user.role !== 'admin') {
     redirect('/unauthorized')
   }
@@ -66,14 +68,24 @@ export default async function PaymentsPage() {
 
   // Fetch payment statistics
   const payments = await Payment.find({}).sort({ createdAt: -1 }).lean()
-  
+
+  // Group payments by ticket type for dynamic counting
+  const ticketTypeCounts = payments
+    .filter(p => p.status === 'completed')
+    .reduce((acc, p) => {
+      const ticketType = p.ticketType || p.accessLevel || 'unknown'
+      acc[ticketType] = (acc[ticketType] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
   const stats: PaymentStats = {
     totalRevenue: payments
       .filter(p => p.status === 'completed')
       .reduce((sum, p) => sum + p.amount, 0),
     totalPayments: payments.length,
-    activeTickets: payments.filter(p => p.accessLevel === 'active' && p.status === 'completed').length,
-    passiveTickets: payments.filter(p => p.accessLevel === 'passive' && p.status === 'completed').length,
+    // Use ticketType if available, fallback to accessLevel for backward compatibility
+    activeTickets: ticketTypeCounts['active'] || 0,
+    passiveTickets: ticketTypeCounts['passive'] || 0,
     completedPayments: payments.filter(p => p.status === 'completed').length,
     pendingPayments: payments.filter(p => p.status === 'pending').length,
     failedPayments: payments.filter(p => p.status === 'failed').length,
@@ -81,10 +93,10 @@ export default async function PaymentsPage() {
 
   // Fetch recent payments with user details
   const recentPayments: PaymentWithUser[] = []
-  
+
   for (const payment of payments.slice(0, 50)) { // Get last 50 payments
     const paymentUser = await User.findOne({ clerkId: payment.clerkId }).lean()
-    
+
     recentPayments.push({
       _id: payment._id?.toString() || '',
       clerkId: payment.clerkId || '',
@@ -93,6 +105,8 @@ export default async function PaymentsPage() {
       amount: payment.amount || 0,
       currency: payment.currency || 'RON',
       accessLevel: payment.accessLevel || 'passive',
+      ticketId: payment.ticketId || '',
+      ticketType: payment.ticketType || '',
       status: payment.status || 'pending',
       createdAt: payment.createdAt,
       updatedAt: payment.updatedAt,
@@ -251,7 +265,7 @@ export default async function PaymentsPage() {
             Lista tuturor plăților efectuate pentru biletele MIMESISS 2025.
           </p>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-border">
             <thead className="bg-muted">
@@ -282,7 +296,7 @@ export default async function PaymentsPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-foreground">
-                        {payment.user ? 
+                        {payment.user ?
                           `${payment.user.firstName} ${payment.user.lastName}`.trim() || 'N/A' :
                           'N/A'
                         }
@@ -293,13 +307,36 @@ export default async function PaymentsPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      payment.accessLevel === 'active' 
-                        ? 'bg-primary/10 text-primary' 
-                        : 'bg-secondary/10 text-secondary'
-                    }`}>
-                      {payment.accessLevel === 'active' ? 'Activ' : 'Pasiv'}
-                    </span>
+                    <div className="text-sm space-y-1">
+                      {/* Show ticket type with badge for new payments */}
+                      {payment.ticketType ? (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                              {payment.ticketType}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              (nou)
+                            </span>
+                          </div>
+                          {payment.ticketId && (
+                            <div className="text-xs text-muted-foreground">
+                              ID: {payment.ticketId.substring(0, 8)}...
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        /* Show access level for old payments */
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">
+                            {payment.accessLevel}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            (vechi)
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                     {formatCurrency(payment.amount)}
@@ -314,7 +351,7 @@ export default async function PaymentsPage() {
                     {formatDate(payment.createdAt)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-muted-foreground">
-                    {payment.stripePaymentIntentId ? 
+                    {payment.stripePaymentIntentId ?
                       payment.stripePaymentIntentId.substring(0, 15) + '...' :
                       payment.stripeSessionId.substring(0, 15) + '...'
                     }

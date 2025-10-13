@@ -3,7 +3,7 @@
 import { currentUser, clerkClient } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
 import { syncUserWithDatabase } from '@/lib/auth'
-import { User, UserType, AccessLevel } from '@/types/models'
+import { User, UserType } from '@/types/models'
 import { User as MongoUser } from '@/models'
 
 export async function updateProfile(formData: FormData) {
@@ -16,7 +16,7 @@ export async function updateProfile(formData: FormData) {
   const firstName = formData.get('firstName') as string
   const lastName = formData.get('lastName') as string
   const userType = formData.get('userType') as UserType
-  const accessLevel = formData.get('accessLevel') as AccessLevel
+  const accessLevel = formData.get('accessLevel') as string
 
   try {
     // Update the user in Clerk using clerkClient

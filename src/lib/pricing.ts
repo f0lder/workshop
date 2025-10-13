@@ -1,5 +1,3 @@
-import { AccessLevel } from '@/types/models';
-
 // Ticket pricing configuration
 export const TICKET_PRICES = {
   active: {
@@ -31,7 +29,7 @@ export const TICKET_PRICES = {
 export type TicketType = keyof typeof TICKET_PRICES;
 
 // Helper function to get ticket details
-export function getTicketDetails(accessLevel: AccessLevel) {
+export function getTicketDetails(accessLevel: string) {
   if (accessLevel === 'unpaid') {
     return null;
   }

@@ -6,13 +6,13 @@ import connectDB from '@/lib/mongodb'
 import { User } from '@/models'
 import { isUserAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { UserType, AccessLevel } from '@/types/models'
+import { UserType } from '@/types/models'
 
 // Type definitions for update operations
 interface UserUpdateData {
   role: 'user' | 'admin'
   userType?: UserType | null
-  accessLevel?: AccessLevel
+  accessLevel?: string
 }
 
 interface ClerkMetadataUpdate {
@@ -105,12 +105,7 @@ export async function updateUserRole(formData: FormData) {
     }
     
     if (accessLevel) {
-      const accessLevelText = {
-        'unpaid': 'neplătit',
-        'active': 'activ',
-        'passive': 'pasiv'
-      }[accessLevel]
-      updates.push(`acces: ${accessLevelText}`)
+      updates.push(`acces: ${accessLevel}`)
     }
 
     return { 

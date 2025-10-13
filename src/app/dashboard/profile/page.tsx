@@ -4,7 +4,7 @@ import { useState, useTransition, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { FaSave, FaEnvelope, FaUser } from 'react-icons/fa'
 import { updateProfile } from './actions'
-import { UserType, AccessLevel } from '@/types/models'
+import { UserType } from '@/types/models'
 import { useMongoUser } from '@/hooks/useMongoUser'
 
 export default function ProfilePage() {
@@ -12,7 +12,7 @@ export default function ProfilePage() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [userType, setUserType] = useState<UserType>('student')
-  const [accessLevel, setAccessLevel] = useState<AccessLevel>('unpaid')
+  const [accessLevel, setAccessLevel] = useState('unpaid')
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -25,7 +25,7 @@ export default function ProfilePage() {
       setFirstName(mongoUser.firstName ?? '')
       setLastName(mongoUser.lastName ?? '')
       setUserType((mongoUser.userType as UserType | undefined) ?? 'student')
-      setAccessLevel((mongoUser.accessLevel as AccessLevel | undefined) ?? 'unpaid')
+      setAccessLevel(mongoUser.accessLevel ?? 'unpaid')
     }
   }, [user, mongoUser])
 
@@ -281,9 +281,7 @@ export default function ProfilePage() {
                 Nivel acces
               </dt>
               <dd className="mt-1 text-sm text-foreground">
-                {accessLevel === 'unpaid' && 'Neplătit'}
-                {accessLevel === 'active' && 'Activ'}
-                {accessLevel === 'passive' && 'Pasiv'}
+                {accessLevel ?? 'N/A'}
               </dd>
             </div>
           </dl>

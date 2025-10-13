@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose'
-import { UserRole, UserType, AccessLevel } from '@/types/models'
+import { UserRole, UserType } from '@/types/models'
 
 // User interface
 export interface IUser extends Document {
@@ -9,7 +9,7 @@ export interface IUser extends Document {
   lastName?: string
   role: UserRole
   userType: UserType
-  accessLevel: AccessLevel
+  accessLevel: string
 }
 
 // Workshop interface
@@ -38,7 +38,8 @@ export interface IRegistration extends Document {
 }
 
 export interface ITicket extends Document {
-  name: string // Ticket name
+  title: string // Ticket title
+  type: string
   price: number // Ticket price in RON
   features: string[] // List of features
   description?: string // Optional detailed description
@@ -52,7 +53,7 @@ const UserSchema = new Schema<IUser>({
   lastName: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   userType: { type: String, enum: ['student', 'elev', 'rezident'], default: 'student' },
-  accessLevel: { type: String, enum: ['unpaid', 'active', 'passive'], default: 'unpaid' },
+  accessLevel: { type: String, default: 'unpaid' },
 }, {
   timestamps: true
 })
@@ -95,7 +96,9 @@ export interface IPayment extends Document {
   stripePaymentIntentId?: string
   amount: number
   currency: string
-  accessLevel: AccessLevel
+  accessLevel: string // Kept for backward compatibility
+  ticketId?: string
+  ticketType?: string
   status: 'pending' | 'completed' | 'failed' | 'refunded'
   metadata?: Record<string, string>
 }
@@ -109,9 +112,10 @@ const PaymentSchema = new Schema<IPayment>({
   currency: { type: String, required: true, default: 'ron' },
   accessLevel: {
     type: String,
-    required: true,
-    enum: ['active', 'passive']
+    required: true, // Kept for backward compatibility
   },
+  ticketId: { type: String, index: true },
+  ticketType: { type: String, index: true },
   status: {
     type: String,
     required: true,
@@ -124,10 +128,11 @@ const PaymentSchema = new Schema<IPayment>({
 })
 
 const TicketSchema = new Schema<ITicket>({
-  name: { type: String, required: true },
+  title: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
   features: { type: [String], required: true },
+  type: { type: String, required: true },
 }, {
   timestamps: true
 })

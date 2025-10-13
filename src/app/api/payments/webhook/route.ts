@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { constructEvent } from '@/lib/stripe';
 import connectDB from '@/lib/mongodb';
 import { Payment, User } from '@/models';
-import { AccessLevel } from '@/types/models';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -37,14 +36,16 @@ export async function POST(req: NextRequest) {
       try {
         // Extract metadata from the payment intent
         const clerkId = paymentIntent.metadata?.clerkId;
-        const accessLevel = paymentIntent.metadata?.accessLevel as AccessLevel;
+        const ticketId = paymentIntent.metadata?.ticketId;
+        const ticketType = paymentIntent.metadata?.ticketType;
+        const ticketTitle = paymentIntent.metadata?.ticketTitle;
         const userName = paymentIntent.metadata?.userName;
         const userEmail = paymentIntent.metadata?.userEmail;
         const userType = paymentIntent.metadata?.userType;
         const eventName = paymentIntent.metadata?.eventName;
         const eventLocation = paymentIntent.metadata?.eventLocation;
 
-        if (!clerkId || !accessLevel) {
+        if (!clerkId || !ticketId || !ticketType) {
           console.error('Missing required metadata in PaymentIntent:', paymentIntent.id);
           return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
         }
@@ -60,11 +61,14 @@ export async function POST(req: NextRequest) {
             clerkId,
             stripeSessionId: paymentIntent.id, // Required field - use PaymentIntent ID
             stripePaymentIntentId: paymentIntent.id,
-            accessLevel,
+            ticketId,
+            ticketType,
+            accessLevel: ticketType, // Keep for backward compatibility
             amount: paymentIntent.amount,
             currency: paymentIntent.currency.toUpperCase(),
             status: 'completed',
             metadata: {
+              ticketTitle: ticketTitle || '',
               userName: userName || '',
               userEmail: userEmail || '',
               userType: userType || 'student',
@@ -76,13 +80,15 @@ export async function POST(req: NextRequest) {
         } else {
           // Update existing payment record
           payment.status = 'completed';
+          payment.ticketId = ticketId;
+          payment.ticketType = ticketType;
           await payment.save();
         }
 
-        // Update user's access level
+        // Update user's access level with ticket type
         const user = await User.findOne({ clerkId });
         if (user) {
-          user.accessLevel = accessLevel;
+          user.accessLevel = ticketType;
           await user.save();
         }
 

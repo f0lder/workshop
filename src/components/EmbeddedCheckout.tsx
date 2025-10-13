@@ -15,7 +15,7 @@ import { FaSpinner } from 'react-icons/fa';
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface EmbeddedCheckoutProps {
-	accessLevel: 'active' | 'passive';
+	ticketId: string;
 	onSuccess?: () => void;
 	onError?: (error: string) => void;
 }
@@ -94,7 +94,7 @@ function CheckoutForm({ onSuccess, onError }: { onSuccess?: () => void; onError?
 	);
 }
 
-export default function EmbeddedCheckout({ accessLevel, onSuccess, onError }: EmbeddedCheckoutProps) {
+export default function EmbeddedCheckout({ ticketId, onSuccess, onError }: EmbeddedCheckoutProps) {
 	const [clientSecret, setClientSecret] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -109,7 +109,7 @@ export default function EmbeddedCheckout({ accessLevel, onSuccess, onError }: Em
 				const res = await fetch('/api/payments/create-payment-intent', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ accessLevel }),
+					body: JSON.stringify({ ticketId }),
 				});
 				
 				const data = await res.json();
@@ -130,7 +130,7 @@ export default function EmbeddedCheckout({ accessLevel, onSuccess, onError }: Em
 		};
 
 		createPaymentIntent();
-	}, [accessLevel, clientSecret]); // Re-run if accessLevel changes or on retry
+	}, [ticketId, clientSecret]); // Re-run if ticketId changes or on retry
 
 	if (loading) {
 		return (

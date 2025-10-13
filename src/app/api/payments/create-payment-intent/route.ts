@@ -1,11 +1,10 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { stripe } from '@/lib/stripe';
-import { TICKET_PRICES, TicketType } from '@/lib/pricing';
 import connectDB from '@/lib/mongodb';
-import { Payment } from '@/models';
+import { Payment, Ticket } from '@/models';
 import { User } from '@/models';
-import { User as UserInterface } from '@/types/models';
+import { User as UserInterface, Ticket as TicketInterface } from '@/types/models';
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,18 +17,28 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     const userData = await User.findOne({ clerkId: user.id }).lean() as UserInterface | null;
-    const { accessLevel } = await req.json() as { accessLevel: TicketType };
 
-    if (!accessLevel || !TICKET_PRICES[accessLevel]) {
+    const data = await req.json();
+
+    const { ticketId } = data;
+
+    console.log('Request data:', { data });
+
+    if (!ticketId) {
+      return NextResponse.json({ error: 'Ticket ID is required' }, { status: 400 });
+    }
+
+    // Get ticket details from database
+    const ticket = await Ticket.findById(ticketId).lean() as TicketInterface | null;
+
+    if (!ticket) {
       return NextResponse.json({ error: 'Invalid ticket type' }, { status: 400 });
     }
 
-    const ticketDetails = TICKET_PRICES[accessLevel];
-
-    // Check if user already has a completed payment for this access level
+    // Check if user already has a completed payment for this ticket type
     const existingPayment = await Payment.findOne({
       clerkId: user.id,
-      accessLevel,
+      ticketType: ticket.type,
       status: 'completed'
     });
 
@@ -40,14 +49,19 @@ export async function POST(req: NextRequest) {
     }
 
     // Create PaymentIntent with customer data
+    // Convert price from RON to bani (cents) - multiply by 100
+    const amountInBani = Math.round(ticket.price * 100);
+    
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: ticketDetails.price,
+      amount: amountInBani,
       currency: 'ron',
-      description: `${ticketDetails.name} - MIMESISS 2025`,
+      description: `${ticket.title} - MIMESISS 2025`,
       receipt_email: userData?.email || '',
       metadata: {
         clerkId: user.id,
-        accessLevel,
+        ticketId: ticket._id?.toString() || ticketId,
+        ticketType: ticket.type,
+        ticketTitle: ticket.title,
         userName: `${user.firstName} ${user.lastName}`.trim(),
         userEmail: userData?.email || '',
         userType: userData?.userType || 'student',

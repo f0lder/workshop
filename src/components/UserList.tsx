@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { FaUser, FaCrown, FaEdit, FaSave, FaTrash, FaEllipsisV, FaClipboardCheck, FaQrcode, FaTimes } from 'react-icons/fa'
 import { updateUserRole, deleteUser } from '@/app/admin/users/actions'
-import { User, UserType, AccessLevel } from '@/types/models'
+import { User, UserType } from '@/types/models'
 import { useRouter } from 'next/navigation'
 import SimpleUserQRCode from './SimpleUserQRCode'
 
@@ -27,7 +27,7 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
   const [editData, setEditData] = useState<{
     role: 'user' | 'admin',
     userType: UserType | '',
-    accessLevel: AccessLevel
+    accessLevel: string
   }>({ role: 'user', userType: '', accessLevel: 'unpaid' })
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState('')
@@ -282,13 +282,12 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
                               <label className="block text-xs font-medium text-muted-foreground mb-1">Nivel acces</label>
                               <select
                                 value={editData.accessLevel}
-                                onChange={(e) => setEditData({...editData, accessLevel: e.target.value as AccessLevel})}
+                                onChange={(e) => setEditData({...editData, accessLevel: e.target.value})}
                                 className="w-full text-sm border border-input bg-background rounded px-2 py-1"
                                 disabled={isPending}
                               >
                                 <option value="unpaid">Neplătit</option>
-                                <option value="active">Activ</option>
-                                <option value="passive">Pasiv</option>
+                                <option value="paid">Plătit</option>
                               </select>
                             </div>
                           </div>

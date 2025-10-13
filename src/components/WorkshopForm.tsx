@@ -93,7 +93,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   id="title"
                   required
                   defaultValue={workshop?.title || ''}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                  className="mimesiss-input"
                   placeholder="ex. Introducere în React"
                 />
               </div>
@@ -110,7 +110,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   rows={4}
                   required
                   defaultValue={workshop?.description || ''}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                  className="mimesiss-input"
                   placeholder="Descrieți ce vor învăța participanții..."
                 />
               </div>
@@ -121,7 +121,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                 Tip workshop *
               </label>
               <div className="mt-1">
-                <select name="type" id="type" defaultValue={workshop?.wsType || ''} className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm">
+                <select name="type" id="type" defaultValue={workshop?.wsType || ''} className="mimesiss-input">
                   <option defaultValue="workshop">Workshop</option>
                   <option value="conferinta">Conferință</option>
                </select>
@@ -140,7 +140,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                     name="date"
                     id="date"
                     defaultValue={workshop?.date?.toString() || ''}
-                    className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                    className="mimesiss-input"
                   />
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                     name="time"
                     id="time"
                     defaultValue={workshop?.time?.toString() || ''}
-                    className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                    className="mimesiss-input"
                   />
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   name="location"
                   id="location"
                   defaultValue={workshop?.location || ''}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                  className="mimesiss-input"
                   placeholder="ex. Sala de conferințe A, Online"
                 />
               </div>
@@ -187,7 +187,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   name="instructor"
                   id="instructor"
                   defaultValue={workshop?.instructor || ''}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                  className="mimesiss-input"
                   placeholder="Numele instructorului"
                 />
               </div>
@@ -206,7 +206,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   min={isEdit && workshop ? workshop.currentParticipants : 1}
                   max="100"
                   defaultValue={workshop?.maxParticipants || defaultSettings?.defaultMaxParticipants || 30}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                  className="mimesiss-input"
                 />
               </div>
               <p className="mt-1 text-sm text-muted-foreground">

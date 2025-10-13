@@ -2,8 +2,6 @@ export type UserRole = 'admin' | 'user';
 
 export type UserType = 'student' | 'elev' | 'rezident';
 
-export type AccessLevel = 'unpaid' | 'active' | 'passive';
-
 // Our MongoDB User interface (this is our main user type)
 export interface User {
   _id: string;
@@ -15,7 +13,7 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   userType: UserType;
-  accessLevel: AccessLevel;
+  accessLevel: string;
 }
 
 // For Clerk user type, we'll use the imported type from @clerk/nextjs/server
@@ -79,7 +77,9 @@ export interface Payment {
   stripePaymentIntentId?: string;
   amount: number;
   currency: string;
-  accessLevel: AccessLevel;
+  accessLevel: string; // Kept for backward compatibility
+  ticketId?: string;
+  ticketType?: string;
   status: 'pending' | 'completed' | 'failed' | 'refunded';
   metadata?: Record<string, string>;
   createdAt: Date;
@@ -87,9 +87,10 @@ export interface Payment {
 }
 
 export interface Ticket {
-  _id?: string | { toString(): string }; // MongoDB ObjectId
+  _id?: string // MongoDB ObjectId
   id?: string; // For serialized versions
   title: string; // Ticket name
+  type: string;
   description: string; // Ticket description
   price: number; // Ticket price in RON
   features: string[]; // List of features

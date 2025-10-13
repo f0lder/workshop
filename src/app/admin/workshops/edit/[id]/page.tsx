@@ -15,14 +15,14 @@ interface EditWorkshopPageProps {
 
 export default async function EditWorkshopPage({ params }: EditWorkshopPageProps) {
   const clerkUser = await currentUser()
-  
+
   if (!clerkUser) {
     redirect('/auth/login')
   }
 
   // Sync user and check if admin
   const user: UserType = await syncUserWithDatabase(clerkUser)
-  
+
   if (user.role !== 'admin') {
     redirect('/unauthorized')
   }

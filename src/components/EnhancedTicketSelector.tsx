@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { TICKET_PRICES, TicketType } from '@/lib/pricing';
+import { useEffect, useState } from 'react';
+import { getAllTickets } from '@/app/admin/tickets/actions';
+import { Ticket as TicketType } from '@/types/models';
 import { FaCheck, FaArrowLeft } from 'react-icons/fa';
 import EmbeddedCheckout from './EmbeddedCheckout';
 
@@ -12,11 +13,23 @@ interface EnhancedTicketSelectorProps {
 export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedTicketSelectorProps) {
 	const [selectedTicket, setSelectedTicket] = useState<TicketType | null>(null);
 	const [showCheckout, setShowCheckout] = useState(false);
+	const [tickets, setTickets] = useState<TicketType[]>([]);
 
-	const handleSelectTicket = (accessLevel: TicketType) => {
-		setSelectedTicket(accessLevel);
-		setShowCheckout(true);
+	const fetchTickets = async () => {
+		const tickets = await getAllTickets();
+		setTickets(tickets);
 	};
+
+	// Fetch tickets on component mount
+	useEffect(() => {
+		fetchTickets();
+	}, []);
+
+	const handleSelectTicket = (ticket: TicketType) => {
+		setSelectedTicket(ticket);
+		setShowCheckout(true);
+	}
+
 
 	const handlePaymentSuccess = () => {
 		// Redirect to success page instead of reloading
@@ -28,8 +41,9 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 		// Keep checkout open for retry
 	};
 
-	const isPurchased = (accessLevel: TicketType) => {
-		return currentAccessLevel === accessLevel;
+
+	const isPurchased = () => {
+		return currentAccessLevel === selectedTicket?._id;
 	};
 
 	if (showCheckout && selectedTicket) {
@@ -44,23 +58,23 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 						Înapoi la selecția biletelor
 					</button>
 					<h2 className="text-2xl font-bold text-foreground mb-2">
-						Finalizare plată - {TICKET_PRICES[selectedTicket].name}
+						Finalizare plată - {selectedTicket.title}
 					</h2>
 					<p className="text-muted-foreground mb-4">
-						{TICKET_PRICES[selectedTicket].displayPrice}
+						{selectedTicket.price} RON
 					</p>
 					<ul className='mx-auto space-y-2 mb-6'>
-						{TICKET_PRICES[selectedTicket].features.map((feature, index) => (
+						{selectedTicket.features.map((feature, index) => (
 							<li key={index} className='flex items-center text-sm'>
 								<FaCheck className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
 								<span>{feature}</span>
 							</li>
 						))}
-					</ul>				
+					</ul>
 				</div>
 
 				<EmbeddedCheckout
-					accessLevel={selectedTicket}
+					ticketId={selectedTicket._id || selectedTicket.id || ''}
 					onSuccess={handlePaymentSuccess}
 					onError={handlePaymentError}
 				/>
@@ -80,16 +94,15 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 			</div>
 
 			<div className="grid md:grid-cols-2 gap-6">
-				{Object.entries(TICKET_PRICES).map(([key, ticket]) => {
-					const accessLevel = key as TicketType;
-					const purchased = isPurchased(accessLevel);
+				{tickets.map((ticket) => {
+					const purchased = isPurchased();
 
 					return (
 						<div
-							key={accessLevel}
+							key={ticket._id}
 							className={`relative rounded-lg border p-6 transition-all ${purchased
-									? 'border-primary bg-primary/5'
-									: 'border-border bg-card hover:border-primary/50'
+								? 'border-primary bg-primary/5'
+								: 'border-border bg-card hover:border-primary/50'
 								}`}
 						>
 							{purchased && (
@@ -100,13 +113,13 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 
 							<div className="mb-4">
 								<h3 className="text-xl font-bold text-foreground mb-2">
-									{ticket.name}
+									{ticket.title}
 								</h3>
 								<p className="text-muted-foreground text-sm mb-4">
 									{ticket.description}
 								</p>
 								<div className="text-3xl font-bold text-primary">
-									{ticket.displayPrice}
+									{ticket.price} RON
 								</div>
 							</div>
 
@@ -120,11 +133,11 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 							</ul>
 
 							<button
-								onClick={() => handleSelectTicket(accessLevel)}
+								onClick={() => handleSelectTicket(ticket)}
 								disabled={purchased}
 								className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${purchased
-										? 'bg-primary/20 text-primary cursor-not-allowed'
-										: 'bg-primary text-primary-foreground hover:bg-primary/90'
+									? 'bg-primary/20 text-primary cursor-not-allowed'
+									: 'bg-primary text-primary-foreground hover:bg-primary/90'
 									}`}
 							>
 								{purchased ? 'Deja cumpărat' : 'Cumpără acum'}
@@ -142,4 +155,5 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 			</div>
 		</div>
 	);
+
 }
