@@ -28,9 +28,17 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 		const features = featuresString.split(',').map(f => f.trim()).filter(f => f.length > 0)
 		const type = formData.get('type') as string
 
+		// Get the ticket ID - use id property (not _id)
+		const ticketId = ticket.id || ticket._id
+		
+		if (!ticketId) {
+			setError('ID bilet invalid')
+			return
+		}
+
 		startTransition(async () => {
 			try {
-				await updateTicket(ticket._id ?? '', {
+				await updateTicket(ticketId, {
 					title,
 					description,
 					price,

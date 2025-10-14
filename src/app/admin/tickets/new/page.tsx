@@ -22,13 +22,14 @@ export default function NewTicketPage() {
 		const price = parseFloat(formData.get('price') as string)
 		const featuresString = formData.get('features') as string
 		const features = featuresString.split(',').map(f => f.trim()).filter(f => f.length > 0)
+		const type = formData.get('type') as string
 
 		const data = {
 			title,
 			description,
 			price,
 			features,
-			type: 'general' // Default type, can be modified to accept user input if needed
+			type
 		}
 
 		startTransition(async () => {

@@ -37,7 +37,7 @@ export default async function EditTicketPage({ params }: EditTicketPageProps) {
 
 	// Prepare serialized ticket data for the client component
 	const ticketData = {
-		id: ticket._id || ticket.id || id,
+		id: ticket._id?.toString() || ticket.id?.toString() || id,
 		title: ticket.title,
 		description: ticket.description,
 		price: ticket.price,
