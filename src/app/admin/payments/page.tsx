@@ -92,13 +92,22 @@ export default async function PaymentsPage() {
     failedPayments: payments.filter(p => p.status === 'failed').length,
   }
 
-  // Fetch recent payments with user details
-  const recentPayments: PaymentWithUser[] = []
+  // Fetch recent payments with user details - OPTIMIZED to prevent N+1 query
+  const recentPaymentsData = payments.slice(0, 50) // Get last 50 payments
+  
+  // Get all unique clerkIds from payments
+  const clerkIds = [...new Set(recentPaymentsData.map(p => p.clerkId))]
+  
+  // Fetch all users in one query instead of one per payment
+  const users = await User.find({ clerkId: { $in: clerkIds } }).lean()
+  
+  // Create a map for O(1) lookup
+  const userMap = new Map(users.map(u => [u.clerkId, u]))
 
-  for (const payment of payments.slice(0, 50)) { // Get last 50 payments
-    const paymentUser = await User.findOne({ clerkId: payment.clerkId }).lean()
-
-    recentPayments.push({
+  const recentPayments: PaymentWithUser[] = recentPaymentsData.map(payment => {
+    const paymentUser = userMap.get(payment.clerkId)
+    
+    return {
       _id: payment._id?.toString() || '',
       clerkId: payment.clerkId || '',
       stripeSessionId: payment.stripeSessionId || '',
@@ -116,8 +125,8 @@ export default async function PaymentsPage() {
         lastName: (paymentUser as unknown as MongoUser).lastName || '',
         email: (paymentUser as unknown as MongoUser).email || ''
       } : undefined
-    })
-  }
+    }
+  })
 
   function formatCurrency(amount: number) {
     return new Intl.NumberFormat('ro-RO', {

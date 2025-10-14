@@ -57,6 +57,11 @@ const UserSchema = new Schema<IUser>({
 }, {
   timestamps: true
 })
+
+// Add indexes for performance
+UserSchema.index({ role: 1 })
+UserSchema.index({ accessLevel: 1 })
+
 // Workshop schema
 const WorkshopSchema = new Schema<IWorkshop>({
   title: { type: String, required: true },
@@ -73,6 +78,10 @@ const WorkshopSchema = new Schema<IWorkshop>({
   timestamps: true
 })
 
+// Add indexes for common queries
+WorkshopSchema.index({ status: 1, date: 1 })
+WorkshopSchema.index({ wsType: 1 })
+
 // Registration schema
 const RegistrationSchema = new Schema<IRegistration>({
   userId: { type: String, required: true },
@@ -88,6 +97,9 @@ const RegistrationSchema = new Schema<IRegistration>({
 
 // Create compound index to prevent duplicate registrations
 RegistrationSchema.index({ userId: 1, workshopId: 1 }, { unique: true })
+// Add individual indexes for common queries
+RegistrationSchema.index({ userId: 1 })
+RegistrationSchema.index({ workshopId: 1 })
 
 // Payment interface
 export interface IPayment extends Document {
@@ -126,6 +138,10 @@ const PaymentSchema = new Schema<IPayment>({
 }, {
   timestamps: true
 })
+
+// Add compound index for common queries
+PaymentSchema.index({ clerkId: 1, status: 1 })
+PaymentSchema.index({ clerkId: 1, ticketType: 1 })
 
 const TicketSchema = new Schema<ITicket>({
   title: { type: String, required: true },
