@@ -37,7 +37,7 @@ export async function updateUserRole(formData: FormData) {
     const userId = formData.get('userId') as string
     const newRole = formData.get('role') as 'user' | 'admin'
     const userType = formData.get('userType') as string
-    const accessLevel = formData.get('accessLevel') as 'unpaid' | 'active' | 'passive'
+    const accessLevel = formData.get('accessLevel') as 'unpaid' | 'paid'
 
     if (!userId || !newRole) {
       throw new Error('Date invalide.')
@@ -47,7 +47,7 @@ export async function updateUserRole(formData: FormData) {
       throw new Error('Rol invalid.')
     }
 
-    if (accessLevel && !['unpaid', 'active', 'passive'].includes(accessLevel)) {
+    if (accessLevel && !['unpaid', 'paid'].includes(accessLevel)) {
       throw new Error('Nivel de acces invalid.')
     }
 
