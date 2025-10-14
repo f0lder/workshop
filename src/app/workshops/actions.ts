@@ -21,11 +21,10 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
 
   try {
     // Get all data in parallel for faster execution
-    const [appSettings, workshop, existingRegistration, userRegistrationsCount] = await Promise.all([
+    const [appSettings, workshop, existingRegistration] = await Promise.all([
       getAppSettings(),
       Workshop.findById(workshopId),
-      Registration.findOne({ userId: clerkUser.id, workshopId }),
-      Registration.countDocuments({ userId: clerkUser.id })
+      Registration.findOne({ userId: clerkUser.id, workshopId })
     ])
 
     if (!workshop) {
@@ -39,13 +38,20 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
 
     if (action === 'register') {
       // Validate registration conditions
-
-      if (userRegistrationsCount >= appSettings.maxWorkshopsPerUser) {
-        throw new Error(`You have reached the maximum workshops limit (${appSettings.maxWorkshopsPerUser})`)
-      }
-
+      
       if (existingRegistration) {
-        throw new Error('Already registered for this workshop')
+        throw new Error('Ești deja înregistrat la acest workshop')
+      }
+      
+      // Count total workshops user is registered for (excluding current one)
+      const userRegistrationsCount = await Registration.countDocuments({ 
+        userId: clerkUser.id,
+        workshopId: { $ne: workshopId } // Exclude current workshop
+      })
+
+      // Maximum 2 workshops at any given time
+      if (userRegistrationsCount >= 2) {
+        throw new Error('Poți fi înregistrat la maxim 2 workshop-uri simultan')
       }
 
       // Get current registration count for this workshop
