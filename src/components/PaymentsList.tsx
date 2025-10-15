@@ -1,0 +1,256 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import { FaSearch, FaTimes } from 'react-icons/fa'
+import DeletePaymentButton from '@/app/admin/payments/DeletePaymentButton'
+
+// Enhanced payment interface with user details
+interface PaymentWithUser {
+  _id: string
+  clerkId: string
+  stripeSessionId: string
+  stripePaymentIntentId?: string
+  amount: number
+  currency: string
+  accessLevel: string
+  ticketId: string
+  ticketType: string
+  status: 'pending' | 'completed' | 'failed' | 'refunded'
+  createdAt: Date
+  updatedAt: Date
+  user?: {
+    firstName: string
+    lastName: string
+    email: string
+  }
+}
+
+interface PaymentsListProps {
+  payments: PaymentWithUser[]
+}
+
+// Helper functions
+function formatCurrency(amount: number, currency: string = 'RON'): string {
+  return new Intl.NumberFormat('ro-RO', {
+    style: 'currency',
+    currency: currency,
+  }).format(amount / 100)
+}
+
+function formatDate(date: Date | string): string {
+  return new Date(date).toLocaleDateString('ro-RO', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function getStatusIcon(status: string) {
+  switch (status) {
+    case 'completed':
+      return <FaTimes className="h-4 w-4 text-green-500" />
+    case 'pending':
+      return <FaTimes className="h-4 w-4 text-yellow-500" />
+    case 'failed':
+      return <FaTimes className="h-4 w-4 text-red-500" />
+    case 'refunded':
+      return <FaTimes className="h-4 w-4 text-blue-500" />
+    default:
+      return null
+  }
+}
+
+function getStatusColor(status: string): string {
+  switch (status) {
+    case 'completed':
+      return 'bg-green-100 text-green-800 border-green-200'
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+    case 'failed':
+      return 'bg-red-100 text-red-800 border-red-200'
+    case 'refunded':
+      return 'bg-blue-100 text-blue-800 border-blue-200'
+    default:
+      return 'bg-gray-100 text-gray-800 border-gray-200'
+  }
+}
+
+export default function PaymentsList({ payments }: PaymentsListProps) {
+  const [searchTerm, setSearchTerm] = useState('')
+
+  // Filter payments based on search term
+  const filteredPayments = useMemo(() => {
+    if (!searchTerm.trim()) return payments
+
+    const lowerSearch = searchTerm.toLowerCase()
+
+    return payments.filter((payment) => {
+      const userName = payment.user
+        ? `${payment.user.firstName} ${payment.user.lastName}`.toLowerCase()
+        : ''
+      const userEmail = payment.user?.email?.toLowerCase() || ''
+      const ticketType = payment.ticketType?.toLowerCase() || ''
+      const accessLevel = payment.accessLevel?.toLowerCase() || ''
+      const status = payment.status?.toLowerCase() || ''
+      const amount = formatCurrency(payment.amount, payment.currency).toLowerCase()
+      const stripeId = payment.stripePaymentIntentId?.toLowerCase() || ''
+
+      return (
+        userName.includes(lowerSearch) ||
+        userEmail.includes(lowerSearch) ||
+        ticketType.includes(lowerSearch) ||
+        accessLevel.includes(lowerSearch) ||
+        status.includes(lowerSearch) ||
+        amount.includes(lowerSearch) ||
+        stripeId.includes(lowerSearch)
+      )
+    })
+  }, [payments, searchTerm])
+
+  return (
+    <>
+      {/* Search Bar */}
+      <div className="px-4 py-3 sm:px-6 bg-muted/50 border-b border-border">
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1 max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FaSearch className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <input
+              type="text"
+              placeholder="Caută plăți după utilizator, email, tip bilet, status, sumă..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="block w-full pl-10 pr-10 py-2 border border-border rounded-md leading-5 bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-foreground text-muted-foreground transition-colors"
+                aria-label="Șterge căutarea"
+              >
+                <FaTimes className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <div className="text-sm text-muted-foreground whitespace-nowrap">
+            {filteredPayments.length} {filteredPayments.length === 1 ? 'plată' : 'plăți'}
+          </div>
+        </div>
+      </div>
+
+      {/* Payments Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-border">
+          <thead className="bg-muted">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Utilizator
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Tip Bilet
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Sumă
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Data
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                ID Stripe
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Acțiuni
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-card divide-y divide-border">
+            {filteredPayments.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-8 text-center text-sm text-muted-foreground">
+                  {searchTerm ? 'Nu s-au găsit plăți care să corespundă căutării.' : 'Nu există plăți.'}
+                </td>
+              </tr>
+            ) : (
+              filteredPayments.map((payment) => (
+                <tr key={payment._id} className="hover:bg-muted/50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div className="text-sm font-medium text-foreground">
+                        {payment.user
+                          ? `${payment.user.firstName} ${payment.user.lastName}`.trim() || 'N/A'
+                          : 'N/A'}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {payment.user?.email || payment.clerkId}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm space-y-1">
+                      {/* Show ticket type with badge for new payments */}
+                      {payment.ticketType ? (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                              {payment.ticketType}
+                            </span>
+                            <span className="text-xs text-muted-foreground">(nou)</span>
+                          </div>
+                          {payment.ticketId && (
+                            <div className="text-xs text-muted-foreground">
+                              ID: {payment.ticketId.substring(0, 8)}...
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        /* Show access level for old payments */
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">
+                            {payment.accessLevel}
+                          </span>
+                          <span className="text-xs text-muted-foreground">(vechi)</span>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm font-medium text-foreground">
+                      {formatCurrency(payment.amount, payment.currency)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                        payment.status
+                      )}`}
+                    >
+                      {getStatusIcon(payment.status)}
+                      <span className="ml-1.5 capitalize">{payment.status}</span>
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    {formatDate(payment.createdAt)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-mono text-muted-foreground max-w-[150px] truncate">
+                      {payment.stripePaymentIntentId || 'N/A'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <DeletePaymentButton paymentId={payment._id} />
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
+  )
+}

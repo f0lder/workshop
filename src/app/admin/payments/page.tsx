@@ -4,18 +4,17 @@ import { syncUserWithDatabase } from '@/lib/auth'
 import { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Payment, User } from '@/models'
-import { FaCreditCard, FaEuroSign, FaUsers, FaCheckCircle, FaClock, FaTimes } from 'react-icons/fa'
-import DeletePaymentButton from './DeletePaymentButton'
+import { FaCreditCard, FaEuroSign, FaCheckCircle, FaClock, FaTimes, FaTicketAlt } from 'react-icons/fa'
+import PaymentsList from '@/components/PaymentsList'
 
 // Payment statistics interface
 interface PaymentStats {
   totalRevenue: number
   totalPayments: number
-  activeTickets: number
-  passiveTickets: number
   completedPayments: number
   pendingPayments: number
   failedPayments: number
+  ticketTypeCounts: Record<string, number>
 }
 
 // User data interface from MongoDB
@@ -71,11 +70,20 @@ export default async function PaymentsPage() {
   const payments = await Payment.find({}).sort({ createdAt: -1 }).lean()
 
   // Group payments by ticket type for dynamic counting
+  // Count both old payments (accessLevel) and new payments (ticketType)
   const ticketTypeCounts = payments
     .filter(p => p.status === 'completed')
     .reduce((acc, p) => {
-      const ticketType = p.ticketType || p.accessLevel || 'unknown'
-      acc[ticketType] = (acc[ticketType] || 0) + 1
+      // For new ticket system: use ticketType
+      // For old ticket system: use accessLevel (active/passive)
+      // This ensures both are counted separately
+      if (p.ticketType) {
+        acc[p.ticketType] = (acc[p.ticketType] || 0) + 1
+      } else if (p.accessLevel) {
+        acc[p.accessLevel] = (acc[p.accessLevel] || 0) + 1
+      } else {
+        acc['unknown'] = (acc['unknown'] || 0) + 1
+      }
       return acc
     }, {} as Record<string, number>)
 
@@ -84,12 +92,10 @@ export default async function PaymentsPage() {
       .filter(p => p.status === 'completed')
       .reduce((sum, p) => sum + p.amount, 0),
     totalPayments: payments.length,
-    // Use ticketType if available, fallback to accessLevel for backward compatibility
-    activeTickets: ticketTypeCounts['active'] || 0,
-    passiveTickets: ticketTypeCounts['passive'] || 0,
     completedPayments: payments.filter(p => p.status === 'completed').length,
     pendingPayments: payments.filter(p => p.status === 'pending').length,
     failedPayments: payments.filter(p => p.status === 'failed').length,
+    ticketTypeCounts,
   }
 
   // Fetch recent payments with user details - OPTIMIZED to prevent N+1 query
@@ -135,42 +141,6 @@ export default async function PaymentsPage() {
     }).format(amount / 100) // Convert from cents
   }
 
-  function formatDate(date: Date) {
-    return new Intl.DateTimeFormat('ro-RO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(new Date(date))
-  }
-
-  function getStatusIcon(status: string) {
-    switch (status) {
-      case 'completed':
-        return <FaCheckCircle className="h-4 w-4 text-green-500" />
-      case 'pending':
-        return <FaClock className="h-4 w-4 text-yellow-500" />
-      case 'failed':
-        return <FaTimes className="h-4 w-4 text-red-500" />
-      default:
-        return <FaClock className="h-4 w-4 text-muted-foreground" />
-    }
-  }
-
-  function getStatusColor(status: string) {
-    switch (status) {
-      case 'completed':
-        return 'text-green-600 bg-green-50 border-green-200'
-      case 'pending':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200'
-      case 'failed':
-        return 'text-red-600 bg-red-50 border-red-200'
-      default:
-        return 'text-muted-foreground bg-muted border-border'
-    }
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -209,29 +179,24 @@ export default async function PaymentsPage() {
           </div>
         </div>
 
-        <div className="bg-card p-6 rounded-lg border border-border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <FaUsers className="h-6 w-6 text-primary" />
+        {/* Dynamic Ticket Type Cards */}
+        {Object.entries(stats.ticketTypeCounts)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([ticketType, count]) => (
+            <div key={ticketType} className="bg-card p-6 rounded-lg border border-border">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <FaTicketAlt className="h-6 w-6 text-primary" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-muted-foreground capitalize">
+                    Bilete {ticketType}
+                  </p>
+                  <p className="text-2xl font-bold text-foreground">{count}</p>
+                </div>
+              </div>
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted-foreground">Bilete Active</p>
-              <p className="text-2xl font-bold text-foreground">{stats.activeTickets}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-card p-6 rounded-lg border border-border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <FaUsers className="h-6 w-6 text-secondary" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted-foreground">Bilete Pasive</p>
-              <p className="text-2xl font-bold text-foreground">{stats.passiveTickets}</p>
-            </div>
-          </div>
-        </div>
+          ))}
       </div>
 
       {/* Status Overview */}
@@ -276,110 +241,7 @@ export default async function PaymentsPage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-border">
-            <thead className="bg-muted">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Utilizator
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Tip Bilet
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Sumă
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Data
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  ID Stripe
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Acțiuni
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-card divide-y divide-border">
-              {recentPayments.map((payment) => (
-                <tr key={payment._id} className="hover:bg-muted/50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-foreground">
-                        {payment.user ?
-                          `${payment.user.firstName} ${payment.user.lastName}`.trim() || 'N/A' :
-                          'N/A'
-                        }
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {payment.user?.email || payment.clerkId}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm space-y-1">
-                      {/* Show ticket type with badge for new payments */}
-                      {payment.ticketType ? (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-                              {payment.ticketType}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              (nou)
-                            </span>
-                          </div>
-                          {payment.ticketId && (
-                            <div className="text-xs text-muted-foreground">
-                              ID: {payment.ticketId.substring(0, 8)}...
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        /* Show access level for old payments */
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">
-                            {payment.accessLevel}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            (vechi)
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                    {formatCurrency(payment.amount)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(payment.status)}`}>
-                      {getStatusIcon(payment.status)}
-                      <span className="ml-1 capitalize">{payment.status}</span>
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                    {formatDate(payment.createdAt)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-muted-foreground">
-                    {payment.stripePaymentIntentId ?
-                      payment.stripePaymentIntentId.substring(0, 15) + '...' :
-                      payment.stripeSessionId.substring(0, 15) + '...'
-                    }
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                    <DeletePaymentButton 
-                      paymentId={payment._id} 
-                      userName={payment.user ? `${payment.user.firstName} ${payment.user.lastName}`.trim() : undefined}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <PaymentsList payments={recentPayments} />
 
         {recentPayments.length === 0 && (
           <div className="text-center py-12">

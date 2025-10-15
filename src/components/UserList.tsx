@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { FaUser, FaCrown, FaEdit, FaSave, FaTrash, FaEllipsisV, FaClipboardCheck, FaQrcode, FaTimes } from 'react-icons/fa'
+import { useState, useTransition, useMemo } from 'react'
+import { FaUser, FaCrown, FaEdit, FaSave, FaTrash, FaEllipsisV, FaClipboardCheck, FaQrcode, FaTimes, FaSearch } from 'react-icons/fa'
 import { updateUserRole, deleteUser } from '@/app/admin/users/actions'
 import { User, UserType } from '@/types/models'
 import { useRouter } from 'next/navigation'
@@ -24,6 +24,7 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
   const [qrPopupUserId, setQrPopupUserId] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
   const [editData, setEditData] = useState<{
     role: 'user' | 'admin',
     userType: UserType | '',
@@ -34,6 +35,28 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
   const [error, setError] = useState('')
   
   const router = useRouter()
+
+  // Filter users based on search query
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return users
+    }
+
+    const query = searchQuery.toLowerCase()
+    return users.filter(user => {
+      const name = `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase()
+      const email = user.email.toLowerCase()
+      const role = user.role.toLowerCase()
+      const userType = (user.userType || '').toLowerCase()
+      const accessLevel = (user.accessLevel || '').toLowerCase()
+
+      return name.includes(query) ||
+        email.includes(query) ||
+        role.includes(query) ||
+        userType.includes(query) ||
+        accessLevel.includes(query)
+    })
+  }, [users, searchQuery])
 
   const handleEdit = (user: User) => {
     setEditingUserId(user.clerkId)
@@ -166,6 +189,44 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
         </div>
       )}
 
+      {/* Search Bar */}
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <FaSearch className="h-4 w-4 text-muted-foreground" />
+        </div>
+        <input
+          type="text"
+          placeholder="Caută utilizatori după nume, email, rol, tip cont sau nivel acces..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="block w-full pl-10 pr-10 py-3 border border-border rounded-lg bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery('')}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Șterge căutare"
+          >
+            <FaTimes className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Results count */}
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <p>
+          {searchQuery ? (
+            <>
+              <span className="font-semibold text-foreground">{filteredUsers.length}</span> rezultate găsite din <span className="font-semibold">{users.length}</span> utilizatori
+            </>
+          ) : (
+            <>
+              <span className="font-semibold text-foreground">{users.length}</span> utilizatori în total
+            </>
+          )}
+        </p>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-border">
           <thead className="bg-muted">
@@ -194,7 +255,18 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
             </tr>
           </thead>
           <tbody className="bg-card divide-y divide-border">
-            {users.map((user) => {
+            {filteredUsers.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-12 text-center">
+                  <div className="flex flex-col items-center justify-center text-muted-foreground">
+                    <FaSearch className="h-12 w-12 mb-3 opacity-50" />
+                    <p className="text-lg font-medium">Niciun utilizator găsit</p>
+                    <p className="text-sm mt-1">Încearcă să modifici criteriile de căutare</p>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              filteredUsers.map((user) => {
               const isCurrentUser = user.clerkId === currentUserId
               return (
                 <tr key={user.clerkId} className={`hover:bg-muted/50 ${isCurrentUser ? 'bg-blue-50/10 border-l-4 border-l-blue-500' : ''}`}>
@@ -429,16 +501,13 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
                   </td>
                 </tr>
               )
-            })}
+            })
+            )}
           </tbody>
         </table>
       </div>
 
-      {users.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">Nu au fost găsiți utilizatori.</p>
-        </div>
-      )}
+      {/* Empty state message removed - now handled in table */}
 
       {/* QR Code Popup Modal */}
       {qrPopupUserId && (
