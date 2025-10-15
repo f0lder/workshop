@@ -5,6 +5,51 @@ import type { Workshop } from "@/types/models";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaChalkboardTeacher, FaUsers, FaInfoCircle } from 'react-icons/fa';
 import { getAppSettings } from "@/lib/settings";
 import { getIsRegisteredForWorkshop } from "../actions";
+import { Metadata } from 'next';
+
+// Generate dynamic metadata for SEO
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+	const { id } = await params;
+	const workshop = await getWorkshopById(id) as Workshop | null;
+
+	if (!workshop) {
+		return {
+			title: 'Workshop negăsit - MIMESISS 2025',
+			description: 'Workshop-ul căutat nu există.',
+		};
+	}
+
+	const wType = workshop.wsType === 'workshop' ? 'Workshop' : 
+		workshop.wsType === 'conferinta' ? 'Conferință' : workshop.wsType;
+	
+	const formatDate = (value?: Date | string) => {
+		if (!value) return "";
+		const d = value instanceof Date ? value : new Date(value);
+		return new Intl.DateTimeFormat('ro-RO', { dateStyle: "long" }).format(d);
+	};
+
+	const availableSpots = workshop.maxParticipants - workshop.currentParticipants;
+	const workshopDate = workshop.date ? formatDate(workshop.date) : "Data va fi anunțată";
+
+	return {
+		title: `${workshop.title} - ${wType} MIMESISS 2025`,
+		description: `${workshop.description} | ${workshopDate} | ${availableSpots} locuri disponibile | Instructor: ${workshop.instructor || 'Va fi anunțat'}`,
+		keywords: [
+			'MIMESISS 2025',
+			'congres medical',
+			'workshop medical',
+			workshop.title,
+			workshop.wsType,
+			'student medicină',
+			'București',
+			'conferință medicală',
+		],
+		robots: {
+			index: true,
+			follow: true,
+		},
+	};
+}
 
 function formatDate(value?: Date | string) {
 	if (!value) return "—";
