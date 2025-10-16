@@ -47,7 +47,7 @@ export async function updateUserRole(formData: FormData) {
       throw new Error('Rol invalid.')
     }
 
-    if (accessLevel && !['unpaid', 'paid'].includes(accessLevel)) {
+    if (accessLevel && !['unpaid', 'paid', 'active', 'passive'].includes(accessLevel)) {
       throw new Error('Nivel de acces invalid.')
     }
 
@@ -64,11 +64,11 @@ export async function updateUserRole(formData: FormData) {
 
     // Prepare update data
     const updateData: UserUpdateData = { role: newRole }
-    
+
     if (userType !== undefined) {
       updateData.userType = (userType as UserType) || null
     }
-    
+
     if (accessLevel) {
       updateData.accessLevel = accessLevel
     }
@@ -87,11 +87,11 @@ export async function updateUserRole(formData: FormData) {
     // Update role in Clerk's public metadata
     const client = await clerkClient()
     const metadataUpdate: ClerkMetadataUpdate = { role: newRole }
-    
+
     if (userType !== undefined) {
       metadataUpdate.userType = (userType as UserType) || null
     }
-    
+
     await client.users.updateUserMetadata(userId, {
       publicMetadata: metadataUpdate
     })
@@ -99,18 +99,18 @@ export async function updateUserRole(formData: FormData) {
     // Build success message
     const updates = []
     updates.push(`rol: ${newRole === 'admin' ? 'Administrator' : 'Utilizator'}`)
-    
+
     if (userType !== undefined) {
       updates.push(`tip: ${userType || 'nespecificat'}`)
     }
-    
+
     if (accessLevel) {
       updates.push(`acces: ${accessLevel}`)
     }
 
-    return { 
-      success: true, 
-      message: `Datele utilizatorului au fost actualizate cu succes (${updates.join(', ')}).` 
+    return {
+      success: true,
+      message: `Datele utilizatorului au fost actualizate cu succes (${updates.join(', ')}).`
     }
   } catch (error) {
     console.error('Error updating user:', error)
@@ -161,9 +161,9 @@ export async function deleteUser(formData: FormData) {
     const client = await clerkClient()
     await client.users.deleteUser(userId)
 
-    return { 
-      success: true, 
-      message: 'Utilizatorul a fost șters cu succes din sistemul de autentificare și baza de date.' 
+    return {
+      success: true,
+      message: 'Utilizatorul a fost șters cu succes din sistemul de autentificare și baza de date.'
     }
   } catch (error) {
     console.error('Error deleting user:', error)
