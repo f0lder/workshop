@@ -4,7 +4,7 @@ import { syncUserWithDatabase } from '@/lib/auth'
 import { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Payment, User } from '@/models'
-import { FaCreditCard, FaEuroSign, FaCheckCircle, FaClock, FaTimes, FaTicketAlt } from 'react-icons/fa'
+import { FaCreditCard, FaEuroSign, FaTicketAlt } from 'react-icons/fa'
 import PaymentsList from '@/components/PaymentsList'
 
 // Payment statistics interface
@@ -98,21 +98,21 @@ export default async function PaymentsPage() {
     ticketTypeCounts,
   }
 
-  // Fetch recent payments with user details - OPTIMIZED to prevent N+1 query
-  const recentPaymentsData = payments.slice(0, 50) // Get last 50 payments
-  
-  // Get all unique clerkIds from payments
-  const clerkIds = [...new Set(recentPaymentsData.map(p => p.clerkId))]
-  
+
+  // Fetch all payments with user details - OPTIMIZED to prevent N+1 query
+  const allPaymentsData = payments // No slice, send all
+
+  // Get all unique clerkIds from all payments
+  const allClerkIds = [...new Set(allPaymentsData.map(p => p.clerkId))]
+
   // Fetch all users in one query instead of one per payment
-  const users = await User.find({ clerkId: { $in: clerkIds } }).lean()
-  
+  const users = await User.find({ clerkId: { $in: allClerkIds } }).lean()
+
   // Create a map for O(1) lookup
   const userMap = new Map(users.map(u => [u.clerkId, u]))
 
-  const recentPayments: PaymentWithUser[] = recentPaymentsData.map(payment => {
+  const recentPayments: PaymentWithUser[] = allPaymentsData.map(payment => {
     const paymentUser = userMap.get(payment.clerkId)
-    
     return {
       _id: payment._id?.toString() || '',
       clerkId: payment.clerkId || '',
@@ -199,38 +199,6 @@ export default async function PaymentsPage() {
           ))}
       </div>
 
-      {/* Status Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card p-4 rounded-lg border border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Finalizate</p>
-              <p className="text-xl font-bold text-green-600">{stats.completedPayments}</p>
-            </div>
-            <FaCheckCircle className="h-8 w-8 text-green-500" />
-          </div>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg border border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">În așteptare</p>
-              <p className="text-xl font-bold text-yellow-600">{stats.pendingPayments}</p>
-            </div>
-            <FaClock className="h-8 w-8 text-yellow-500" />
-          </div>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg border border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Eșuate</p>
-              <p className="text-xl font-bold text-red-600">{stats.failedPayments}</p>
-            </div>
-            <FaTimes className="h-8 w-8 text-red-500" />
-          </div>
-        </div>
-      </div>
 
       {/* Recent Payments Table */}
       <div className="bg-card shadow border border-border overflow-hidden sm:rounded-lg">

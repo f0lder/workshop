@@ -15,7 +15,6 @@ interface PaymentWithUser {
   accessLevel: string
   ticketId: string
   ticketType: string
-  status: 'pending' | 'completed' | 'failed' | 'refunded'
   createdAt: Date
   updatedAt: Date
   user?: {
@@ -47,35 +46,6 @@ function formatDate(date: Date | string): string {
   })
 }
 
-function getStatusIcon(status: string) {
-  switch (status) {
-    case 'completed':
-      return <FaTimes className="h-4 w-4 text-green-500" />
-    case 'pending':
-      return <FaTimes className="h-4 w-4 text-yellow-500" />
-    case 'failed':
-      return <FaTimes className="h-4 w-4 text-red-500" />
-    case 'refunded':
-      return <FaTimes className="h-4 w-4 text-blue-500" />
-    default:
-      return null
-  }
-}
-
-function getStatusColor(status: string): string {
-  switch (status) {
-    case 'completed':
-      return 'bg-green-100 text-green-800 border-green-200'
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-    case 'failed':
-      return 'bg-red-100 text-red-800 border-red-200'
-    case 'refunded':
-      return 'bg-blue-100 text-blue-800 border-blue-200'
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200'
-  }
-}
 
 export default function PaymentsList({ payments }: PaymentsListProps) {
   const [searchTerm, setSearchTerm] = useState('')
@@ -93,7 +63,6 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
       const userEmail = payment.user?.email?.toLowerCase() || ''
       const ticketType = payment.ticketType?.toLowerCase() || ''
       const accessLevel = payment.accessLevel?.toLowerCase() || ''
-      const status = payment.status?.toLowerCase() || ''
       const amount = formatCurrency(payment.amount, payment.currency).toLowerCase()
       const stripeId = payment.stripePaymentIntentId?.toLowerCase() || ''
 
@@ -102,7 +71,6 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
         userEmail.includes(lowerSearch) ||
         ticketType.includes(lowerSearch) ||
         accessLevel.includes(lowerSearch) ||
-        status.includes(lowerSearch) ||
         amount.includes(lowerSearch) ||
         stripeId.includes(lowerSearch)
       )
@@ -154,9 +122,6 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Sumă
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Status
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Data
@@ -222,16 +187,6 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm font-medium text-foreground">
                       {formatCurrency(payment.amount, payment.currency)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                        payment.status
-                      )}`}
-                    >
-                      {getStatusIcon(payment.status)}
-                      <span className="ml-1.5 capitalize">{payment.status}</span>
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
