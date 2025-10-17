@@ -11,22 +11,7 @@ import PaymentsList from '@/components/PaymentsList'
 interface PaymentStats {
   totalRevenue: number
   totalPayments: number
-  completedPayments: number
-  pendingPayments: number
-  failedPayments: number
   ticketTypeCounts: Record<string, number>
-}
-
-// User data interface from MongoDB
-interface MongoUser {
-  _id: unknown
-  clerkId: string
-  firstName?: string
-  lastName?: string
-  email: string
-  role: string
-  accessLevel: string
-  __v: number
 }
 
 // Enhanced payment interface with user details
@@ -92,9 +77,6 @@ export default async function PaymentsPage() {
       .filter(p => p.status === 'completed')
       .reduce((sum, p) => sum + p.amount, 0),
     totalPayments: payments.length,
-    completedPayments: payments.filter(p => p.status === 'completed').length,
-    pendingPayments: payments.filter(p => p.status === 'pending').length,
-    failedPayments: payments.filter(p => p.status === 'failed').length,
     ticketTypeCounts,
   }
 
@@ -106,7 +88,7 @@ export default async function PaymentsPage() {
   const allClerkIds = [...new Set(allPaymentsData.map(p => p.clerkId))]
 
   // Fetch all users in one query instead of one per payment
-  const users = await User.find({ clerkId: { $in: allClerkIds } }).lean()
+  const users = await User.find({ clerkId: { $in: allClerkIds } }) as UserType[]
 
   // Create a map for O(1) lookup
   const userMap = new Map(users.map(u => [u.clerkId, u]))
@@ -127,9 +109,9 @@ export default async function PaymentsPage() {
       createdAt: payment.createdAt,
       updatedAt: payment.updatedAt,
       user: paymentUser ? {
-        firstName: (paymentUser as unknown as MongoUser).firstName || '',
-        lastName: (paymentUser as unknown as MongoUser).lastName || '',
-        email: (paymentUser as unknown as MongoUser).email || ''
+        firstName: (paymentUser as UserType).firstName || '',
+        lastName: (paymentUser as UserType).lastName || '',
+        email: (paymentUser as UserType).email || ''
       } : undefined
     }
   })
