@@ -3,11 +3,15 @@ import Link from 'next/link'
 import { FaUserGraduate, FaFileAlt, FaCreditCard, FaInfoCircle } from 'react-icons/fa'
 import { RiContractFill } from 'react-icons/ri'
 import { getAppSettings } from '@/lib/settings'
+import { getTicketByType } from './actions'
 
 export default async function InfoPage() {
   const settings = await getAppSettings();
 
   const paymentenabled = settings ?? false;
+
+  const activeTicket = await getTicketByType('active');
+  const passiveTicket = await getTicketByType('passive');
 
   return (
     <>
@@ -123,12 +127,13 @@ export default async function InfoPage() {
                     <li>Coffee break și masa de prânz</li>
                   </ul>
                 </div>
-                
-                <div className="text-center">
-                  
-                  <div className="text-3xl font-bold text-secondary mb-2">170 RON</div>
-                  <p className="text-gray-400">Taxa de participare</p>
-                </div>
+
+                {passiveTicket?.price && (
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-secondary mb-2"> {passiveTicket.price} RON </div>
+                    <p className="text-gray-400">Taxa de participare</p>
+                  </div>
+                )}
                 {paymentenabled && (
                   <Link href="/payment" className="mimesiss-btn-primary items-center">
                     Cumpara bilet
@@ -176,11 +181,13 @@ export default async function InfoPage() {
                     <li>Networking cu specialiști</li>
                   </ul>
                 </div>
-                
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">120 RON</div>
-                  <p className="text-muted-foreground">Taxa comună pentru toate secțiunile</p>
-                </div>
+
+                {activeTicket?.price && (
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary mb-2">{activeTicket.price} RON</div>
+                    <p className="text-muted-foreground">Taxa comună pentru toate secțiunile</p>
+                  </div>
+                )}
 
                 {paymentenabled && (
                   <Link href="/payment" className="mimesiss-btn-primary items-center">
