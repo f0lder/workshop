@@ -11,7 +11,5 @@ export async function getTicketByType(ticketType: string): Promise<TicketType | 
 		return null;
 	}
 
-	console.log('Fetched ticket:', ticket);
-
 	return JSON.parse(JSON.stringify(ticket)) as TicketType;
 }

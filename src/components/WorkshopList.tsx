@@ -1,12 +1,20 @@
 import Link from 'next/link'
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUsers } from 'react-icons/fa'
 import { getAllWorkshops } from '@/app/workshops/actions'
+import { WorkshopRegistrationButton } from './WorkshopRegistrationButton'
+import { getIsRegisteredForWorkshop } from '@/app/workshops/actions'
+import { Workshop } from '@/types/models'
 
 interface WorkshopListProps {
   workshopVisibleToPublic: boolean
+  globalRegistrationEnabled: boolean
 }
 
-export default async function WorkshopList({ workshopVisibleToPublic }: WorkshopListProps) {
+type ExtendedWorkshop = {
+  isRegistered: boolean
+} & Workshop
+
+export default async function WorkshopList({ workshopVisibleToPublic, globalRegistrationEnabled }: WorkshopListProps) {
   // If workshops are not visible to public, show coming soon message
   if (!workshopVisibleToPublic) {
     return (
@@ -18,9 +26,17 @@ export default async function WorkshopList({ workshopVisibleToPublic }: Workshop
     )
   }
 
-  const workshops = await getAllWorkshops()
+  const workshops = await getAllWorkshops() as Workshop[]
 
-  if (workshops.length === 0) {
+  // Resolve registration status for each workshop in parallel
+  const extendedWorkshops: ExtendedWorkshop[] = await Promise.all(
+    workshops.map(async (w) => {
+      const isRegistered = await getIsRegisteredForWorkshop(w._id?.toString() ?? '')
+      return Object.assign({}, w, { isRegistered }) as ExtendedWorkshop
+    })
+  )
+
+  if (extendedWorkshops.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground text-lg">
@@ -32,7 +48,7 @@ export default async function WorkshopList({ workshopVisibleToPublic }: Workshop
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {workshops.map((workshop) => (
+      {extendedWorkshops.map((workshop) => (
         <div key={workshop._id?.toString()} className="mimesiss-section-card">
           <div className="p-6">
             <h3 className="text-xl font-semibold text-foreground mb-2">
@@ -84,7 +100,7 @@ export default async function WorkshopList({ workshopVisibleToPublic }: Workshop
               )}
 
               {workshop.currentParticipants !== 0 && (
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between my-2">
                 <div className="flex-1">
                   <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
@@ -101,11 +117,12 @@ export default async function WorkshopList({ workshopVisibleToPublic }: Workshop
               </div>
               )}
             </div>
+            {globalRegistrationEnabled && <WorkshopRegistrationButton workshop={JSON.parse(JSON.stringify(workshop))} isGlobalRegistrationClosed={globalRegistrationEnabled} isRegistered={workshop.isRegistered} />}
 
             <div className="mt-6">
               <Link 
                 href={`/workshops/${workshop._id?.toString()}`} 
-                className="w-full block text-center bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
+                className="w-full block text-center bg-secondary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
               >
                 Vezi detalii
               </Link>

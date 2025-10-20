@@ -43,15 +43,29 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
         throw new Error('Ești deja înregistrat la acest workshop')
       }
       
-      // Count total workshops user is registered for (excluding current one)
-      const userRegistrationsCount = await Registration.countDocuments({ 
-        userId: clerkUser.id,
-        workshopId: { $ne: workshopId } // Exclude current workshop
-      })
+      // Enforce maximum of 2 active "workshop" type registrations.
+      // If the current workshop is a 'conferinta' type, allow unlimited registrations.
+      if (workshop.wsType !== 'conferinta') {
+        // Get the user's other registrations (exclude current workshop)
+        const otherRegs = await Registration.find({
+          userId: clerkUser.id,
+          workshopId: { $ne: workshopId }
+        }).lean()
 
-      // Maximum 2 workshops at any given time
-      if (userRegistrationsCount >= 2) {
-        throw new Error('Poți fi înregistrat la maxim 2 workshop-uri simultan')
+        const otherWorkshopIds = otherRegs.map(r => r.workshopId)
+
+        // Count how many of those registrations are for workshops of type 'workshop'
+        let userWorkshopCount = 0
+        if (otherWorkshopIds.length > 0) {
+          userWorkshopCount = await Workshop.countDocuments({
+            _id: { $in: otherWorkshopIds },
+            wsType: 'workshop'
+          })
+        }
+
+        if (userWorkshopCount >= 2) {
+          throw new Error('Poți fi înregistrat la maxim 2 workshop-uri simultan')
+        }
       }
 
       // Get current registration count for this workshop

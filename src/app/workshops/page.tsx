@@ -34,6 +34,7 @@ export default async function WorkshopsPage() {
 
   const appSettings = await getAppSettings()
   const workshopVisibleToPublic = appSettings?.workshopVisibleToPublic || false
+  const globalRegistrationEnabled = appSettings.globalRegistrationEnabled || false
 
   return (
     <>
@@ -65,7 +66,7 @@ export default async function WorkshopsPage() {
 
           {/* Workshop List with Loading */}
           <Suspense fallback={<WorkshopListSkeleton />}>
-            <WorkshopList workshopVisibleToPublic={workshopVisibleToPublic} />
+            <WorkshopList workshopVisibleToPublic={workshopVisibleToPublic} globalRegistrationEnabled={globalRegistrationEnabled} />
           </Suspense>
 
           {/* Info Section */}
