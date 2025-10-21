@@ -3,6 +3,7 @@ import { Workshop, User } from '@/types/models';
 import { FaCalendarAlt, FaEdit, FaUsers, FaMapMarkerAlt, FaUser } from 'react-icons/fa'
 import DeleteWorkshopButton from '@/components/DeleteWorkshopButton'
 import { getRegistrations } from '@/app/admin/workshops/actions';
+import { FaLink } from 'react-icons/fa';
 
 export default async function WorkshopAdminRow({ workshop }: { workshop: Workshop }) {
 
@@ -15,13 +16,20 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 				<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
 					<div className="flex-1 min-w-0">
 						<div className="space-y-2">
+							<div className="text-sm font-medium text-foreground flex items-center space-x-2">
+									<span>{workshop.title} </span>
+									<span className="border border-primary rounded-full p-1 bg-primary/45">{workshop.wsType}</span>
+									{workshop.url && (
+										<Link href={`${workshop.url}`} target="_blank" className="inline-flex items-center text-sm text-primary hover:underline mt-1">
+											<FaLink className="mr-1 h-4 w-4" />
+										</Link>
+									)}
+							</div>
 							<div>
-								<p className="text-sm font-medium text-foreground">
-									{workshop.title} <span className="border border-primary rounded-full p-1 bg-primary/45">{workshop.wsType}</span>
-								</p>
 								<p className="text-sm text-muted-foreground line-clamp-2">
 									{workshop.description}
 								</p>
+
 							</div>
 						</div>
 					</div>

@@ -2,10 +2,11 @@ import { getWorkshopById } from "../actions";
 import HeaderContent from "@/components/HeaderContent";
 import { WorkshopRegistrationButton } from "@/components/WorkshopRegistrationButton";
 import type { Workshop } from "@/types/models";
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaChalkboardTeacher, FaUsers, FaInfoCircle } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaChalkboardTeacher, FaUsers, FaInfoCircle, FaInstagram } from 'react-icons/fa';
 import { getAppSettings } from "@/lib/settings";
 import { getIsRegisteredForWorkshop } from "../actions";
 import { Metadata } from 'next';
+import { InstagramPost } from "@/components/InstagramPost";
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -19,9 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 		};
 	}
 
-	const wType = workshop.wsType === 'workshop' ? 'Workshop' : 
+	const wType = workshop.wsType === 'workshop' ? 'Workshop' :
 		workshop.wsType === 'conferinta' ? 'Conferință' : workshop.wsType;
-	
+
 	const formatDate = (value?: Date | string) => {
 		if (!value) return "";
 		const d = value instanceof Date ? value : new Date(value);
@@ -127,6 +128,23 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 					</div>
 				</div>
 
+
+				{/* Instagram embed */}
+				{workshop.url && (
+					<div className="mimesiss-card p-6">
+						<h2 className="text-xl font-semibold text-foreground mb-6 flex items-center">
+							<FaInstagram className="mr-2 text-primary" />
+							Postare Instagram
+						</h2>
+
+						{/* Instagram embed */}
+						<div className="flex justify-center">
+							<InstagramPost url={workshop.url || ''} />
+						</div>
+					</div>
+				)}
+
+
 				{/* Workshop Details */}
 				<div className="mimesiss-card p-6">
 					<h2 className="text-xl font-semibold text-foreground mb-6 flex items-center">
@@ -229,7 +247,7 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 						</div>
 					</div>
 				)}
-			</div>
+			</div >
 		</>
 	);
 }

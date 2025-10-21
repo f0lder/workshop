@@ -117,12 +117,28 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
             </div>
 
             <div>
+              <label htmlFor="url" className="block text-sm font-medium text-foreground">
+                URL Eveniment
+              </label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="url"
+                  id="url"
+                  defaultValue={workshop?.url || ''}
+                  className="mimesiss-input"
+                  placeholder="Instagram post URL"
+                />
+              </div>
+            </div>
+
+            <div>
               <label htmlFor="type" className="block text-sm font-medium text-foreground">
                 Tip workshop *
               </label>
               <div className="mt-1">
-                <select name="type" id="type" defaultValue={workshop?.wsType || ''} className="mimesiss-input">
-                  <option defaultValue="workshop">Workshop</option>
+                <select name="type" id="type" defaultValue={workshop?.wsType || 'workshop'} className="mimesiss-input">
+                  <option value="workshop">Workshop</option>
                   <option value="conferinta">Conferință</option>
                </select>
               </div>

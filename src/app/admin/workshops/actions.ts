@@ -9,14 +9,14 @@ import { User as UserType } from '@/types/models'
 
 export async function createWorkshop(formData: FormData) {
   const clerkUser = await currentUser()
-  
+
   if (!clerkUser) {
     throw new Error('Authentication required')
   }
 
   // Sync user and check if admin
   const user = await syncUserWithDatabase(clerkUser)
-  
+
   if (user.role !== 'admin') {
     throw new Error('Admin access required')
   }
@@ -30,12 +30,18 @@ export async function createWorkshop(formData: FormData) {
   const time = formData.get('time') as string
   const location = formData.get('location') as string
   const instructor = formData.get('instructor') as string
-  const maxParticipants = parseInt(formData.get('maxParticipants') as string)
-  const wsType = formData.get('type') as string
+  const maxParticipantsRaw = formData.get('maxParticipants') as string
+  const maxParticipants = Number(maxParticipantsRaw)
+  const wsType = (formData.get('type') as string) || ''
+  const url = (formData.get('url') as string) || ''
 
   // Validate required fields
-  if (!title || !description || !maxParticipants || !wsType) {
+  if (!title || !description || !wsType) {
     throw new Error('All required fields must be filled')
+  }
+
+  if (!Number.isFinite(maxParticipants) || maxParticipants <= 0) {
+    throw new Error('Numărul maxim de participanți este invalid')
   }
 
   try {
@@ -65,11 +71,12 @@ export async function createWorkshop(formData: FormData) {
       instructor: instructor || '',
       wsType: finalWsType,
       status: 'active',
+      url: url || '',
     })
 
     // Revalidate the admin workshops page
     revalidatePath('/admin/workshops')
-    
+
     return { success: true, workshopId: workshop._id.toString() }
   } catch (error) {
     console.error('Error creating workshop:', error)
@@ -80,14 +87,14 @@ export async function createWorkshop(formData: FormData) {
 
 export async function updateWorkshop(workshopId: string, formData: FormData) {
   const clerkUser = await currentUser()
-  
+
   if (!clerkUser) {
     throw new Error('Authentication required')
   }
 
   // Sync user and check if admin
   const user = await syncUserWithDatabase(clerkUser)
-  
+
   if (user.role !== 'admin') {
     throw new Error('Admin access required')
   }
@@ -103,6 +110,9 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
   const instructor = formData.get('instructor') as string ?? ''
   const maxParticipants = parseInt(formData.get('maxParticipants') as string) ?? 0
   const wsType = formData.get('type') as string ?? 'workshop'
+  const url = formData.get('url') as string ?? ''
+
+  console.log('updateWorkshop: received url=', url)
 
   // Validate required fields
   if (!title || !description || !maxParticipants) {
@@ -112,7 +122,7 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
   try {
     // Get the existing workshop to check current participants
     const existingWorkshop = await Workshop.findById(workshopId)
-    
+
     if (!existingWorkshop) {
       throw new Error('Workshop not found')
     }
@@ -148,6 +158,7 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
         maxParticipants,
         instructor: instructor || '',
         wsType: finalWsType,
+        url: url || '',
       },
       { new: true }
     )
@@ -158,7 +169,7 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
 
     // Revalidate the admin workshops page
     revalidatePath('/admin/workshops')
-    
+
     return { success: true, workshopId: workshop._id.toString() }
   } catch (error) {
     console.error('Error updating workshop:', error)
@@ -168,14 +179,14 @@ export async function updateWorkshop(workshopId: string, formData: FormData) {
 
 export async function deleteWorkshop(workshopId: string) {
   const clerkUser = await currentUser()
-  
+
   if (!clerkUser) {
     throw new Error('Authentication required')
   }
 
   // Sync user and check if admin
   const user = await syncUserWithDatabase(clerkUser)
-  
+
   if (user.role !== 'admin') {
     throw new Error('Admin access required')
   }
@@ -195,7 +206,7 @@ export async function deleteWorkshop(workshopId: string) {
 
     // Revalidate the admin workshops page
     revalidatePath('/admin/workshops')
-    
+
     return { success: true }
   } catch (error) {
     console.error('Error deleting workshop:', error)
@@ -204,7 +215,7 @@ export async function deleteWorkshop(workshopId: string) {
 }
 
 
-export async function getRegistrations(workshopId: string) : Promise<UserType[]>{
+export async function getRegistrations(workshopId: string): Promise<UserType[]> {
   const clerkUser = await currentUser()
 
   if (!clerkUser) {

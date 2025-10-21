@@ -31,6 +31,7 @@ export interface Workshop {
   instructor: string;
   status: 'active' | 'cancelled' | 'completed';
   wsType: 'workshop' | 'conferinta';
+  url?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

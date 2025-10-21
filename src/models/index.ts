@@ -24,6 +24,7 @@ export interface IWorkshop extends Document {
   wsType: 'workshop' | 'conferinta'
   instructor: string
   status: 'active' | 'cancelled' | 'completed'
+  url?: string;
 }
 
 // Registration interface
@@ -74,6 +75,7 @@ const WorkshopSchema = new Schema<IWorkshop>({
   instructor: { type: String, required: false },
   status: { type: String, enum: ['active', 'cancelled', 'completed'], default: 'active' },
   wsType: { type: String, enum: ['workshop', 'conferinta'], default: 'workshop' },
+  url: { type: String, required: false },
 }, {
   timestamps: true
 })
