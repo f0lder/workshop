@@ -4,17 +4,16 @@ import { syncUserWithDatabase } from '@/lib/auth'
 import { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Payment, User } from '@/models'
-import { FaCreditCard, FaEuroSign, FaTicketAlt } from 'react-icons/fa'
-import PaymentsList from '@/components/PaymentsList'
+// Import the new client component
+import PaymentsClient from './PaymentsClient'
 
-// Payment statistics interface
+// You can move these interfaces to a shared types file or to PaymentsClient.tsx
 interface PaymentStats {
   totalRevenue: number
   totalPayments: number
   ticketTypeCounts: Record<string, number>
 }
 
-// Enhanced payment interface with user details
 interface PaymentWithUser {
   _id: string
   clerkId: string
@@ -42,7 +41,6 @@ export default async function PaymentsPage() {
     redirect('/auth/login')
   }
 
-  // Sync user and check if admin
   const user: UserType = await syncUserWithDatabase(clerkUser)
 
   if (user.role !== 'admin') {
@@ -54,14 +52,9 @@ export default async function PaymentsPage() {
   // Fetch payment statistics
   const payments = await Payment.find({}).sort({ createdAt: -1 }).lean()
 
-  // Group payments by ticket type for dynamic counting
-  // Count both old payments (accessLevel) and new payments (ticketType)
   const ticketTypeCounts = payments
     .filter(p => p.status === 'completed')
     .reduce((acc, p) => {
-      // For new ticket system: use ticketType
-      // For old ticket system: use accessLevel (active/passive)
-      // This ensures both are counted separately
       if (p.ticketType) {
         acc[p.ticketType] = (acc[p.ticketType] || 0) + 1
       } else if (p.accessLevel) {
@@ -80,17 +73,10 @@ export default async function PaymentsPage() {
     ticketTypeCounts,
   }
 
-
-  // Fetch all payments with user details - OPTIMIZED to prevent N+1 query
-  const allPaymentsData = payments // No slice, send all
-
-  // Get all unique clerkIds from all payments
+  // Fetch all payments with user details
+  const allPaymentsData = payments
   const allClerkIds = [...new Set(allPaymentsData.map(p => p.clerkId))]
-
-  // Fetch all users in one query instead of one per payment
   const users = await User.find({ clerkId: { $in: allClerkIds } }) as UserType[]
-
-  // Create a map for O(1) lookup
   const userMap = new Map(users.map(u => [u.clerkId, u]))
 
   const recentPayments: PaymentWithUser[] = allPaymentsData.map(payment => {
@@ -116,93 +102,9 @@ export default async function PaymentsPage() {
     }
   })
 
-  function formatCurrency(amount: number) {
-    return new Intl.NumberFormat('ro-RO', {
-      style: 'currency',
-      currency: 'RON'
-    }).format(amount / 100) // Convert from cents
-  }
+  // Remove the formatCurrency and downloadCSV functions
+  // Remove the entire JSX return block
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Gestionare Plăți</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Monitorizați și gestionați toate plățile pentru biletele MIMESISS 2025.
-          </p>
-        </div>
-      </div>
-
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-card p-6 rounded-lg border border-border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <FaEuroSign className="h-6 w-6 text-primary" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted-foreground">Venituri Totale</p>
-              <p className="text-2xl font-bold text-foreground">{formatCurrency(stats.totalRevenue)}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-card p-6 rounded-lg border border-border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <FaCreditCard className="h-6 w-6 text-primary" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-muted-foreground">Total Plăți</p>
-              <p className="text-2xl font-bold text-foreground">{stats.totalPayments}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Dynamic Ticket Type Cards */}
-        {Object.entries(stats.ticketTypeCounts)
-          .sort(([a], [b]) => a.localeCompare(b))
-          .map(([ticketType, count]) => (
-            <div key={ticketType} className="bg-card p-6 rounded-lg border border-border">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <FaTicketAlt className="h-6 w-6 text-primary" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground capitalize">
-                    Bilete {ticketType}
-                  </p>
-                  <p className="text-2xl font-bold text-foreground">{count}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-      </div>
-
-
-      {/* Recent Payments Table */}
-      <div className="bg-card shadow border border-border overflow-hidden sm:rounded-lg">
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-foreground">Plăți Recente</h3>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Lista tuturor plăților efectuate pentru biletele MIMESISS 2025.
-          </p>
-        </div>
-
-        <PaymentsList payments={recentPayments} />
-
-        {recentPayments.length === 0 && (
-          <div className="text-center py-12">
-            <FaCreditCard className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-2 text-sm font-medium text-foreground">Nicio plată</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Nu există încă plăți înregistrate în sistem.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+  // Render the Client Component with the fetched data
+  return <PaymentsClient stats={stats} payments={recentPayments} />
 }
