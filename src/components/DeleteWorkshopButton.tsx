@@ -41,6 +41,7 @@ export default function DeleteWorkshopButton({ workshopId, workshopTitle }: Dele
           </p>
           <div className="flex space-x-2">
             <button
+              type='button'
               onClick={handleDelete}
               disabled={isPending}
               className="inline-flex items-center gap-1 px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
@@ -49,6 +50,7 @@ export default function DeleteWorkshopButton({ workshopId, workshopTitle }: Dele
               {isPending ? 'Deleting...' : 'Yes, Delete'}
             </button>
             <button
+              type='button'
               onClick={() => setShowConfirm(false)}
               disabled={isPending}
               className="inline-flex items-center px-2 py-1 border border-input text-xs font-medium rounded text-foreground bg-card hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -63,6 +65,7 @@ export default function DeleteWorkshopButton({ workshopId, workshopTitle }: Dele
 
   return (
     <button
+      type='button'
       onClick={() => setShowConfirm(true)}
       className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-card hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
     >

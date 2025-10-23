@@ -197,7 +197,6 @@ export default function SignupPage() {
                 Cod de verificare
               </label>
               <input
-                id="code"
                 name="code"
                 type="text"
                 required
@@ -263,7 +262,6 @@ export default function SignupPage() {
                     <FaUser className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <input
-                    id="firstName"
                     name="firstName"
                     type="text"
                     required
@@ -280,7 +278,6 @@ export default function SignupPage() {
                   Nume
                 </label>
                 <input
-                  id="lastName"
                   name="lastName"
                   type="text"
                     required
@@ -301,7 +298,6 @@ export default function SignupPage() {
                   <FaUser className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <select
-                  id="userType"
                   name="userType"
                   required
                   value={userType}
@@ -325,7 +321,6 @@ export default function SignupPage() {
                   <FaEnvelope className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <input
-                  id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
@@ -347,7 +342,6 @@ export default function SignupPage() {
                   <FaLock className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <input
-                  id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"

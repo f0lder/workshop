@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useId } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createWorkshop, updateWorkshop } from '@/app/admin/workshops/actions'
 import type { IAppSettings } from '@/models/AppSettings'
-import { Workshop } from '@/types/models'
+import type { Workshop } from '@/types/models'
 
 interface WorkshopFormProps {
   mode: 'create' | 'edit'
@@ -90,7 +90,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                 <input
                   type="text"
                   name="title"
-                  id="title"
+                  id={useId()}
                   required
                   defaultValue={workshop?.title || ''}
                   className="mimesiss-input"
@@ -106,7 +106,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
               <div className="mt-1">
                 <textarea
                   name="description"
-                  id="description"
+                  id={useId()}
                   rows={4}
                   required
                   defaultValue={workshop?.description || ''}
@@ -124,7 +124,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                 <input
                   type="text"
                   name="url"
-                  id="url"
+                  id={useId()}
                   defaultValue={workshop?.url || ''}
                   className="mimesiss-input"
                   placeholder="Instagram post URL"
@@ -137,7 +137,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                 Tip workshop *
               </label>
               <div className="mt-1">
-                <select name="type" id="type" defaultValue={workshop?.wsType || 'workshop'} className="mimesiss-input">
+                <select name="type" id={useId()} defaultValue={workshop?.wsType || 'workshop'} className="mimesiss-input">
                   <option value="workshop">Workshop</option>
                   <option value="conferinta">Conferință</option>
                </select>
@@ -154,7 +154,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   <input
                     type="date"
                     name="date"
-                    id="date"
+                    id={useId()}
                     defaultValue={workshop?.date?.toString() || ''}
                     className="mimesiss-input"
                   />
@@ -169,7 +169,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                   <input
                     type="time"
                     name="time"
-                    id="time"
+                    id={useId()}
                     defaultValue={workshop?.time?.toString() || ''}
                     className="mimesiss-input"
                   />
@@ -185,7 +185,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                 <input
                   type="text"
                   name="location"
-                  id="location"
+                  id={useId()}
                   defaultValue={workshop?.location || ''}
                   className="mimesiss-input"
                   placeholder="ex. Sala de conferințe A, Online"
@@ -201,7 +201,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                 <input
                   type="text"
                   name="instructor"
-                  id="instructor"
+                  id={useId()}
                   defaultValue={workshop?.instructor || ''}
                   className="mimesiss-input"
                   placeholder="Numele instructorului"
@@ -217,7 +217,7 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                 <input
                   type="number"
                   name="maxParticipants"
-                  id="maxParticipants"
+                  id={useId()}
                   required
                   min={isEdit && workshop ? workshop.currentParticipants : 1}
                   max="100"

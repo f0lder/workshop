@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { FaCalendar, FaCircle } from 'react-icons/fa'
 
 interface TimeLeft {
   days: number
@@ -65,16 +66,14 @@ export default function MimesissCountdown() {
   if (!mounted) {
     return (
       <div className="text-center mb-6">
-        <svg className="h-8 w-8 text-primary mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
-        </svg>
+       <FaCalendar className="h-8 w-8 text-primary mx-auto mb-4" />
         <h3 className="text-2xl font-bold text-white mb-2">Timpul rămas până la MIMESISS 2025</h3>
         <p className="mimesiss-text-secondary">Se încarcă...</p>
       </div>
     )
   }
 
-  const isConferenceStarted = timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0
+  const isConferenceStarted  = timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0
 
   return (
     <>
@@ -113,15 +112,12 @@ export default function MimesissCountdown() {
       {isConferenceStarted && (
         <div className="text-center">
           <div className="bg-primary/20 rounded-lg p-6 border border-primary/30">
-            <svg className="h-12 w-12 text-primary mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
-              <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-            </svg>
+            <FaCircle className="h-8 w-8 text-green-500 mx-auto mb-4 animate-pulse" />
             <p className="text-lg text-white font-medium">
               Bun venit la cea de-a V-a ediție a MIMESISS!
             </p>
             <p className="mimesiss-text-secondary mt-2">
-              Conferința este în desfășurare la Spitalul militar central &ldquo;Dr. Carol Davila&rdquo;
+              Spitalul universitar de urgență militar central &ldquo;Dr. CAROL DAVILA&rdquo;
             </p>
           </div>
         </div>

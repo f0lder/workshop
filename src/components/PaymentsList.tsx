@@ -95,6 +95,7 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
             />
             {searchTerm && (
               <button
+                type='button'
                 onClick={() => setSearchTerm('')}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-foreground text-muted-foreground transition-colors"
                 aria-label="Șterge căutarea"

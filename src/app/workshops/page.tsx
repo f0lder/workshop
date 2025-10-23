@@ -3,7 +3,7 @@ import WorkshopList from '@/components/WorkshopList'
 import { Suspense } from 'react'
 import { getAppSettings } from '@/lib/settings'
 import HeaderContent from '@/components/HeaderContent'
-import { FaCircle } from 'react-icons/fa'
+import { FaCircle,FaCalendar } from 'react-icons/fa'
 
 // Force dynamic rendering since we're fetching data from database
 export const dynamic = 'force-dynamic'
@@ -13,6 +13,7 @@ function WorkshopListSkeleton() {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {[...Array(6)].map((_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: This is a static skeleton array; the index is stable.
         <div key={i} className="mimesiss-section-card animate-pulse">
           <div className="p-6">
             <div className="h-6 bg-gray-700 rounded mb-2 w-3/4"></div>
@@ -50,15 +51,11 @@ export default async function WorkshopsPage() {
             </p>
             <div className="mt-4 flex items-center space-x-6">
               <div className="flex items-center">
-                <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-                </svg>
+                <FaCalendar className="h-5 w-5 mr-2" />
                 <span>13-16 Noiembrie 2025</span>
               </div>
               <div className="flex items-center">
-                <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                </svg>
+                <FaCircle className="h-5 w-5 mr-2" />
                 <span>Spitalul Universitar de Urgență Militar Central &ldquo;Dr. Carol Davila&rdquo;</span>
               </div>
             </div>

@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 
 interface ToggleSwitchProps {
-  id: string
   name: string
   label: string
   description?: string
@@ -13,7 +12,6 @@ interface ToggleSwitchProps {
 }
 
 export default function ToggleSwitch({ 
-  id, 
   name, 
   label, 
   description, 
@@ -63,12 +61,13 @@ export default function ToggleSwitch({
         {/* Hidden input for form submission */}
         <input
           type="checkbox"
-          id={id}
+          id={useId()}
           name={name}
           checked={isChecked}
           onChange={handleInputChange}
           disabled={disabled}
           className="sr-only"
+          onClick={handleClick}
         />
         
         {/* Toggle Switch */}
@@ -76,7 +75,7 @@ export default function ToggleSwitch({
           type="button"
           role="switch"
           aria-checked={isChecked}
-          aria-labelledby={`${id}-label`}
+          aria-labelledby={`${useId()}-label`}
           disabled={disabled}
           onClick={handleClick}
           onTouchEnd={handleTouchEnd}
@@ -102,11 +101,11 @@ export default function ToggleSwitch({
       {/* Label and Description */}
       <div className="flex-1">
         <label
-          id={`${id}-label`}
+          htmlFor={name}
+          id={`${useId()}-label`}
           className={`text-sm font-medium text-foreground ${
             disabled ? 'opacity-50' : 'cursor-pointer'
           }`}
-          onClick={handleClick}
         >
           {label}
         </label>

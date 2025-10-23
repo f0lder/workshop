@@ -92,7 +92,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
 
           <div className="space-y-6">
             <ToggleSwitch
-              id="globalRegistrationEnabled"
               name="globalRegistrationEnabled"
               label="Permite înregistrarea globală la workshop-uri"
               description="Când este activat, utilizatorii se pot înregistra la workshop-uri. Când este dezactivat, înregistrările sunt blocate global."
@@ -100,7 +99,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
             />
 
             <ToggleSwitch
-              id="paymentsEnabled"
               name="paymentsEnabled"
               label="Permite plățile pentru workshop-uri"
               description="Când este activat, utilizatorii pot efectua plăți pentru workshop-uri."
@@ -108,7 +106,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
             />
 
             <ToggleSwitch
-              id="workshopVisibleToPublic"
               name="workshopVisibleToPublic"
               label="Workshop-uri vizibile publicului"
               description="Când este activat, workshop-urile sunt vizibile publicului."
@@ -116,7 +113,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
             />
 
             <ToggleSwitch
-              id="requireApprovalForRegistration"
               name="requireApprovalForRegistration"
               label="Necesită aprobare pentru înregistrări"
               description="Când este activat, înregistrările necesită aprobare manuală de la admin înainte de confirmare."
@@ -124,7 +120,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
             />
 
             <ToggleSwitch
-              id="allowCancelRegistration"
               name="allowCancelRegistration"
               label="Permite anularea înregistrărilor"
               description="Când este activat, utilizatorii pot anula propriile înregistrări la workshop-uri."
@@ -141,7 +136,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
                 <input
                   type="number"
                   name="maxWorkshopsPerUser"
-                  id="maxWorkshopsPerUser"
                   min="1"
                   max="100"
                   defaultValue={initialSettings.maxWorkshopsPerUser}
@@ -158,7 +152,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
                 <input
                   type="number"
                   name="defaultMaxParticipants"
-                  id="defaultMaxParticipants"
                   min="1"
                   max="1000"
                   defaultValue={initialSettings.defaultMaxParticipants}
@@ -175,7 +168,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
                 <input
                   type="number"
                   name="defaultWorkshopDuration"
-                  id="defaultWorkshopDuration"
                   min="30"
                   max="480"
                   step="30"
@@ -197,7 +189,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
 
           <div className="space-y-6">
             <ToggleSwitch
-              id="sendEmailNotifications"
               name="sendEmailNotifications"
               label="Trimite notificări prin email"
               description="Activează trimiterea de notificări prin email pentru diverse evenimente din platformă."
@@ -205,7 +196,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
             />
 
             <ToggleSwitch
-              id="sendRegistrationConfirmation"
               name="sendRegistrationConfirmation"
               label="Confirmări de înregistrare"
               description="Trimite email de confirmare când un utilizator se înregistrează la un workshop."
@@ -213,7 +203,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
             />
 
             <ToggleSwitch
-              id="sendCancellationNotification"
               name="sendCancellationNotification"
               label="Notificări de anulare"
               description="Trimite email de notificare când un utilizator anulează o înregistrare."
@@ -232,7 +221,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
 
           <div className="space-y-6">
             <ToggleSwitch
-              id="maintenanceMode"
               name="maintenanceMode"
               label="Mod mentenanță"
               description="⚠️ Când este activat, blochează accesul utilizatorilor normali la platformă. Doar administratorii pot accesa aplicația."
@@ -246,7 +234,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
               <div className="mt-1">
                 <textarea
                   name="registrationMessage"
-                  id="registrationMessage"
                   rows={3}
                   defaultValue={initialSettings.registrationMessage}
                   className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
@@ -263,7 +250,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
                 <input
                   type="text"
                   name="footerText"
-                  id="footerText"
                   defaultValue={initialSettings.footerText}
                   className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
                   placeholder="Text afișat în footer"

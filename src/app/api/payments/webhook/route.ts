@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No signature' }, { status: 400 });
   }
 
-  let event;
+  let event = null;
 
   try {
     event = constructEvent(body, signature);
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       error: err instanceof Error ? err.message : 'Unknown error',
       hasWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
       webhookSecretLength: process.env.STRIPE_WEBHOOK_SECRET?.length || 0,
-      signatureHeader: signature.substring(0, 20) + '...',
+      signatureHeader: `${signature.substring(0, 20)}...`,
       bodyLength: body.length
     });
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });

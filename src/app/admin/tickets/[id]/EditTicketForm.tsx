@@ -75,7 +75,6 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 						<input
 							type="text"
 							name="title"
-							id="title"
 							required
 							disabled={isPending}
 							defaultValue={ticket.title}
@@ -89,7 +88,6 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 						</label>
 						<textarea
 							name="description"
-							id="description"
 							required
 							disabled={isPending}
 							rows={4}
@@ -105,7 +103,6 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 						<input
 							type="text"
 							name="type"
-							id="type"
 							required
 							disabled={isPending}
 							defaultValue={ticket.type}
@@ -120,7 +117,6 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 						<input
 							type="number"
 							name="price"
-							id="price"
 							required
 							disabled={isPending}
 							min="0"
@@ -137,7 +133,6 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 						<input
 							type="text"
 							name="features"
-							id="features"
 							required
 							disabled={isPending}
 							defaultValue={ticket.features.join(', ')}

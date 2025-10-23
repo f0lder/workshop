@@ -65,7 +65,6 @@ export default function NewTicketPage() {
 			  <input 
 				  type="text" 
 				  name="title" 
-				  id="title" 
 				  required 
 				  disabled={isPending}
 				  placeholder="ex: Participant Activ"
@@ -79,7 +78,6 @@ export default function NewTicketPage() {
 			  </label>
 			  <textarea 
 				  name="description" 
-				  id="description" 
 				  required 
 				  disabled={isPending}
 				  rows={4}
@@ -94,7 +92,6 @@ export default function NewTicketPage() {
 			  </label>
 			 <input type="text"
 				 name="type"
-				 id="type"
 				 required
 				 disabled={isPending}
 				 placeholder="ex: VIP"
@@ -109,7 +106,6 @@ export default function NewTicketPage() {
 			  <input 
 				  type="number" 
 				  name="price" 
-				  id="price" 
 				  required 
 				  disabled={isPending}
 				  min="0" 
@@ -126,7 +122,6 @@ export default function NewTicketPage() {
 			  <input 
 				  type="text" 
 				  name="features" 
-				  id="features" 
 				  required 
 				  disabled={isPending}
 				  placeholder="Acces la conferințe, Materiale incluse, Certificat"

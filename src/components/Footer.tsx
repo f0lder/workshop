@@ -15,8 +15,8 @@ export default function Footer() {
           Parteneri și Organizatori
         </h3>
         <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8">
-          {orgs.map((org, index) => (
-            <div key={index} className="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-lg p-2 shadow-sm">
+          {orgs.map((org) => (
+            <div key={org.alt} className="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-lg p-2 shadow-sm">
               <Image
                 src={org.src}
                 alt={org.alt}
@@ -68,7 +68,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} MIMESISS. Toate drepturile rezervate.
           </p>
           <p className="text-xs">
-            Dezvoltat de <a target='_blank' className='text-primary underline' href="https://fldr.xyz">Ursan Bogdan</a>
+            Dezvoltat de <a target='_blank' rel='noreferrer' className='text-primary underline' href="https://fldr.xyz">Ursan Bogdan</a>
           </p>
         </div>
       </div>

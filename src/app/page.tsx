@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
-import CountdownWrapper from '@/components/CountdownWrapper'
+import MimesissCountdown from '@/components/MimesissCountdown'
 import { FaCalendar, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa'
 import { getAppSettings } from '@/lib/settings'
 
@@ -57,7 +57,7 @@ export default async function HomePage() {
           </div>
 
           {/* Countdown */}
-          <CountdownWrapper />
+          <MimesissCountdown />
         </div>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">

@@ -162,7 +162,6 @@ function ResetPasswordForm() {
               </label>
               <div className="mt-1">
                 <input
-                  id="code"
                   name="code"
                   type="text"
                   required
@@ -189,7 +188,6 @@ function ResetPasswordForm() {
               </label>
               <div className="mt-1">
                 <input
-                  id="password"
                   name="password"
                   type="password"
                   required
@@ -207,7 +205,6 @@ function ResetPasswordForm() {
               </label>
               <div className="mt-1">
                 <input
-                  id="confirmPassword"
                   name="confirmPassword"
                   type="password"
                   required

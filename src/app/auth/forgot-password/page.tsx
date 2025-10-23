@@ -119,7 +119,6 @@ export default function ForgotPasswordPage() {
               </label>
               <div className="mt-1">
                 <input
-                  id="email"
                   name="email"
                   type="email"
                   autoComplete="email"

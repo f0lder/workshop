@@ -12,13 +12,13 @@ interface MongooseCache {
 }
 
 declare global {
-  var mongoose: MongooseCache | undefined
+  var mongooseCache: MongooseCache | undefined
 }
 
-const cached: MongooseCache = global.mongoose || { conn: null, promise: null }
+const cached: MongooseCache = global.mongooseCache || { conn: null, promise: null }
 
-if (!global.mongoose) {
-  global.mongoose = cached
+if (!global.mongooseCache) {
+  global.mongooseCache = cached
 }
 
 async function connectDB() {
@@ -36,7 +36,7 @@ async function connectDB() {
       connectTimeoutMS: 10000,
     }
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts)
+    cached.promise = mongoose.connect(MONGODB_URI ?? '', opts)
   }
 
   try {

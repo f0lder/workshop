@@ -1,18 +1,18 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 import {
 	Elements,
 	PaymentElement,
-	useStripe,
-	useElements
+	useElements,
+	useStripe
 } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 
 // Load Stripe outside of component render to avoid recreating
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 interface EmbeddedCheckoutProps {
 	ticketId: string;
@@ -84,6 +84,7 @@ function CheckoutForm({ onSuccess, onError }: { onSuccess?: () => void; onError?
 			)}
 
 			<button
+				type="submit"
 				disabled={isLoading || !stripe || !elements}
 				className="w-full bg-primary text-primary-foreground py-3 px-4 rounded-md font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
 			>
@@ -147,7 +148,8 @@ export default function EmbeddedCheckout({ ticketId, onSuccess, onError }: Embed
 				<div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md mb-4">
 					{error}
 				</div>
-				<button 
+				<button
+					type="button"
 					onClick={() => {
 						setError('');
 						setLoading(true);

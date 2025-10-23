@@ -18,7 +18,7 @@ export default function DeletePaymentButton({ paymentId, userName }: DeletePayme
       ? `Sigur doriți să ștergeți plata pentru ${userName}?`
       : 'Sigur doriți să ștergeți această plată?'
     
-    if (!confirm(confirmMessage + '\n\nAceastă acțiune nu poate fi anulată.')) {
+    if (!confirm(`${confirmMessage}\n\nAceastă acțiune nu poate fi anulată.`)) {
       return
     }
 
@@ -49,6 +49,7 @@ export default function DeletePaymentButton({ paymentId, userName }: DeletePayme
 
   return (
     <button
+      type="button"
       onClick={handleDelete}
       disabled={isDeleting}
       className="text-destructive hover:text-destructive/80 disabled:opacity-50 disabled:cursor-not-allowed p-2 rounded-md hover:bg-destructive/10 transition-colors"

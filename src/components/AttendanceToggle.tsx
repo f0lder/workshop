@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { FaCheckCircle, FaSpinner, FaTimesCircle } from 'react-icons/fa';
 
 interface AttendanceToggleProps {
   registrationId: string;
@@ -11,10 +11,10 @@ interface AttendanceToggleProps {
 }
 
 export default function AttendanceToggle({ 
-  registrationId, 
-  userId, 
-  initialStatus, 
-  confirmedAt 
+  registrationId,
+  userId,
+  initialStatus,
+  confirmedAt
 }: AttendanceToggleProps) {
   const [confirmed, setConfirmed] = useState(initialStatus);
   const [updating, setUpdating] = useState(false);
@@ -80,6 +80,7 @@ export default function AttendanceToggle({
         </div>
         
         <button
+          type='button'
           onClick={toggleAttendance}
           disabled={updating}
           className={`px-4 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${

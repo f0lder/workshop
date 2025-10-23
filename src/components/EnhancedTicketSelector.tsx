@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { FaArrowLeft, FaCheck } from 'react-icons/fa';
 import { getAllTickets } from '@/app/admin/tickets/actions';
-import { Ticket as TicketType } from '@/types/models';
-import { FaCheck, FaArrowLeft } from 'react-icons/fa';
+import type { Ticket as TicketType } from '@/types/models';
 import EmbeddedCheckout from './EmbeddedCheckout';
 
 interface EnhancedTicketSelectorProps {
@@ -15,13 +15,14 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 	const [showCheckout, setShowCheckout] = useState(false);
 	const [tickets, setTickets] = useState<TicketType[]>([]);
 
-	const fetchTickets = async () => {
-		const tickets = await getAllTickets();
-		setTickets(tickets);
-	};
-
+	
 	// Fetch tickets on component mount
 	useEffect(() => {
+		const fetchTickets = async () => {
+			const tickets = await getAllTickets();
+			setTickets(tickets);
+		};
+
 		fetchTickets();
 	}, []);
 
@@ -51,6 +52,7 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 			<div className="space-y-6 max-w-md mx-auto">
 				<div className="text-center">
 					<button
+						type="button"
 						onClick={() => setShowCheckout(false)}
 						className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 mx-auto"
 					>
@@ -64,8 +66,8 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 						{selectedTicket.price} RON
 					</p>
 					<ul className='mx-auto space-y-2 mb-6'>
-						{selectedTicket.features.map((feature, index) => (
-							<li key={index} className='flex items-center text-sm'>
+						{selectedTicket.features.map((feature) => (
+							<li key={feature} className='flex items-center text-sm'>
 								<FaCheck className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
 								<span>{feature}</span>
 							</li>
@@ -124,8 +126,8 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 							</div>
 
 							<ul className="space-y-2 mb-6">
-								{ticket.features.map((feature, index) => (
-									<li key={index} className="flex items-center text-sm">
+								{ticket.features.map((feature) => (
+									<li key={feature} className="flex items-center text-sm">
 										<FaCheck className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
 										<span>{feature}</span>
 									</li>
@@ -133,6 +135,7 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 							</ul>
 
 							<button
+								type="button"
 								onClick={() => handleSelectTicket(ticket)}
 								disabled={purchased}
 								className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${purchased

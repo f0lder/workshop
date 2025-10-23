@@ -49,6 +49,7 @@ export default function ProfilePage() {
         <div className="text-center">
           <div className="text-red-500 mb-2">Eroare la încărcarea datelor</div>
           <button 
+            type='button'
             onClick={() => refetch()}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
           >
@@ -150,7 +151,6 @@ export default function ProfilePage() {
                   <FaEnvelope className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <input
-                  id="email"
                   name="email"
                   type="email"
                   value={user.emailAddresses[0]?.emailAddress || ''}
@@ -173,7 +173,6 @@ export default function ProfilePage() {
                   <FaUser className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <input
-                  id="firstName"
                   name="firstName"
                   type="text"
                   value={firstName}
@@ -190,7 +189,6 @@ export default function ProfilePage() {
                 Nume
               </label>
               <input
-                id="lastName"
                 name="lastName"
                 type="text"
                 value={lastName}
@@ -207,7 +205,6 @@ export default function ProfilePage() {
                 Schimba tip utilizator in (Curent: {userType})
               </label>
               <select
-                id="userType"
                 name="userType"
                 value={userType}
                 onChange={(e) => setUserType(e.target.value as UserType)}

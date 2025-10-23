@@ -108,7 +108,6 @@ export default function ProfilePage() {
                   <FaEnvelope className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <input
-                  id="email"
                   name="email"
                   type="email"
                   value={user.emailAddresses[0]?.emailAddress || ''}
@@ -131,7 +130,6 @@ export default function ProfilePage() {
                   <FaUser className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <input
-                  id="firstName"
                   name="firstName"
                   type="text"
                   value={firstName}
@@ -148,7 +146,6 @@ export default function ProfilePage() {
                 Nume
               </label>
               <input
-                id="lastName"
                 name="lastName"
                 type="text"
                 value={lastName}

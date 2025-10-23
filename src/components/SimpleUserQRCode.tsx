@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { FaDownload, FaShare } from 'react-icons/fa';
 import Image from 'next/image';
 import QRCode from 'qrcode';
@@ -15,15 +15,7 @@ export default function SimpleUserQRCode({ userId, userName }: SimpleUserQRCodeP
 	const [qrDataUrl, setQrDataUrl] = useState<string>('');
 	const [isLoading, setIsLoading] = useState(true);
 
-	useEffect(() => {
-		if (typeof window !== 'undefined' && userId) {
-			const url = `${window.location.origin}/qr/${userId}`;
-			setQrUrl(url);
-			generateQRCode(url);
-		}
-	}, [userId]);
-
-	const generateQRCode = async (url: string) => {
+	const generateQRCode = useCallback(async (url: string) => {
 		try {
 			const dataUrl = await QRCode.toDataURL(url, {
 				width: 300,
@@ -40,7 +32,15 @@ export default function SimpleUserQRCode({ userId, userName }: SimpleUserQRCodeP
 			console.error('Error generating QR code:', error);
 			setIsLoading(false);
 		}
-	};
+	}, []); // Add state setters as dependencies
+
+	useEffect(() => {
+		if (typeof window !== 'undefined' && userId) {
+			const url = `${window.location.origin}/qr/${userId}`;
+			setQrUrl(url);
+			generateQRCode(url);
+		}
+	}, [userId, generateQRCode]);
 
 	const downloadQRCode = async () => {
 		if (!qrDataUrl) return;
@@ -125,6 +125,7 @@ export default function SimpleUserQRCode({ userId, userName }: SimpleUserQRCodeP
 
 				<div className="flex gap-3 justify-center">
 					<button
+						type='button'
 						onClick={downloadQRCode}
 						className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg"
 					>
@@ -133,6 +134,7 @@ export default function SimpleUserQRCode({ userId, userName }: SimpleUserQRCodeP
 					</button>
 
 					<button
+						type='button'
 						onClick={shareQRCode}
 						className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-lg"
 					>
