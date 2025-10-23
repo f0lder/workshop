@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { updateTicket } from '../actions'
+import { updateTicket } from '../app/admin/tickets/actions'
 import { Ticket } from '@/types/models'
 
 interface EditTicketFormProps {
