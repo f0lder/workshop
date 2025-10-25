@@ -1,7 +1,6 @@
 'use client'
 
 import { useClerk } from '@clerk/nextjs'
-import type { UserResource } from '@clerk/types'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -20,15 +19,15 @@ import {
   FaUsers
 } from 'react-icons/fa'
 
-interface HeaderProps {
-  user?: UserResource | null
-}
+import { useUser } from '@clerk/nextjs'
+import Loading from '@/components/Loading'
 
-export default function Header({ user }: HeaderProps) {
+export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
   const { signOut } = useClerk()
+  const { user,isLoaded } = useUser()
 
   const handleSignOut = async () => {
     await signOut()
@@ -55,6 +54,10 @@ export default function Header({ user }: HeaderProps) {
     { href: '/contact', label: 'Date de contact', icon: FaUser },
     { href: '/gallery', label: 'Galerie foto', icon: FaImage },
   ]
+
+  if (!isLoaded) {
+    return <Loading />; // or a loading spinner
+  }
 
   return (
     <>

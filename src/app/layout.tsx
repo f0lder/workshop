@@ -5,7 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { ToastProvider } from "@/components/ui/ToastProvider";
-import HeaderWrapper from "@/components/HeaderWrapper";
+import Header from "@/components/Header";
 import "./critical.css";
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -137,7 +137,7 @@ export default function RootLayout({
           className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground min-h-screen`}
         >
           <ToastProvider>
-            <HeaderWrapper />
+            <Header />
             <main>
               {children}
             </main>
