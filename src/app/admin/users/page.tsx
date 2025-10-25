@@ -1,11 +1,8 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import connectDB from '@/lib/mongodb'
-import { User } from '@/models'
-import { User as UserInterface } from '@/types/models'
 import { isUserAdmin } from '@/lib/auth'
-import { clerkClient } from '@clerk/nextjs/server'
 import UserListWrapper from '@/components/UserListWrapper'
+import {fetchAllUsers} from './actions'
 
 export default async function AdminUsersPage() {
   const clerkUser = await currentUser()
@@ -19,32 +16,8 @@ export default async function AdminUsersPage() {
     redirect('/unauthorized')
   }
 
-  // Get users from MongoDB
-  await connectDB()
-  const mongoUsers = await User.find({}).lean()
+  const users = await fetchAllUsers();
 
-  // Get all users from Clerk
-  const clerkUsers = await (await clerkClient()).users.getUserList({
-    limit: 500, // Adjust as needed
-  })
-
-  // Combine Clerk and MongoDB data using User interface
-  const users: UserInterface[] = clerkUsers.data.map((clerkUser) => {
-    const mongoUser = mongoUsers.find((u) => u.clerkId === clerkUser.id)
-    
-    return {
-      _id: mongoUser?._id?.toString() || '',
-      clerkId: clerkUser.id,
-      email: clerkUser.emailAddresses[0]?.emailAddress || '',
-      firstName: clerkUser.firstName || '',
-      lastName: clerkUser.lastName || '',
-      role: mongoUser?.role || 'user',
-      createdAt: mongoUser?.createdAt || new Date(clerkUser.createdAt),
-      updatedAt: mongoUser?.updatedAt || new Date(clerkUser.updatedAt || clerkUser.createdAt),
-      userType: mongoUser?.userType || 'student',
-      accessLevel: mongoUser?.accessLevel || 'unpaid',
-    }
-  })
 
   // Sort by creation date (newest first)
   users.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())

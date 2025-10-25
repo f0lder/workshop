@@ -6,7 +6,7 @@ import connectDB from '@/lib/mongodb'
 import { User } from '@/models'
 import { isUserAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { UserType } from '@/types/models'
+import { UserType,User as UserInterface } from '@/types/models'
 
 // Type definitions for update operations
 interface UserUpdateData {
@@ -169,4 +169,25 @@ export async function deleteUser(formData: FormData) {
     console.error('Error deleting user:', error)
     throw new Error(error instanceof Error ? error.message : 'A apărut o eroare la ștergerea utilizatorului.')
   }
+}
+
+export async function fetchAllUsers() {
+  // Check if current user is admin
+  const clerkUser = await currentUser()
+  if (!clerkUser) {
+    redirect('/auth/login')
+  }
+
+  const isAdmin = await isUserAdmin(clerkUser.id)
+  if (!isAdmin) {
+    throw new Error('Nu aveți permisiunea să efectuați această acțiune.')
+  }
+
+  await connectDB()
+
+  const users = await User.find({})
+
+  const usersJSON = JSON.parse(JSON.stringify(users)) as UserInterface[];
+
+  return usersJSON;
 }
