@@ -47,7 +47,7 @@ export default function UserListWrapper({ initialUsers, currentUserId }: UserLis
 
       const qrPromises = users.map(async (user) => {
         // Use the full URL for the QR code
-        const url = `${window.location.origin}/qr/${user._id}`;
+        const url = `${window.location.origin}/qr/${user.clerkId}`;
         const dataUrl = await generateQRCodeDataUrl(url);
 
         if (dataUrl) {
