@@ -2,8 +2,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaCircle, FaEnvelope, FaInstagram, FaFacebook } from 'react-icons/fa'
 
+/*1. Directia Medicala
+2. ⁠Spitalul Militar Central
+3. ⁠Institutul National de Medicina Aeronautica
+4. ⁠Intitutul Medici Militar
+5. ⁠Universitatea de Medicina si Farmacie
+*/
 const orgs = [
-  { src: '/orgs/1.png', alt: 'Organizator 1' },
+  { src: '/orgs/1.png', alt: 'ASSM' },
+  { src: '/orgs/3.png', alt: 'Directia Medicala' },
+  { src: '/orgs/2.png', alt: 'Spitalul Militar Central' },
+  { src: '/orgs/aero.png', alt: 'Institutul National de Medicina Aeronautica' },
+  { src: '/orgs/5.png', alt: 'Intitutul Medici Militar' },
+  { src: '/orgs/4.png', alt: 'Universitatea de Medicina si Farmacie' },
 ]
 
 export default function Footer() {

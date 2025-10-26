@@ -50,7 +50,7 @@ export default async function AdminSettingsPage() {
 			Începeți prin a crea primul tip de bilet.
 		  </p>
 		  <div className="mt-6">
-			<Link href="/admin/tickets/new" className="mimesiss-button-primary inline-flex items-center">
+			<Link href="/admin/tickets/new" className="mimesiss-btn-primary inline-flex items-center">
 			  <FaTicketAlt className="w-5 h-5 mr-2" />
 			  Adaugă primul bilet
 			</Link>
