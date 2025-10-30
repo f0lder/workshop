@@ -1,18 +1,16 @@
-import Link from 'next/link'
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUsers } from 'react-icons/fa'
-import { getAllWorkshops } from '@/app/workshops/actions'
-import { WorkshopRegistrationButton } from './WorkshopRegistrationButton'
-import { getIsRegisteredForWorkshop } from '@/app/workshops/actions'
-import { Workshop } from '@/types/models'
+import { getAllWorkshops } from '@/app/workshops/actions';
+import { getIsRegisteredForWorkshop } from '@/app/workshops/actions';
+import { Workshop } from '@/types/models';
+import WorkshopListClient from './WorkshopListClient'; // <-- Import the new client component
 
 interface WorkshopListProps {
-  workshopVisibleToPublic: boolean
-  globalRegistrationEnabled: boolean
+  workshopVisibleToPublic: boolean;
+  globalRegistrationEnabled: boolean;
 }
 
 type ExtendedWorkshop = {
-  isRegistered: boolean
-} & Workshop
+  isRegistered: boolean;
+} & Workshop;
 
 export default async function WorkshopList({ workshopVisibleToPublic, globalRegistrationEnabled }: WorkshopListProps) {
   // If workshops are not visible to public, show coming soon message
@@ -23,18 +21,18 @@ export default async function WorkshopList({ workshopVisibleToPublic, globalRegi
           În curând...
         </p>
       </div>
-    )
+    );
   }
 
-  const workshops = await getAllWorkshops() as Workshop[]
+  const workshops = await getAllWorkshops() as Workshop[];
 
   // Resolve registration status for each workshop in parallel
   const extendedWorkshops: ExtendedWorkshop[] = await Promise.all(
     workshops.map(async (w) => {
-      const isRegistered = await getIsRegisteredForWorkshop(w._id?.toString() ?? '')
-      return Object.assign({}, w, { isRegistered }) as ExtendedWorkshop
+      const isRegistered = await getIsRegisteredForWorkshop(w._id?.toString() ?? '');
+      return Object.assign({}, w, { isRegistered }) as ExtendedWorkshop;
     })
-  )
+  );
 
   if (extendedWorkshops.length === 0) {
     return (
@@ -43,96 +41,15 @@ export default async function WorkshopList({ workshopVisibleToPublic, globalRegi
           Nu sunt workshop-uri disponibile momentan.
         </p>
       </div>
-    )
+    );
   }
 
+  const serializedWorkshops = JSON.parse(JSON.stringify(extendedWorkshops));
+
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {extendedWorkshops.map((workshop) => (
-        <div key={workshop._id?.toString()} className="mimesiss-section-card p-6 flex flex-col justify-between">
-          <h3 className="text-xl font-semibold text-foreground mb-2">
-            {workshop.title}
-          </h3>
-          <div className='my-2'>
-            <span className="pill">{workshop.wsType === 'workshop' ? 'Workshop' : 'Conferință'}</span>
-          </div>
-
-          <div className="space-y-3">
-            {workshop.date && (
-              <div className="flex items-center text-sm text-muted-foreground">
-                <FaCalendarAlt className="h-4 w-4 mr-2" />
-                {new Date(workshop.date).toLocaleDateString('ro-RO', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </div>
-            )}
-
-            {workshop.time && (
-              <div className="flex items-center text-sm text-muted-foreground">
-                <FaClock className="h-4 w-4 mr-2" />
-                {workshop.time || 'Ora va fi anunțată'}
-              </div>
-            )}
-
-            {workshop.location && (
-              <div className="flex items-center text-sm text-muted-foreground">
-                <FaMapMarkerAlt className="h-4 w-4 mr-2" />
-                {workshop.location}
-              </div>
-            )}
-
-
-            <div className="flex items-center text-sm text-muted-foreground">
-              <FaUsers className="h-4 w-4 mr-2" />
-              {workshop.currentParticipants === 0 ? `Niciun participant din ${workshop.maxParticipants}` : (
-                <>
-                  {(workshop.currentParticipants || 0)} / {workshop.maxParticipants || 0} participanți
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-border">
-            {workshop.instructor && (
-              <p className="text-sm text-muted-foreground mb-3">
-                Instructor: <span className="font-medium text-foreground">{workshop.instructor}</span>
-              </p>
-            )}
-
-            {workshop.currentParticipants !== 0 && (
-              <div className="flex items-center justify-between my-2">
-                <div className="flex-1">
-                  <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div
-                      className="bg-primary h-2 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${Math.min(100, Math.max(0, ((workshop.currentParticipants || 0) / (workshop.maxParticipants || 1)) * 100))}%`,
-                      }}
-                    ></div>
-                  </div>
-                </div>
-                <span className="ml-3 text-xs text-muted-foreground">
-                  {Math.round(((workshop.currentParticipants || 0) / (workshop.maxParticipants || 1)) * 100)}% complet
-                </span>
-              </div>
-            )}
-          </div>
-          {globalRegistrationEnabled && <WorkshopRegistrationButton workshop={JSON.parse(JSON.stringify(workshop))} isGlobalRegistrationClosed={globalRegistrationEnabled} isRegistered={workshop.isRegistered} />}
-
-          <div className="mt-6">
-            <Link
-              href={`/workshops/${workshop._id?.toString()}`}
-              className="w-full block text-center bg-secondary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
-            >
-              Vezi detalii
-            </Link>
-          </div>
-
-        </div>
-      ))}
-    </div>
-  )
+    <WorkshopListClient
+      initialWorkshops={serializedWorkshops}
+      globalRegistrationEnabled={globalRegistrationEnabled}
+    />
+  );
 }

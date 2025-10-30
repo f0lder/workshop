@@ -24,6 +24,7 @@ export default async function HomePage() {
               height={400}
               className="w-full h-auto object-cover"
               priority
+              loading='eager'
             />
           </div>
         </div>

@@ -3,7 +3,7 @@ import WorkshopList from '@/components/WorkshopList'
 import { Suspense } from 'react'
 import { getAppSettings } from '@/lib/settings'
 import HeaderContent from '@/components/HeaderContent'
-import { FaCircle,FaCalendar } from 'react-icons/fa'
+import { FaCircle,FaCalendar, FaMapPin } from 'react-icons/fa'
 
 // Force dynamic rendering since we're fetching data from database
 export const dynamic = 'force-dynamic'
@@ -51,11 +51,11 @@ export default async function WorkshopsPage() {
             </p>
             <div className="mt-4 flex items-center space-x-6">
               <div className="flex items-center">
-                <FaCalendar className="h-5 w-5 mr-2" />
+                <FaCalendar className="h-5 w-5 mr-2 text-primary" />
                 <span>13-16 Noiembrie 2025</span>
               </div>
               <div className="flex items-center">
-                <FaCircle className="h-5 w-5 mr-2" />
+                <FaMapPin className="h-5 w-5 mr-2 text-primary" />
                 <span>Spitalul Universitar de Urgență Militar Central &ldquo;Dr. Carol Davila&rdquo;</span>
               </div>
             </div>
