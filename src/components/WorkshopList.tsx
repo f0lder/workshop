@@ -49,57 +49,60 @@ export default async function WorkshopList({ workshopVisibleToPublic, globalRegi
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {extendedWorkshops.map((workshop) => (
-        <div key={workshop._id?.toString()} className="mimesiss-section-card">
-          <div className="p-6">
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              {workshop.title}
-            </h3>
-            <div className="space-y-3">
-              {workshop.date && (
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <FaCalendarAlt className="h-4 w-4 mr-2" />
-                  {new Date(workshop.date).toLocaleDateString('ro-RO', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </div>
-              )}
+        <div key={workshop._id?.toString()} className="mimesiss-section-card p-6 flex flex-col justify-between">
+          <h3 className="text-xl font-semibold text-foreground mb-2">
+            {workshop.title}
+          </h3>
+          <div className='my-2'>
+            <span className="pill">{workshop.wsType === 'workshop' ? 'Workshop' : 'Conferință'}</span>
+          </div>
 
-              {workshop.time && (
+          <div className="space-y-3">
+            {workshop.date && (
+              <div className="flex items-center text-sm text-muted-foreground">
+                <FaCalendarAlt className="h-4 w-4 mr-2" />
+                {new Date(workshop.date).toLocaleDateString('ro-RO', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </div>
+            )}
+
+            {workshop.time && (
               <div className="flex items-center text-sm text-muted-foreground">
                 <FaClock className="h-4 w-4 mr-2" />
                 {workshop.time || 'Ora va fi anunțată'}
               </div>
-              )}
+            )}
 
-              {workshop.location && (
+            {workshop.location && (
               <div className="flex items-center text-sm text-muted-foreground">
                 <FaMapMarkerAlt className="h-4 w-4 mr-2" />
                 {workshop.location}
               </div>
+            )}
+
+
+            <div className="flex items-center text-sm text-muted-foreground">
+              <FaUsers className="h-4 w-4 mr-2" />
+              {workshop.currentParticipants === 0 ? `Niciun participant din ${workshop.maxParticipants}` : (
+                <>
+                  {(workshop.currentParticipants || 0)} / {workshop.maxParticipants || 0} participanți
+                </>
               )}
-
-
-              <div className="flex items-center text-sm text-muted-foreground">
-                <FaUsers className="h-4 w-4 mr-2" />
-                {workshop.currentParticipants === 0 ? `Niciun participant din ${workshop.maxParticipants}` : (
-                  <>
-                    {(workshop.currentParticipants || 0)} / {workshop.maxParticipants || 0} participanți
-                  </>
-                )}
-              </div>
             </div>
+          </div>
 
-            <div className="mt-4 pt-4 border-t border-border">
-              {workshop.instructor && (
+          <div className="mt-4 pt-4 border-t border-border">
+            {workshop.instructor && (
               <p className="text-sm text-muted-foreground mb-3">
                 Instructor: <span className="font-medium text-foreground">{workshop.instructor}</span>
               </p>
-              )}
+            )}
 
-              {workshop.currentParticipants !== 0 && (
+            {workshop.currentParticipants !== 0 && (
               <div className="flex items-center justify-between my-2">
                 <div className="flex-1">
                   <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -115,19 +118,19 @@ export default async function WorkshopList({ workshopVisibleToPublic, globalRegi
                   {Math.round(((workshop.currentParticipants || 0) / (workshop.maxParticipants || 1)) * 100)}% complet
                 </span>
               </div>
-              )}
-            </div>
-            {globalRegistrationEnabled && <WorkshopRegistrationButton workshop={JSON.parse(JSON.stringify(workshop))} isGlobalRegistrationClosed={globalRegistrationEnabled} isRegistered={workshop.isRegistered} />}
-
-            <div className="mt-6">
-              <Link 
-                href={`/workshops/${workshop._id?.toString()}`} 
-                className="w-full block text-center bg-secondary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
-              >
-                Vezi detalii
-              </Link>
-            </div>
+            )}
           </div>
+          {globalRegistrationEnabled && <WorkshopRegistrationButton workshop={JSON.parse(JSON.stringify(workshop))} isGlobalRegistrationClosed={globalRegistrationEnabled} isRegistered={workshop.isRegistered} />}
+
+          <div className="mt-6">
+            <Link
+              href={`/workshops/${workshop._id?.toString()}`}
+              className="w-full block text-center bg-secondary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
+            >
+              Vezi detalii
+            </Link>
+          </div>
+
         </div>
       ))}
     </div>

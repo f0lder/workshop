@@ -18,7 +18,7 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 						<div className="space-y-2">
 							<div className="text-sm font-medium text-foreground flex items-center space-x-2">
 									<span>{workshop.title} </span>
-									<span className="border border-primary rounded-full p-1 bg-primary/45">{workshop.wsType}</span>
+									<span className="pill">{workshop.wsType ? workshop.wsType : 'N/A'}</span>
 									{workshop.url && (
 										<Link href={`${workshop.url}`} target="_blank" className="inline-flex items-center text-sm text-primary hover:underline mt-1">
 											<FaLink className="mr-1 h-4 w-4" />
