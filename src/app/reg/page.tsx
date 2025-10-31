@@ -91,7 +91,7 @@ export default function RegPage() {
 						<ul className="list-decimal list-outside pl-5 my-2">
 							<li>Trimiterea abstractelor și evaluare
 								<ul className="list-disc list-outside pl-5 my-2">
-									<li>Toți participanții activi trimit abstractul la <a href="mailto:secretariat@asmm-bucuresti.com" className="underline"> secretariat@asmm-bucuresti.com </a> până la 01.11.2025.</li>
+									<li>Toți participanții activi trimit abstractul la <a href="mailto:secretariat@asmm-bucuresti.com" className="underline text-primary"> secretariat@asmm-bucuresti.com </a> până la 01.11.2025.</li>
 									<li>Evaluarea abstractelor se va desfășura între 02.11 - 08.11.2025 de către comisia de experți din domeniul medical și medico-militar.</li>
 									<li>Participanții la prezentări orale își pregătesc materialul pentru congres.</li>
 									<li>Participanții la e-postere trimit posterul digital între 08.11 - 11.11.2025. Organizatorii își rezervă dreptul ca posterul să nu fie acceptat, chiar dacă abstractul a fost aprobat.</li>
