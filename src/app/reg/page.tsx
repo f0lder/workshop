@@ -46,7 +46,7 @@ export default function RegPage() {
 					</li>
 
 					<li>
-						Achiziționarea biletului nu asigură diploma de participare. Obligatorii pentru primirea acesteia sunt completarea formularului GDPR și participarea la toate workshop-urile la care participantul a fost repartizat (echipa MIMESISS 2025 garantează repartizarea la minim 2 workshop-uri), precum și participarea la cel puțin două conferințe organizate în cadrul congresului. Menționăm că participanții au dreptul să asiste la toate conferințele din cadrul congresului.
+						Achiziționarea biletului nu asigură diploma de participare. Obligatorii pentru primirea acesteia sunt completarea formularului GDPR, participarea la toate workshop-urile la care participantul a fost repartizat (echipa MIMESISS 2025 garantează repartizarea la minim 2 workshop-uri), participarea la cel puțin două conferințe organizate în cadrul congresului și prezența la sesiunea dedicată concursului studențesc. Menționăm că participanții au dreptul să asiste la toate conferințele din cadrul congresului.
 					</li>
 
 					<li>
@@ -91,8 +91,8 @@ export default function RegPage() {
 						<ul className="list-decimal list-outside pl-5 my-2">
 							<li>Trimiterea abstractelor și evaluare
 								<ul className="list-disc list-outside pl-5 my-2">
-									<li>Toți participanții activi trimit abstractul la <a href="mailto:secretariat@asmm-bucuresti.com" className="underline text-primary"> secretariat@asmm-bucuresti.com </a> până la 01.11.2025.</li>
-									<li>Evaluarea abstractelor se va desfășura între 02.11 - 08.11.2025 de către comisia de experți din domeniul medical și medico-militar.</li>
+									<li>Toți participanții activi trimit abstractul la <a href="mailto:secretariat@asmm-bucuresti.com" className="underline text-primary"> secretariat@asmm-bucuresti.com </a> începând cu data de 02.11.2025 până la data de 08.11.2025</li>
+									<li>Evaluarea abstractelor se va desfășura între 02.11.2025-11.11.2025 de către comisia de experți din domeniul medical și medico-militar.</li>
 									<li>Participanții la prezentări orale își pregătesc materialul pentru congres.</li>
 									<li>Participanții la e-postere trimit posterul digital între 08.11 - 11.11.2025. Organizatorii își rezervă dreptul ca posterul să nu fie acceptat, chiar dacă abstractul a fost aprobat.</li>
 
