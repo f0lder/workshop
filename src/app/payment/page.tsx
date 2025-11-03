@@ -7,7 +7,7 @@ import { getAppSettings } from '@/lib/settings';
 
 export default async function PaymentPage() {
   const clerkUser = await currentUser();
-  
+
   if (!clerkUser) {
     redirect('/auth/login');
   }
@@ -21,15 +21,15 @@ export default async function PaymentPage() {
 
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
-	<div className="max-w-4xl mx-auto">
-	  {!paymentsEnabled ? (
-		<div className="mb-6 p-4 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg">
-		<strong>Notă:</strong> Plățile sunt momentan închise. Te rugăm să verifici înapoi mai târziu.
-		</div>
-	  ) : (
-		<EnhancedTicketSelector currentAccessLevel={user.accessLevel} />
-	  )}
-	</div>
+      <div className="max-w-4xl mx-auto">
+        {!paymentsEnabled ? (
+          <div className="mb-6 p-4 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg">
+            <strong>Notă:</strong> Plățile sunt momentan închise. Te rugăm să verifici înapoi mai târziu.
+          </div>
+        ) : (
+          <EnhancedTicketSelector currentAccessLevel={user.accessLevel} />
+        )}
+      </div>
     </div>
   );
 }

@@ -3,15 +3,17 @@ import Link from 'next/link'
 import { FaUserGraduate, FaFileAlt, FaCreditCard, FaInfoCircle } from 'react-icons/fa'
 import { RiContractFill } from 'react-icons/ri'
 import { getAppSettings } from '@/lib/settings'
-import { getTicketByType } from './actions'
+import { getAllTickets } from './actions'
 
 export default async function InfoPage() {
   const settings = await getAppSettings();
 
-  const paymentenabled = settings ?? false;
+  const paymentEnabled = settings ?? false;
 
-  const activeTicket = await getTicketByType('active');
-  const passiveTicket = await getTicketByType('passive');
+  const tickets = await getAllTickets();
+
+  const activeTicket = tickets.find(ticket => ticket.type === 'active');
+  const passiveTicket = tickets.find(ticket => ticket.type === 'passive');
 
   return (
     <>
@@ -134,7 +136,7 @@ export default async function InfoPage() {
                     <p className="text-gray-400">Taxa de participare</p>
                   </div>
                 )}
-                {paymentenabled && (
+                {paymentEnabled && (
                   <Link href="/payment" className="mimesiss-btn-primary items-center">
                     Cumpara bilet
                   </Link>
@@ -189,7 +191,7 @@ export default async function InfoPage() {
                   </div>
                 )}
 
-                {paymentenabled && (
+                {paymentEnabled && (
                   <Link href="/payment" className="mimesiss-btn-primary items-center">
                     Cumpara bilet
                   </Link>
