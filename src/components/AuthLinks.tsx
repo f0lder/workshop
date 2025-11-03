@@ -137,17 +137,6 @@ export default function AuthLinks({ variant, isMobileMenuOpen, onLinkClick }: Au
 					</div>
 				</div>
 
-				{/* Dashboard Link (in main nav links section) */}
-				{/* This is intentionally injected into the Header's nav section via props */}
-				{/*
-          NOTE: To make this truly clean, the Header should map the main links,
-          and *then* render this component which adds its *own* links.
-          The `Header.tsx` (File 2) is already set up this way.
-          This component (AuthLinks) should *not* render the main links.
-          
-          We need to add the "Contul meu" link to the *bottom* auth section.
-        */}
-
 				{/* Sign Out Button & Dashboard Link */}
 				<div className={`p-6 border-t border-border/50 space-y-2 transform transition-all duration-200 ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
 					}`}

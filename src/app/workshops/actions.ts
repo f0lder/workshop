@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { Workshop, Registration } from '@/models'
 import connectDB from '@/lib/mongodb'
 import { getAppSettings } from '@/lib/settings'
-import { Workshop as WorkshopType } from '@/types/models'
+import type { Workshop as WorkshopType, Registrations } from '@/types/models'
 
 export async function registerForWorkshop(formData: FormData): Promise<void> {
   const clerkUser = await currentUser()
@@ -116,8 +116,16 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
   revalidatePath('/dashboard')
 }
 
+interface registrationsWithWorkshops extends Registrations {
+  workshop: WorkshopType;
+  attendance: {
+    confirmed: boolean;
+    confirmedAt?: Date | string;
+    confirmedBy?: string;
+  };
+}
 
-export async function getUserRegistrations(userId: string): Promise<WorkshopType[]> {
+export async function getUserRegistrations(userId: string): Promise<registrationsWithWorkshops[]> {
   await connectDB()
 
   try {
@@ -127,11 +135,29 @@ export async function getUserRegistrations(userId: string): Promise<WorkshopType
       return []
     }
 
-    const workshops = await Workshop.find({
-      _id: { $in: registrations.map(reg => reg.workshopId) }
-    }).sort({ date: 1 }) // Sort by date ascending
+    // Get all workshop IDs from registrations
+    const workshopIds = registrations.map((reg) => reg.workshopId);
 
-    return workshops as WorkshopType[]
+    // Fetch all workshops at once
+    const workshops = await Workshop.find({ _id: { $in: workshopIds } }).lean();
+
+    const workshopMap = Object.fromEntries(
+      workshops.map(workshop => [String(workshop._id), workshop])
+    );
+
+    // Combine registrations with workshops
+    const registrationsWithWorkshops = registrations
+      .filter((reg) => workshopMap[reg.workshopId])
+      .map((reg) => ({
+        _id: String(reg._id),
+        userId: reg.userId,
+        workshopId: reg.workshopId,
+        workshop: workshopMap[reg.workshopId] as unknown as WorkshopType,
+        attendance: reg.attendance || { confirmed: false }
+      })) as registrationsWithWorkshops[];
+
+    return registrationsWithWorkshops
+
   } catch (error) {
     console.error('Error fetching user registrations:', error)
     return []

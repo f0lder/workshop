@@ -34,7 +34,7 @@ export default function PaymentForm({users, tickets}: {users: User[], tickets: T
 				accessLevel: tickets.find(t => t._id === ticketId)?.type || 'unpaid',
 				amount: Number(amount) * 100, // Convert to cents
 				currency: 'RON',
-				stripeSessionId: `manual_${Date.now()}_${userId}`, // Placeholder, will be set by server
+				stripeSessionId: `manual_${Date.now()}_${userId}`,
 				stripePaymentIntentId: `manual_${Date.now()}_${userId}`,
 				status: 'completed' as const,
 				createdAt: new Date(),

@@ -21,6 +21,7 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
   const baseLinks = [
     { href: '/dashboard', icon: FaHome, label: 'Dashboard' },
     { href: '/dashboard/profile', icon: FaUser, label: 'Profil' },
+    { href: '/dashboard/registrations', icon: FaCalendarAlt, label: 'Înregistrările mele' },
     { href: '/workshops', icon: FaCalendarAlt, label: 'Workshop-uri' },
     { href: '/payment', icon: FaCreditCard, label: 'Cumpără Bilet' },
   ]

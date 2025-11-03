@@ -1,8 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server'
-import { FaCalendarAlt, FaUsers, FaCog, FaCircle } from 'react-icons/fa'
+import { FaCalendarAlt, FaUsers, FaCog } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
-import { getUserRegistrations } from '@/app/workshops/actions'
 import SimpleUserQRCode from '@/components/SimpleUserQRCode'
 
 export default async function DashboardPage() {
@@ -10,8 +9,6 @@ export default async function DashboardPage() {
 
   if (!clerkUser) return null
 
-  // Get user registrations
-  const userRegistrations = await getUserRegistrations(clerkUser.id)
 
   // Sync user with database
   const user = await syncUserWithDatabase(clerkUser)
@@ -96,8 +93,8 @@ export default async function DashboardPage() {
       {/* User QR Code Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <SimpleUserQRCode 
-            userId={clerkUser.id} 
+          <SimpleUserQRCode
+            userId={clerkUser.id}
             userName={clerkUser.firstName && clerkUser.lastName ? `${clerkUser.firstName} ${clerkUser.lastName}` : undefined}
           />
         </div>
@@ -161,54 +158,6 @@ export default async function DashboardPage() {
                 <FaUsers className="mr-2 h-4 w-4" />
                 Panou Admin
               </Link>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Workshops */}
-      <div className="bg-card shadow border border-border rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-foreground">
-            Inregistrarile mele
-          </h3>
-          <div className="mt-5">
-            {userRegistrations.length > 0 ? (
-              <ul className="divide-y divide-border">
-                {userRegistrations.map((workshop) => (
-                  <li key={workshop.id} className="py-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{workshop.title}</p>
-                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                          {workshop.date && (
-                            <>
-                              <span>{new Date(workshop.date).toLocaleDateString()}</span>
-                              <FaCircle className="inline-block size-[8px] fill-current" />
-                            </>
-                          )}
-                          {workshop.location && (
-                            <>
-                              
-                              <span>{workshop.location}</span>
-                              <FaCircle className="inline-block size-[8px] fill-current" />
-                            </>
-                          )}
-                          <span>{workshop.currentParticipants} / {workshop.maxParticipants} locuri ocupate</span>
-                        </div>
-                      </div>
-                      <Link
-                        href={`/workshops/${workshop.id}`}
-                        className="text-sm font-medium text-primary hover:underline"
-                      >
-                        Vezi detalii
-                      </Link>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-muted-foreground">Nu ai nicio înregistrare la workshopuri.</p>
             )}
           </div>
         </div>
