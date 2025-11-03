@@ -2,6 +2,7 @@
 
 import { FaCreditCard, FaEuroSign, FaTicketAlt } from 'react-icons/fa'
 import PaymentsList from '@/components/PaymentsList'
+import Link from 'next/link'
 
 // Define the types again here or import them from a shared types file
 interface PaymentStats {
@@ -106,14 +107,21 @@ export default function PaymentsClient({ stats, payments }: PaymentsClientProps)
 					<p className="mt-1 text-sm text-muted-foreground">
 						Monitorizați și gestionați toate plățile pentru biletele MIMESISS 2025.
 					</p>
+
 					{/* 4. Add onClick handler to the button */}
-					<button
-						type='button'
-						onClick={downloadCSV}
-						className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-					>
-						Descarca Raport Plăți
-					</button>
+					<div className="mt-4 flex items-center space-x-4">
+						<button
+							type='button'
+							onClick={downloadCSV}
+							className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+						>
+							Descarca Raport Plăți
+						</button>
+
+						<Link href="/admin/payments/new" className="text-sm text-primary hover:underline">
+							Creează o plată nouă
+						</Link>
+					</div>
 				</div>
 			</div>
 

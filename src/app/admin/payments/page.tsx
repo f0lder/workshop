@@ -102,9 +102,5 @@ export default async function PaymentsPage() {
     }
   })
 
-  // Remove the formatCurrency and downloadCSV functions
-  // Remove the entire JSX return block
-
-  // Render the Client Component with the fetched data
   return <PaymentsClient stats={stats} payments={recentPayments} />
 }

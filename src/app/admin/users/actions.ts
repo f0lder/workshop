@@ -191,3 +191,30 @@ export async function fetchAllUsers() {
 
   return usersJSON;
 }
+
+export async function updateUserAccessLevel(userId: string, newAccessLevel: string) {
+  // Check if current user is admin
+  const clerkUser = await currentUser()
+  if (!clerkUser) {
+    redirect('/auth/login')
+  }
+
+  const isAdmin = await isUserAdmin(clerkUser.id)
+  if (!isAdmin) {
+    throw new Error('Nu aveți permisiunea să efectuați această acțiune.')
+  }
+
+  await connectDB()
+
+  const updatedUser = await User.findOneAndUpdate(
+    { clerkId: userId },
+    { accessLevel: newAccessLevel },
+    { new: true }
+  )
+
+  if (!updatedUser) {
+    throw new Error('Utilizatorul nu a fost găsit.')
+  }
+
+  return updatedUser
+}

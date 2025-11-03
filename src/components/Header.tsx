@@ -1,9 +1,8 @@
 'use client'
 
-import { useClerk } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import {
   FaBars,
@@ -12,27 +11,16 @@ import {
   FaHome,
   FaImage,
   FaInfoCircle,
-  FaSignOutAlt,
   FaTimes,
   FaUser,
-  FaUserPlus,
   FaUsers
 } from 'react-icons/fa'
 
-import { useUser } from '@clerk/nextjs'
-import Loading from '@/components/Loading'
+import AuthLinks from '@/components/AuthLinks'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const router = useRouter()
   const pathname = usePathname()
-  const { signOut } = useClerk()
-  const { user,isLoaded } = useUser()
-
-  const handleSignOut = async () => {
-    await signOut()
-    router.push('/')
-  }
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -54,10 +42,6 @@ export default function Header() {
     { href: '/contact', label: 'Date de contact', icon: FaUser },
     { href: '/gallery', label: 'Galerie foto', icon: FaImage },
   ]
-
-  if (!isLoaded) {
-    return <Loading />; // or a loading spinner
-  }
 
   return (
     <>
@@ -86,43 +70,8 @@ export default function Header() {
               ))}
             </nav>
 
-            {/* Desktop Auth Section */}
-            <div className="hidden lg:flex items-center space-x-4">
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="flex items-center space-x-2 text-foreground hover:text-foreground/80 transition-colors"
-                  >
-                    <FaUser className="h-4 w-4" />
-                    <span>Contul meu</span>
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={handleSignOut}
-                    className="flex items-center space-x-2 text-destructive hover:text-destructive/80 transition-colors"
-                  >
-                    <FaSignOutAlt className="h-4 w-4" />
-                    <span>Deconectare</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/auth/login"
-                    className="text-foreground hover:text-foreground/80 transition-colors"
-                  >
-                    Conectare
-                  </Link>
-                  <Link
-                    href="/auth/signup"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md transition-colors"
-                  >
-                    Înregistrare
-                  </Link>
-                </>
-              )}
-            </div>
+            {/* Desktop Auth Section - REPLACED */}
+            <AuthLinks variant="desktop" />
 
             {/* Mobile Menu Button */}
             <button
@@ -171,30 +120,7 @@ export default function Header() {
               </button>
             </div>
 
-            {/* User Profile Section */}
-            {user && (
-              <div className={`p-6 border-b border-border transform transition-all duration-300 ease-in-out delay-100 ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <FaUser className="h-5 w-5 text-primary" />
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.emailAddresses?.[0]?.emailAddress}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {user?.publicMetadata?.role === 'admin' ? 'Administrator' : 'Utilizator'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Navigation Links */}
-            <nav className="flex-1 px-6 py-6 space-y-2">
+            <nav className="flex-1 px-6 py-6 space-y-2 overflow-y-auto">
               {links.map(({ href, label, icon: Icon }, index) => (
                 <Link
                   key={href}
@@ -208,65 +134,12 @@ export default function Header() {
                   {label}
                 </Link>
               ))}
-
-              {user ? (
-                // Logged in user actions
-                <div className={`border-t border-border/50 my-4 pt-4 transform transition-all duration-200 ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                  }`}
-                  style={{ transitionDelay: isMobileMenuOpen ? '600ms' : '0ms' }}
-                >
-                  <Link
-                    href="/dashboard"
-                    onClick={toggleMobileMenu}
-                    className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors duration-200"
-                  >
-                    <FaUser className="h-4 w-4 mr-3" />
-                    Contul meu
-                  </Link>
-                </div>
-              ) : (
-                // Guest user actions
-                <div className={`border-t border-border/50 my-4 pt-4 space-y-2 transform transition-all duration-200 ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                  }`}
-                  style={{ transitionDelay: isMobileMenuOpen ? '600ms' : '0ms' }}
-                >
-                  <Link
-                    href="/auth/login"
-                    onClick={toggleMobileMenu}
-                    className="flex items-center px-3 py-2 rounded-md text-foreground hover:bg-accent/50 transition-colors duration-200"
-                  >
-                    <FaUser className="h-4 w-4 mr-3" />
-                    Conectare
-                  </Link>
-
-                  <Link
-                    href="/auth/signup"
-                    onClick={toggleMobileMenu}
-                    className="flex items-center px-3 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
-                  >
-                    <FaUserPlus className="h-4 w-4 mr-3" />
-                    Înregistrare
-                  </Link>
-                </div>
-              )}
             </nav>
-
-            {/* Sign Out Button */}
-            {user && (
-              <div className={`p-6 border-t border-border/50 transform transition-all duration-200 ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                }`}
-                style={{ transitionDelay: isMobileMenuOpen ? '650ms' : '0ms' }}
-              >
-                <button
-                type='button'
-                  onClick={handleSignOut}
-                  className="flex items-center w-full px-3 py-2 rounded-md text-destructive hover:bg-destructive/10 transition-colors duration-200"
-                >
-                  <FaSignOutAlt className="h-4 w-4 mr-3" />
-                  Deconectare
-                </button>
-              </div>
-            )}
+            <AuthLinks
+              variant="mobile"
+              isMobileMenuOpen={isMobileMenuOpen}
+              onLinkClick={toggleMobileMenu}
+            />
           </div>
         </div>
       </div>
