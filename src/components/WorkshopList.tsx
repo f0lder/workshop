@@ -1,5 +1,4 @@
-import { getAllWorkshops } from '@/app/workshops/actions';
-import { getIsRegisteredForWorkshop } from '@/app/workshops/actions';
+import { getAllWorkshops, getIsRegisteredForWorkshop } from '@/app/workshops/actions';
 import { Workshop } from '@/types/models';
 import WorkshopListClient from './WorkshopListClient'; // <-- Import the new client component
 
@@ -11,6 +10,10 @@ interface WorkshopListProps {
 type ExtendedWorkshop = {
   isRegistered: boolean;
 } & Workshop;
+
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
 
 export default async function WorkshopList({ workshopVisibleToPublic, globalRegistrationEnabled }: WorkshopListProps) {
   // If workshops are not visible to public, show coming soon message
@@ -24,15 +27,20 @@ export default async function WorkshopList({ workshopVisibleToPublic, globalRegi
     );
   }
 
-  const workshops = await getAllWorkshops() as Workshop[];
+  const workshops = await getAllWorkshops();
 
   // Resolve registration status for each workshop in parallel
   const extendedWorkshops: ExtendedWorkshop[] = await Promise.all(
     workshops.map(async (w) => {
-      const isRegistered = await getIsRegisteredForWorkshop(w._id?.toString() ?? '');
-      return Object.assign({}, w, { isRegistered }) as ExtendedWorkshop;
+      const workshopId = w._id?.toString();
+      if (!isString(workshopId)) {
+        // Handle the case where workshopId is not a string, for example by skipping the workshop
+        return null;
+      }
+      const isRegistered = await getIsRegisteredForWorkshop(workshopId);
+      return { ...w, isRegistered };
     })
-  );
+  ).then(results => results.filter(Boolean) as ExtendedWorkshop[]);
 
   if (extendedWorkshops.length === 0) {
     return (
@@ -44,11 +52,27 @@ export default async function WorkshopList({ workshopVisibleToPublic, globalRegi
     );
   }
 
-  const serializedWorkshops = JSON.parse(JSON.stringify(extendedWorkshops));
+  const plainWorkshops = extendedWorkshops.map(w => ({
+    _id: w._id ? w._id.toString() : '',
+    title: w.title,
+    description: w.description,
+    date: w.date ? new Date(w.date).toISOString() : '',
+    time: w.time,
+    location: w.location,
+    maxParticipants: w.maxParticipants,
+    currentParticipants: w.currentParticipants,
+    instructor: w.instructor,
+    status: w.status,
+    wsType: w.wsType,
+    url: w.url,
+    isRegistered: w.isRegistered,
+    createdAt: w.createdAt ? new Date(w.createdAt).toISOString() : '',
+    updatedAt: w.updatedAt ? new Date(w.updatedAt).toISOString() : '',
+  }));
 
   return (
     <WorkshopListClient
-      initialWorkshops={serializedWorkshops}
+      initialWorkshops={plainWorkshops}
       globalRegistrationEnabled={globalRegistrationEnabled}
     />
   );

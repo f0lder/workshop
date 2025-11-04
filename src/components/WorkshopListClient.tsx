@@ -5,47 +5,47 @@ import Link from 'next/link';
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUsers, FaSearch } from 'react-icons/fa';
 import { WorkshopRegistrationButton } from './WorkshopRegistrationButton';
 import { Workshop } from '@/types/models';
+import Card from '@/components/ui/Card';
 
 // This is the same type from your server component
 type ExtendedWorkshop = {
 	isRegistered: boolean;
-} & Workshop;
+} & Omit<Workshop, 'date' | 'createdAt' | 'updatedAt'> & {
+	date: string | null;
+	createdAt: string | null;
+	updatedAt: string | null;
+};
 
 interface WorkshopListClientProps {
 	initialWorkshops: ExtendedWorkshop[];
 	globalRegistrationEnabled: boolean;
 }
 
+const FILTER_TYPE = {
+	ALL: 'toate',
+	WORKSHOP: 'workshop',
+	CONFERENCE: 'conferinta',
+};
+
 export default function WorkshopListClient({ initialWorkshops, globalRegistrationEnabled }: WorkshopListClientProps) {
 	// --- State for our filters ---
 	const [searchTerm, setSearchTerm] = useState('');
-	const [selectedType, setSelectedType] = useState('toate'); // 'toate', 'workshop', 'conferinta'
+	const [selectedType, setSelectedType] = useState(FILTER_TYPE.ALL);
 	const [showAvailable, setShowAvailable] = useState(false);
 	const [showMyRegistrations, setShowMyRegistrations] = useState(false);
 
 	// --- Memoize the filtered list ---
 	const filteredWorkshops = useMemo(() => {
 		return initialWorkshops.filter(w => {
-			// 1. Filter by Search Term (Title or Instructor)
-			const searchMatch = searchTerm.toLowerCase()
-				? w.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-				w.instructor?.toLowerCase().includes(searchTerm.toLowerCase())
-				: true;
+			const searchMatch = !searchTerm ||
+				w.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				w.instructor?.toLowerCase().includes(searchTerm.toLowerCase());
 
-			// 2. Filter by Type
-			const typeMatch = selectedType === 'toate'
-				? true
-				: w.wsType === selectedType;
+			const typeMatch = selectedType === FILTER_TYPE.ALL || w.wsType === selectedType;
 
-			// 3. Filter by Availability
-			const availableMatch = showAvailable
-				? (w.maxParticipants - w.currentParticipants) > 0
-				: true;
+			const availableMatch = !showAvailable || (w.maxParticipants - w.currentParticipants) > 0;
 
-			// 4. Filter by My Registrations
-			const registrationMatch = showMyRegistrations
-				? w.isRegistered
-				: true;
+			const registrationMatch = !showMyRegistrations || w.isRegistered;
 
 			return searchMatch && typeMatch && availableMatch && registrationMatch;
 		});
@@ -59,7 +59,7 @@ export default function WorkshopListClient({ initialWorkshops, globalRegistratio
 	return (
 		<>
 			{/* --- FILTER UI --- */}
-			<div className="mb-8 p-6 bg-card border border-border rounded-lg space-y-4">
+			<Card className="mb-8 p-6 space-y-4">
 				{/* Search Bar */}
 				<div className="relative">
 					<input
@@ -76,22 +76,22 @@ export default function WorkshopListClient({ initialWorkshops, globalRegistratio
 				<div className="flex flex-wrap gap-2">
 					<button
 						type='button'
-						onClick={() => setSelectedType('toate')}
-						className={`px-4 py-2 rounded-md text-sm font-medium ${selectedType === 'toate' ? activeBtnClass : inactiveBtnClass}`}
+						onClick={() => setSelectedType(FILTER_TYPE.ALL)}
+						className={`px-4 py-2 rounded-md text-sm font-medium ${selectedType === FILTER_TYPE.ALL ? activeBtnClass : inactiveBtnClass}`}
 					>
 						Toate
 					</button>
 					<button
 						type='button'
-						onClick={() => setSelectedType('workshop')}
-						className={`px-4 py-2 rounded-md text-sm font-medium ${selectedType === 'workshop' ? activeBtnClass : inactiveBtnClass}`}
+						onClick={() => setSelectedType(FILTER_TYPE.WORKSHOP)}
+						className={`px-4 py-2 rounded-md text-sm font-medium ${selectedType === FILTER_TYPE.WORKSHOP ? activeBtnClass : inactiveBtnClass}`}
 					>
 						Workshops
 					</button>
 					<button
 						type='button'
-						onClick={() => setSelectedType('conferinta')}
-						className={`px-4 py-2 rounded-md text-sm font-medium ${selectedType === 'conferinta' ? activeBtnClass : inactiveBtnClass}`}
+						onClick={() => setSelectedType(FILTER_TYPE.CONFERENCE)}
+						className={`px-4 py-2 rounded-md text-sm font-medium ${selectedType === FILTER_TYPE.CONFERENCE ? activeBtnClass : inactiveBtnClass}`}
 					>
 						Conferințe
 					</button>
@@ -118,7 +118,7 @@ export default function WorkshopListClient({ initialWorkshops, globalRegistratio
 						Doar înscrierile mele
 					</label>
 				</div>
-			</div>
+			</Card>
 
 			{/* --- WORKSHOP LIST --- */}
 			{filteredWorkshops.length === 0 ? (
@@ -130,7 +130,7 @@ export default function WorkshopListClient({ initialWorkshops, globalRegistratio
 			) : (
 				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 					{filteredWorkshops.map((workshop) => (
-						<div key={workshop._id?.toString()} className="mimesiss-section-card p-6 flex flex-col justify-between">
+						<Card key={workshop._id?.toString()} className="p-6 flex flex-col justify-between">
 							{/* This is the same mapping logic from your original file */}
 							<h3 className="text-xl font-semibold text-foreground mb-2">
 								{workshop.title}
@@ -206,7 +206,7 @@ export default function WorkshopListClient({ initialWorkshops, globalRegistratio
 									Vezi detalii
 								</Link>
 							</div>
-						</div>
+						</Card>
 					))}
 				</div>
 			)}
