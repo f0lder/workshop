@@ -95,6 +95,7 @@ export interface Ticket {
   description: string; // Ticket description
   price: number; // Ticket price in RON
   features: string[]; // List of features
+  enabled: boolean; // Whether the ticket is available for purchase
   createdAt?: Date;
   updatedAt?: Date;
 }

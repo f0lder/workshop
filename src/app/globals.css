@@ -244,3 +244,12 @@ ol.regulament-list > li::before {
 .pill{
   @apply border border-primary rounded-full p-1 bg-primary/45 inline-block;
 }
+
+/* Center single ticket on desktop */
+.ticket-grid {
+  @apply grid md:grid-cols-2 gap-6;
+}
+
+.ticket-grid:has(> :only-child) {
+  @apply md:grid-cols-1 md:max-w-md md:mx-auto;
+}

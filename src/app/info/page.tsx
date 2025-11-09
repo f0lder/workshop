@@ -10,7 +10,10 @@ export default async function InfoPage() {
 
   const paymentEnabled = settings ?? false;
 
-  const tickets = await getAllTickets();
+  const allTickets = await getAllTickets();
+  
+  // Filter only enabled tickets
+  const tickets = allTickets.filter(ticket => ticket.enabled !== false);
 
   const activeTicket = tickets.find(ticket => ticket.type === 'active');
   const passiveTicket = tickets.find(ticket => ticket.type === 'passive');

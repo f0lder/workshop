@@ -23,10 +23,14 @@ export async function createTicket(data: {
 	price: number;
 	features: string[];
 	type: string;
+	enabled?: boolean;
 }): Promise<void> {
 	await connectDB();
 
-	const ticket = new Ticket(data);
+	const ticket = new Ticket({
+		...data,
+		enabled: data.enabled ?? true
+	});
 	await ticket.save();
 }
 
@@ -36,6 +40,7 @@ export async function updateTicket(ticketId: string, data: {
 	price?: number;
 	features?: string[];
 	type?: string;
+	enabled?: boolean;
 }): Promise<void> {
 	await connectDB();
 
@@ -49,6 +54,7 @@ export async function updateTicket(ticketId: string, data: {
 	ticket.price = data.price ?? ticket.price;
 	ticket.features = data.features ?? ticket.features;
 	ticket.type = data.type ?? ticket.type;
+	ticket.enabled = data.enabled ?? ticket.enabled;
 	await ticket.save();
 
 	// Don't return the Mongoose document to avoid serialization errors

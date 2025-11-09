@@ -44,6 +44,7 @@ export interface ITicket extends Document {
   price: number // Ticket price in RON
   features: string[] // List of features
   description?: string // Optional detailed description
+  enabled: boolean // Whether the ticket is available for purchase
 }
 
 // User schema
@@ -151,6 +152,7 @@ const TicketSchema = new Schema<ITicket>({
   price: { type: Number, required: true },
   features: { type: [String], required: true },
   type: { type: String, required: true },
+  enabled: { type: Boolean, required: true, default: true },
 }, {
   timestamps: true
 })

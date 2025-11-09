@@ -23,13 +23,15 @@ export default function NewTicketPage() {
 		const featuresString = formData.get('features') as string
 		const features = featuresString.split(',').map(f => f.trim()).filter(f => f.length > 0)
 		const type = formData.get('type') as string
+		const enabled = formData.get('enabled') === 'on'
 
 		const data = {
 			title,
 			description,
 			price,
 			features,
-			type
+			type,
+			enabled
 		}
 
 		startTransition(async () => {
@@ -130,6 +132,20 @@ export default function NewTicketPage() {
 			  <p className="mt-1 text-sm text-muted-foreground">
 				  Separate caracteristicile prin virgulă
 			  </p>
+			</div>
+
+			<div className="flex items-center gap-3">
+			  <input
+				  type="checkbox"
+				  id="enabled"
+				  name="enabled"
+				  disabled={isPending}
+				  defaultChecked={true}
+				  className="w-4 h-4 text-primary bg-background border-input rounded focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
+			  />
+			  <label htmlFor="enabled" className="text-sm font-medium text-foreground">
+				  Bilet activ (disponibil pentru cumpărare)
+			  </label>
 			</div>
 		</div>
 

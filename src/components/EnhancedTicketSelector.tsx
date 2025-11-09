@@ -19,8 +19,10 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 	// Fetch tickets on component mount
 	useEffect(() => {
 		const fetchTickets = async () => {
-			const tickets = await getAllTickets();
-			setTickets(tickets);
+			const allTickets = await getAllTickets();
+			// Filter only enabled tickets
+			const enabledTickets = allTickets.filter(ticket => ticket.enabled !== false);
+			setTickets(enabledTickets);
 		};
 
 		fetchTickets();
@@ -95,7 +97,7 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 				</p>
 			</div>
 
-			<div className="grid md:grid-cols-2 gap-6">
+			<div className="ticket-grid">
 				{tickets.map((ticket) => {
 					const purchased = isPurchased();
 

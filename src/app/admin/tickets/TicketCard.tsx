@@ -39,9 +39,20 @@ export function TicketCard({ ticket }: TicketCardProps) {
         {/* Ticket Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-foreground mb-1">
-              {ticket.title || 'Fără titlu'}
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-xl font-bold text-foreground">
+                {ticket.title || 'Fără titlu'}
+              </h3>
+              <span 
+                className={`text-xs px-2 py-1 rounded-full font-medium ${
+                  ticket.enabled !== false 
+                    ? 'bg-green-500/10 text-green-500' 
+                    : 'bg-gray-500/10 text-gray-500'
+                }`}
+              >
+                {ticket.enabled !== false ? 'Activ' : 'Dezactivat'}
+              </span>
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold text-primary">
                 {ticket.price} RON
