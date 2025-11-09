@@ -28,7 +28,12 @@ const FILTER_TYPE = {
 };
 
 export default function WorkshopListClient({ initialWorkshops }: WorkshopListClientProps) {
-	const { globalRegistrationEnabled } = useRegistration();
+	const { globalRegistrationEnabled, registrationStartTime } = useRegistration();
+	
+	// Check if registration has started
+	const now = Date.now();
+	const startTimestamp = registrationStartTime ? new Date(registrationStartTime).getTime() : null;
+	const hasRegistrationStarted = !startTimestamp || now >= startTimestamp;
 	
 	// --- State for our filters ---
 	const [searchTerm, setSearchTerm] = useState('');
@@ -199,7 +204,7 @@ export default function WorkshopListClient({ initialWorkshops }: WorkshopListCli
 									</div>
 								)}
 							</div>
-							{globalRegistrationEnabled && (
+							{globalRegistrationEnabled && hasRegistrationStarted && (
 								<WorkshopRegistrationButton 
 									workshop={JSON.parse(JSON.stringify(workshop))} 
 									isRegistered={workshop.isRegistered}
