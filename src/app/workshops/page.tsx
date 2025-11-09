@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { getAppSettings } from '@/lib/settings'
 import HeaderContent from '@/components/HeaderContent'
 import { FaCircle,FaCalendar, FaMapPin } from 'react-icons/fa'
+import RegistrationCountdown from '@/components/RegistrationCountdown'
 
 // Force dynamic rendering since we're fetching data from database
 export const dynamic = 'force-dynamic'
@@ -36,6 +37,8 @@ export default async function WorkshopsPage() {
   const appSettings = await getAppSettings()
   const workshopVisibleToPublic = appSettings?.workshopVisibleToPublic || false
   const globalRegistrationEnabled = appSettings.globalRegistrationEnabled || false
+  const registrationStartTime = appSettings.registrationStartTime ? new Date(appSettings.registrationStartTime).toISOString() : null
+  const registrationDeadline = appSettings.registrationDeadline ? new Date(appSettings.registrationDeadline).toISOString() : null
 
   return (
     <>
@@ -61,9 +64,19 @@ export default async function WorkshopsPage() {
             </div>
           </div>
 
+          {/* Registration Countdown */}
+          {globalRegistrationEnabled && (registrationStartTime || registrationDeadline) && (
+            <RegistrationCountdown startTime={registrationStartTime} deadline={registrationDeadline} />
+          )}
+
           {/* Workshop List with Loading */}
           <Suspense fallback={<WorkshopListSkeleton />}>
-            <WorkshopList workshopVisibleToPublic={workshopVisibleToPublic} globalRegistrationEnabled={globalRegistrationEnabled} />
+            <WorkshopList 
+              workshopVisibleToPublic={workshopVisibleToPublic} 
+              globalRegistrationEnabled={globalRegistrationEnabled}
+              registrationStartTime={registrationStartTime}
+              registrationDeadline={registrationDeadline}
+            />
           </Suspense>
 
           {/* Info Section */}

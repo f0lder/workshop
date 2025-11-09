@@ -6,6 +6,7 @@ import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUsers, FaSearch } from 'react
 import { WorkshopRegistrationButton } from './WorkshopRegistrationButton';
 import { Workshop } from '@/types/models';
 import Card from '@/components/ui/Card';
+import { useRegistration } from '@/contexts/RegistrationContext';
 
 // This is the same type from your server component
 type ExtendedWorkshop = {
@@ -18,7 +19,6 @@ type ExtendedWorkshop = {
 
 interface WorkshopListClientProps {
 	initialWorkshops: ExtendedWorkshop[];
-	globalRegistrationEnabled: boolean;
 }
 
 const FILTER_TYPE = {
@@ -27,7 +27,9 @@ const FILTER_TYPE = {
 	CONFERENCE: 'conferinta',
 };
 
-export default function WorkshopListClient({ initialWorkshops, globalRegistrationEnabled }: WorkshopListClientProps) {
+export default function WorkshopListClient({ initialWorkshops }: WorkshopListClientProps) {
+	const { globalRegistrationEnabled } = useRegistration();
+	
 	// --- State for our filters ---
 	const [searchTerm, setSearchTerm] = useState('');
 	const [selectedType, setSelectedType] = useState(FILTER_TYPE.ALL);
@@ -197,7 +199,12 @@ export default function WorkshopListClient({ initialWorkshops, globalRegistratio
 									</div>
 								)}
 							</div>
-							{globalRegistrationEnabled && <WorkshopRegistrationButton workshop={JSON.parse(JSON.stringify(workshop))} isGlobalRegistrationClosed={globalRegistrationEnabled} isRegistered={workshop.isRegistered} />}
+							{globalRegistrationEnabled && (
+								<WorkshopRegistrationButton 
+									workshop={JSON.parse(JSON.stringify(workshop))} 
+									isRegistered={workshop.isRegistered}
+								/>
+							)}
 							<div className="mt-6">
 								<Link
 									href={`/workshops/${workshop._id?.toString()}`}

@@ -1,6 +1,7 @@
 import { getWorkshopById } from "../actions";
 import HeaderContent from "@/components/HeaderContent";
 import { WorkshopRegistrationButton } from "@/components/WorkshopRegistrationButton";
+import { RegistrationProvider } from "@/contexts/RegistrationContext";
 import type { Workshop } from "@/types/models";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaChalkboardTeacher, FaUsers, FaInfoCircle, FaInstagram } from 'react-icons/fa';
 import { getAppSettings } from "@/lib/settings";
@@ -71,7 +72,9 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 	const { id } = await params;
 
 	const appSettings = await getAppSettings()
-	const isGlobalRegistrationClosed = appSettings?.globalRegistrationEnabled || false
+	const globalRegistrationEnabled = appSettings?.globalRegistrationEnabled || false
+	const registrationStartTime = appSettings?.registrationStartTime ? new Date(appSettings.registrationStartTime).toISOString() : null
+	const registrationDeadline = appSettings?.registrationDeadline ? new Date(appSettings.registrationDeadline).toISOString() : null
 
 	const workshop = (await getWorkshopById(id)) as Workshop | null;
 
@@ -102,20 +105,28 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 	return (
 		<>
 			<HeaderContent title={`${wType}: ${workshop.title}`} />
-			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-				{/* Hero Section */}
-				<div className="mimesiss-card p-8">
-					<div className="text-center mb-6">
-						<h1 className="text-3xl font-bold text-foreground mb-3">{workshop.title}</h1>
-						<p className="text-lg text-muted-foreground leading-relaxed">{workshop.description}</p>
-					</div>
+			<RegistrationProvider
+				value={{
+					globalRegistrationEnabled,
+					registrationStartTime,
+					registrationDeadline,
+				}}
+			>
+				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+					{/* Hero Section */}
+					<div className="mimesiss-card p-8">
+						<div className="text-center mb-6">
+							<h1 className="text-3xl font-bold text-foreground mb-3">{workshop.title}</h1>
+							<p className="text-lg text-muted-foreground leading-relaxed">{workshop.description}</p>
+						</div>
 
-					{/* Registration Button */}
-					<div className="flex justify-center mb-6">
-						<WorkshopRegistrationButton workshop={wsJSON} isGlobalRegistrationClosed={isGlobalRegistrationClosed} isRegistered={isRegistered} />
-					</div>
-
-					{/* Status Badge */}
+						{/* Registration Button */}
+						<div className="flex justify-center mb-6">
+							<WorkshopRegistrationButton 
+								workshop={wsJSON} 
+								isRegistered={isRegistered}
+							/>
+						</div>					{/* Status Badge */}
 					<div className="flex justify-center">
 						<span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${workshop.status === 'active' ? 'bg-primary/10 text-primary border border-primary/20' :
 							workshop.status === 'completed' ? 'bg-green-100 text-green-800 border border-green-200' :
@@ -247,7 +258,8 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 						</div>
 					</div>
 				)}
-			</div >
+				</div>
+			</RegistrationProvider>
 		</>
 	);
 }

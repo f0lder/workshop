@@ -7,23 +7,12 @@ export interface IAppSettings extends Document {
   paymentsEnabled?: boolean
   workshopVisibleToPublic?: boolean
 
-  requireApprovalForRegistration: boolean
-  maxWorkshopsPerUser: number
   allowCancelRegistration: boolean
-  
-  // Email settings
-  sendEmailNotifications: boolean
-  sendRegistrationConfirmation: boolean
-  sendCancellationNotification: boolean
-  
-  // General app settings
-  maintenanceMode: boolean
-  registrationMessage: string
-  footerText: string
+  registrationStartTime?: Date // When registrations will open
+  registrationDeadline?: Date // When registrations will close
   
   // Workshop defaults
   defaultMaxParticipants: number
-  defaultWorkshopDuration: number // in minutes
   
   createdAt: Date
   updatedAt: Date
@@ -46,56 +35,18 @@ const AppSettingsSchema = new Schema<IAppSettings>({
     default: false,
     required: true
   },
-  requireApprovalForRegistration: {
-    type: Boolean,
-    default: false,
-    required: true
-  },
-  maxWorkshopsPerUser: {
-    type: Number,
-    default: 10,
-    min: 1,
-    max: 100,
-    required: true
-  },
   allowCancelRegistration: {
     type: Boolean,
     default: true,
     required: true
   },
-  
-  // Email settings
-  sendEmailNotifications: {
-    type: Boolean,
-    default: false,
-    required: true
+  registrationStartTime: {
+    type: Date,
+    required: false
   },
-  sendRegistrationConfirmation: {
-    type: Boolean,
-    default: true,
-    required: true
-  },
-  sendCancellationNotification: {
-    type: Boolean,
-    default: true,
-    required: true
-  },
-  
-  // General app settings
-  maintenanceMode: {
-    type: Boolean,
-    default: false,
-    required: true
-  },
-  registrationMessage: {
-    type: String,
-    default: 'Înregistrează-te la workshop-urile care te interesează!',
-    maxlength: 500
-  },
-  footerText: {
-    type: String,
-    default: '© 2025 Mimesiss Workshop Platform',
-    maxlength: 200
+  registrationDeadline: {
+    type: Date,
+    required: false
   },
   
   // Workshop defaults
@@ -104,13 +55,6 @@ const AppSettingsSchema = new Schema<IAppSettings>({
     default: 20,
     min: 1,
     max: 1000,
-    required: true
-  },
-  defaultWorkshopDuration: {
-    type: Number,
-    default: 120, // 2 hours
-    min: 30,
-    max: 480, // 8 hours
     required: true
   }
 }, {

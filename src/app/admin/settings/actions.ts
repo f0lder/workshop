@@ -21,26 +21,18 @@ export async function updateSettings(formData: FormData) {
 
   try {
     // Extract form data
+    const registrationStartTimeStr = formData.get('registrationStartTime') as string
+    const registrationDeadlineStr = formData.get('registrationDeadline') as string
+    
     const updates = {
       // Workshop settings
       globalRegistrationEnabled: formData.get('globalRegistrationEnabled') === 'on',
       paymentsEnabled: formData.get('paymentsEnabled') === 'on',
       workshopVisibleToPublic: formData.get('workshopVisibleToPublic') === 'on',
-      requireApprovalForRegistration: formData.get('requireApprovalForRegistration') === 'on',
       allowCancelRegistration: formData.get('allowCancelRegistration') === 'on',
-      maxWorkshopsPerUser: parseInt(formData.get('maxWorkshopsPerUser') as string) || 10,
+      registrationStartTime: registrationStartTimeStr ? new Date(registrationStartTimeStr) : undefined,
+      registrationDeadline: registrationDeadlineStr ? new Date(registrationDeadlineStr) : undefined,
       defaultMaxParticipants: parseInt(formData.get('defaultMaxParticipants') as string) || 20,
-      defaultWorkshopDuration: parseInt(formData.get('defaultWorkshopDuration') as string) || 120,
-      
-      // Email settings
-      sendEmailNotifications: formData.get('sendEmailNotifications') === 'on',
-      sendRegistrationConfirmation: formData.get('sendRegistrationConfirmation') === 'on',
-      sendCancellationNotification: formData.get('sendCancellationNotification') === 'on',
-      
-      // General settings
-      maintenanceMode: formData.get('maintenanceMode') === 'on',
-      registrationMessage: formData.get('registrationMessage') as string || '',
-      footerText: formData.get('footerText') as string || '',
     }
 
     // Update settings

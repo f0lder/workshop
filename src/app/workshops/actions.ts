@@ -36,6 +36,11 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
       throw new Error('Inregistrarile sunt inchise in acest moment')
     }
 
+    // Check if registration deadline has passed (only for workshops, not conferences)
+    if (workshop.wsType === 'workshop' && appSettings.registrationDeadline && new Date(appSettings.registrationDeadline) < new Date()) {
+      throw new Error('Termenul limită pentru înregistrări la workshop-uri a expirat')
+    }
+
     if (action === 'register') {
       // Validate registration conditions
       

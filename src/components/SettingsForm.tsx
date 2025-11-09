@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { IAppSettings } from '@/models/AppSettings'
+import type { IAppSettings } from '@/models/AppSettings'
 import { updateSettings, resetSettings } from '@/app/admin/settings/actions'
 import ToggleSwitch from '@/components/ui/ToggleSwitch'
 
@@ -15,6 +15,18 @@ function Spinner() {
   return (
     <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
   )
+}
+
+// Helper to format date for datetime-local input (keeps local timezone)
+function formatDateTimeLocal(date: Date | string | undefined): string {
+  if (!date) return ''
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const hours = String(d.getHours()).padStart(2, '0')
+  const minutes = String(d.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
 export default function SettingsForm({ initialSettings }: SettingsFormProps) {
@@ -113,37 +125,48 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
             />
 
             <ToggleSwitch
-              name="requireApprovalForRegistration"
-              label="Necesită aprobare pentru înregistrări"
-              description="Când este activat, înregistrările necesită aprobare manuală de la admin înainte de confirmare."
-              defaultChecked={initialSettings.requireApprovalForRegistration}
-            />
-
-            <ToggleSwitch
               name="allowCancelRegistration"
               label="Permite anularea înregistrărilor"
               description="Când este activat, utilizatorii pot anula propriile înregistrări la workshop-uri."
               defaultChecked={initialSettings.allowCancelRegistration}
             />
-          </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="maxWorkshopsPerUser" className="block text-sm font-medium text-foreground">
-                Workshop-uri maxime per utilizator
+              <label htmlFor="registrationStartTime" className="block text-sm font-medium text-foreground">
+                Data de începere a înregistrărilor la workshop-uri
               </label>
               <div className="mt-1">
                 <input
-                  type="number"
-                  name="maxWorkshopsPerUser"
-                  min="1"
-                  max="100"
-                  defaultValue={initialSettings.maxWorkshopsPerUser}
+                  type="datetime-local"
+                  name="registrationStartTime"
+                  defaultValue={formatDateTimeLocal(initialSettings.registrationStartTime)}
                   className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
                 />
               </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Înregistrările la workshop-uri (nu conferințe) vor fi deschise începând cu această dată. Lăsați gol pentru disponibilitate imediată.
+              </p>
             </div>
 
+            <div>
+              <label htmlFor="registrationDeadline" className="block text-sm font-medium text-foreground">
+                Data limită pentru înregistrări la workshop-uri
+              </label>
+              <div className="mt-1">
+                <input
+                  type="datetime-local"
+                  name="registrationDeadline"
+                  defaultValue={formatDateTimeLocal(initialSettings.registrationDeadline)}
+                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                />
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Înregistrările la workshop-uri (nu conferințe) vor fi închise automat după această dată. Lăsați gol pentru nelimitat.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <label htmlFor="defaultMaxParticipants" className="block text-sm font-medium text-foreground">
                 Participanți maximi implicit
@@ -156,103 +179,6 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
                   max="1000"
                   defaultValue={initialSettings.defaultMaxParticipants}
                   className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="defaultWorkshopDuration" className="block text-sm font-medium text-foreground">
-                Durată implicită (minute)
-              </label>
-              <div className="mt-1">
-                <input
-                  type="number"
-                  name="defaultWorkshopDuration"
-                  min="30"
-                  max="480"
-                  step="30"
-                  defaultValue={initialSettings.defaultWorkshopDuration}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Email Settings */}
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium text-foreground border-b border-border pb-2">
-              Setări Email
-            </h3>
-          </div>
-
-          <div className="space-y-6">
-            <ToggleSwitch
-              name="sendEmailNotifications"
-              label="Trimite notificări prin email"
-              description="Activează trimiterea de notificări prin email pentru diverse evenimente din platformă."
-              defaultChecked={initialSettings.sendEmailNotifications}
-            />
-
-            <ToggleSwitch
-              name="sendRegistrationConfirmation"
-              label="Confirmări de înregistrare"
-              description="Trimite email de confirmare când un utilizator se înregistrează la un workshop."
-              defaultChecked={initialSettings.sendRegistrationConfirmation}
-            />
-
-            <ToggleSwitch
-              name="sendCancellationNotification"
-              label="Notificări de anulare"
-              description="Trimite email de notificare când un utilizator anulează o înregistrare."
-              defaultChecked={initialSettings.sendCancellationNotification}
-            />
-          </div>
-        </div>
-
-        {/* General Settings */}
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium text-foreground border-b border-border pb-2">
-              Setări Generale
-            </h3>
-          </div>
-
-          <div className="space-y-6">
-            <ToggleSwitch
-              name="maintenanceMode"
-              label="Mod mentenanță"
-              description="⚠️ Când este activat, blochează accesul utilizatorilor normali la platformă. Doar administratorii pot accesa aplicația."
-              defaultChecked={initialSettings.maintenanceMode}
-            />
-
-            <div>
-              <label htmlFor="registrationMessage" className="block text-sm font-medium text-foreground">
-                Mesaj înregistrare
-              </label>
-              <div className="mt-1">
-                <textarea
-                  name="registrationMessage"
-                  rows={3}
-                  defaultValue={initialSettings.registrationMessage}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-                  placeholder="Mesajul afișat pe pagina de workshop-uri"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="footerText" className="block text-sm font-medium text-foreground">
-                Text footer
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="footerText"
-                  defaultValue={initialSettings.footerText}
-                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-                  placeholder="Text afișat în footer"
                 />
               </div>
             </div>

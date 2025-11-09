@@ -4,17 +4,11 @@ import { AppSettings, IAppSettings } from '@/models'
 // Default settings
 const DEFAULT_SETTINGS = {
   globalRegistrationEnabled: true,
-  requireApprovalForRegistration: false,
-  maxWorkshopsPerUser: 10,
+  paymentsEnabled: false,
+  workshopVisibleToPublic: false,
   allowCancelRegistration: true,
-  sendEmailNotifications: false,
-  sendRegistrationConfirmation: true,
-  sendCancellationNotification: true,
-  maintenanceMode: false,
-  registrationMessage: 'Înregistrează-te la workshop-urile care te interesează!',
-  footerText: '© 2025 Mimesiss Workshop Platform',
+  registrationDeadline: undefined,
   defaultMaxParticipants: 20,
-  defaultWorkshopDuration: 120,
 }
 
 /**
@@ -96,12 +90,4 @@ export async function resetAppSettings(): Promise<IAppSettings> {
 export async function isGlobalRegistrationEnabled(): Promise<boolean> {
   const settings = await getAppSettings()
   return settings.globalRegistrationEnabled
-}
-
-/**
- * Check if app is in maintenance mode
- */
-export async function isMaintenanceMode(): Promise<boolean> {
-  const settings = await getAppSettings()
-  return settings.maintenanceMode
 }

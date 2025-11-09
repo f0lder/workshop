@@ -5,13 +5,13 @@ import { useTransition } from 'react'
 import { useToast } from '@/components/ui/ToastProvider'
 import { registerForWorkshop } from '@/app/workshops/actions'
 import { useMongoUser } from '@/hooks/useMongoUser'
+import { useRegistration } from '@/contexts/RegistrationContext'
 import Link from 'next/link'
 
 interface WorkshopRegistrationButtonProps {
   workshop: Workshop
   onRegistrationChange?: () => Promise<void>
   onOptimisticUpdate?: (workshopId: string, isRegistered: boolean) => void
-  isGlobalRegistrationClosed?: boolean,
   isRegistered: boolean
 }
 
@@ -22,10 +22,23 @@ function Spinner() {
   )
 }
 
-export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlobalRegistrationClosed, isRegistered }: WorkshopRegistrationButtonProps) {
+export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isRegistered }: WorkshopRegistrationButtonProps) {
   const { user: mongoUser, isLoading: isLoadingUser, error } = useMongoUser()
+  const { globalRegistrationEnabled, registrationStartTime, registrationDeadline } = useRegistration()
   const [isPending, startTransition] = useTransition()
   const { showToast } = useToast()
+
+  // Check registration timing
+  const now = Date.now();
+  const startTimestamp = registrationStartTime ? new Date(registrationStartTime).getTime() : null;
+  const deadlineTimestamp = registrationDeadline ? new Date(registrationDeadline).getTime() : null;
+  
+  // Before start time affects ALL workshop types (workshops AND conferences)
+  const isBeforeStart = startTimestamp && now < startTimestamp;
+  
+  // Deadline only affects workshops, NOT conferences
+  const isWorkshop = workshop.wsType === 'workshop';
+  const isAfterDeadline = isWorkshop && deadlineTimestamp && now > deadlineTimestamp;
 
   // Show loading state while user data is loading
   if (isLoadingUser) {
@@ -56,6 +69,24 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
 
   // Check if user is registered
   const isFull = workshop.currentParticipants >= workshop.maxParticipants
+
+  // Show "registrations closed" if before start time (affects ALL types, even if already registered)
+  if (isBeforeStart) {
+    return (
+      <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border border-gray-300">
+        Înregistrările sunt închise
+      </div>
+    )
+  }
+
+  // Show closed message if deadline has passed (ONLY for workshops, affects everyone)
+  if (isAfterDeadline) {
+    return (
+      <div className="w-full text-center py-2 px-4 bg-destructive/10 text-destructive rounded-md border border-destructive">
+        Înregistrările la workshop-uri s-au încheiat
+      </div>
+    )
+  }
 
   async function handleSubmit(formData: FormData) {
     const action = formData.get('action') as string
@@ -94,8 +125,8 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
     })
   }
 
-  if (!isGlobalRegistrationClosed) {
-
+  // Global registration toggle (affects all workshop types)
+  if (!globalRegistrationEnabled) {
     return (
       <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border border-gray-300">
         Înregistrările sunt închise
@@ -127,7 +158,7 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isGlo
       />
       <button
         type="submit"
-        disabled={isPending || (isFull && !isRegistered) || (!isGlobalRegistrationClosed && !isRegistered)}
+        disabled={isPending || (isFull && !isRegistered)}
         className={`w-full font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2 ${isPending ? 'bg-gray-400 text-white cursor-wait' :
             isFull && !isRegistered
               ? 'bg-gray-400 cursor-not-allowed text-white'
