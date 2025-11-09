@@ -17,15 +17,17 @@ function Spinner() {
   )
 }
 
-// Helper to format date for datetime-local input (keeps local timezone)
+// Helper to format date for datetime-local input
+// Reads stored UTC time and displays it as-is (since we store the literal time as UTC)
 function formatDateTimeLocal(date: Date | string | undefined): string {
   if (!date) return ''
   const d = new Date(date)
-  const year = d.getFullYear()
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  const hours = String(d.getHours()).padStart(2, '0')
-  const minutes = String(d.getMinutes()).padStart(2, '0')
+  // Use UTC methods because we store "20:00" as "20:00 UTC" (not as Romania time converted to UTC)
+  const year = d.getUTCFullYear()
+  const month = String(d.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(d.getUTCDate()).padStart(2, '0')
+  const hours = String(d.getUTCHours()).padStart(2, '0')
+  const minutes = String(d.getUTCMinutes()).padStart(2, '0')
   return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
