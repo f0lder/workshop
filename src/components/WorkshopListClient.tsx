@@ -4,14 +4,16 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUsers, FaSearch } from 'react-icons/fa';
 import { WorkshopRegistrationButton } from './WorkshopRegistrationButton';
-import { Workshop } from '@/types/models';
+import type { Workshop } from '@/types/models';
 import Card from '@/components/ui/Card';
 import { useRegistration } from '@/contexts/RegistrationContext';
 
 // This is the same type from your server component
 type ExtendedWorkshop = {
+	_id: string;
+	id?: string;
 	isRegistered: boolean;
-} & Omit<Workshop, 'date' | 'createdAt' | 'updatedAt'> & {
+} & Omit<Workshop, 'date' | 'createdAt' | 'updatedAt' | '_id' | 'id'> & {
 	date: string | null;
 	createdAt: string | null;
 	updatedAt: string | null;
@@ -172,10 +174,16 @@ export default function WorkshopListClient({ initialWorkshops }: WorkshopListCli
 								)}
 								<div className="flex items-center text-sm text-muted-foreground">
 									<FaUsers className="h-4 w-4 mr-2" />
-									{workshop.currentParticipants === 0 ? `Niciun participant din ${workshop.maxParticipants}` : (
+									{workshop.wsType === 'conferinta' ? (
 										<>
-											{(workshop.currentParticipants || 0)} / {workshop.maxParticipants || 0} participanți
+											{workshop.currentParticipants || 0} {workshop.currentParticipants === 1 ? 'participant' : 'participanți'}
 										</>
+									) : (
+										workshop.currentParticipants === 0 ? `Niciun participant din ${workshop.maxParticipants}` : (
+											<>
+												{(workshop.currentParticipants || 0)} / {workshop.maxParticipants || 0} participanți
+											</>
+										)
 									)}
 								</div>
 							</div>
@@ -186,7 +194,7 @@ export default function WorkshopListClient({ initialWorkshops }: WorkshopListCli
 										Instructor: <span className="font-medium text-foreground">{workshop.instructor}</span>
 									</p>
 								)}
-								{workshop.currentParticipants !== 0 && (
+								{workshop.currentParticipants !== 0 && workshop.wsType !== 'conferinta' && (
 									<div className="flex items-center justify-between my-2">
 										<div className="flex-1">
 											<div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -212,7 +220,7 @@ export default function WorkshopListClient({ initialWorkshops }: WorkshopListCli
 							)}
 							<div className="mt-6">
 								<Link
-									href={`/workshops/${workshop._id?.toString()}`}
+									href={`/workshops/${workshop._id || workshop.id || ''}`}
 									className="w-full block text-center bg-secondary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200"
 								>
 									Vezi detalii

@@ -1,5 +1,5 @@
 import { getAllWorkshops, getIsRegisteredForWorkshop } from '@/app/workshops/actions';
-import { Workshop } from '@/types/models';
+import type { Workshop } from '@/types/models';
 import WorkshopListClient from './WorkshopListClient'; // <-- Import the new client component
 import { RegistrationProvider } from '@/contexts/RegistrationContext';
 
@@ -55,23 +55,27 @@ export default async function WorkshopList({ workshopVisibleToPublic, globalRegi
     );
   }
 
-  const plainWorkshops = extendedWorkshops.map(w => ({
-    _id: w._id ? w._id.toString() : '',
-    title: w.title,
-    description: w.description,
-    date: w.date ? new Date(w.date).toISOString() : '',
-    time: w.time,
-    location: w.location,
-    maxParticipants: w.maxParticipants,
-    currentParticipants: w.currentParticipants,
-    instructor: w.instructor,
-    status: w.status,
-    wsType: w.wsType,
-    url: w.url,
-    isRegistered: w.isRegistered,
-    createdAt: w.createdAt ? new Date(w.createdAt).toISOString() : '',
-    updatedAt: w.updatedAt ? new Date(w.updatedAt).toISOString() : '',
-  }));
+  const plainWorkshops = extendedWorkshops.map(w => {
+    const workshopId = w._id ? w._id.toString() : (w.id || '');
+    return {
+      _id: workshopId,
+      id: workshopId,
+      title: w.title,
+      description: w.description,
+      date: w.date ? new Date(w.date).toISOString() : '',
+      time: w.time,
+      location: w.location,
+      maxParticipants: w.maxParticipants,
+      currentParticipants: w.currentParticipants,
+      instructor: w.instructor,
+      status: w.status,
+      wsType: w.wsType,
+      url: w.url,
+      isRegistered: w.isRegistered,
+      createdAt: w.createdAt ? new Date(w.createdAt).toISOString() : '',
+      updatedAt: w.updatedAt ? new Date(w.updatedAt).toISOString() : '',
+    };
+  });
 
   return (
     <RegistrationProvider

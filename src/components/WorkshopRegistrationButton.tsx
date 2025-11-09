@@ -67,8 +67,9 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isReg
     )
   }
 
-  // Check if user is registered
-  const isFull = workshop.currentParticipants >= workshop.maxParticipants
+  // Check if workshop is full (conferences have unlimited capacity)
+  const isConference = workshop.wsType === 'conferinta'
+  const isFull = !isConference && workshop.currentParticipants >= workshop.maxParticipants
 
   // Show "registrations closed" if before start time (affects ALL types, even if already registered)
   if (isBeforeStart) {

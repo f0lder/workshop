@@ -24,7 +24,9 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [selectedType, setSelectedType] = useState<'workshop' | 'conferinta'>(workshop?.wsType || 'workshop')
   const router = useRouter()
+  const maxParticipantsId = useId()
 
   const isEdit = mode === 'edit'
   const title = isEdit ? 'Editează Workshop' : 'Creează Workshop Nou'
@@ -137,7 +139,13 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
                 Tip workshop *
               </label>
               <div className="mt-1">
-                <select name="type" id={useId()} defaultValue={workshop?.wsType || 'workshop'} className="mimesiss-input">
+                <select 
+                  name="type" 
+                  id={useId()} 
+                  defaultValue={workshop?.wsType || 'workshop'} 
+                  className="mimesiss-input"
+                  onChange={(e) => setSelectedType(e.target.value as 'workshop' | 'conferinta')}
+                >
                   <option value="workshop">Workshop</option>
                   <option value="conferinta">Conferință</option>
                </select>
@@ -211,24 +219,33 @@ export default function WorkshopForm({ mode, workshop, defaultSettings }: Worksh
 
             <div>
               <label htmlFor="maxParticipants" className="block text-sm font-medium text-foreground">
-                Numărul maxim de participanți *
+                Numărul maxim de participanți {selectedType === 'workshop' ? '*' : ''}
               </label>
               <div className="mt-1">
-                <input
-                  type="number"
-                  name="maxParticipants"
-                  id={useId()}
-                  required
-                  min={isEdit && workshop ? workshop.currentParticipants : 1}
-                  max="100"
-                  defaultValue={workshop?.maxParticipants || defaultSettings?.defaultMaxParticipants || 30}
-                  className="mimesiss-input"
-                />
+                {selectedType === 'conferinta' ? (
+                  <div className="mimesiss-input bg-muted flex items-center justify-between">
+                    <span className="text-muted-foreground">Nelimitat (Conferință)</span>
+                    <input type="hidden" name="maxParticipants" value="999999" />
+                  </div>
+                ) : (
+                  <input
+                    type="number"
+                    name="maxParticipants"
+                    id={maxParticipantsId}
+                    required
+                    min={isEdit && workshop ? workshop.currentParticipants : 1}
+                    max="1000"
+                    defaultValue={workshop?.maxParticipants || defaultSettings?.defaultMaxParticipants || 30}
+                    className="mimesiss-input"
+                  />
+                )}
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
-                {isEdit && workshop 
-                  ? `Valoare minimă: ${workshop.currentParticipants} (participanți actuali)`
-                  : `Numărul maxim de participanți permis pentru acest workshop. Implicit: ${defaultSettings?.defaultMaxParticipants || 20}`
+                {selectedType === 'conferinta' 
+                  ? 'Conferințele au locuri nelimitate'
+                  : isEdit && workshop 
+                    ? `Valoare minimă: ${workshop.currentParticipants} (participanți actuali)`
+                    : `Numărul maxim de participanți permis pentru acest workshop. Implicit: ${defaultSettings?.defaultMaxParticipants || 20}`
                 }
               </p>
             </div>

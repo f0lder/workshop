@@ -44,7 +44,12 @@ export default async function RegistrationsPage() {
 												<FaCircle className="inline-block size-[8px] fill-current" />
 											</>
 										)}
-										<span>{registration.workshop.currentParticipants} / {registration.workshop.maxParticipants} locuri ocupate</span>
+										<span>
+											{registration.workshop.wsType === 'conferinta' 
+												? `${registration.workshop.currentParticipants} participanți (nelimitat)`
+												: `${registration.workshop.currentParticipants} / ${registration.workshop.maxParticipants} locuri ocupate`
+											}
+										</span>
 									</div>
 								
 									<div>
@@ -60,7 +65,7 @@ export default async function RegistrationsPage() {
 									</div>
 								</div>
 								<Link
-									href={`/workshops/${registration.workshop.id}`}
+									href={`/workshops/${registration.workshop._id || registration.workshop.id || ''}`}
 									className="text-sm font-medium text-primary hover:underline"
 								>
 									Detalii {registration.workshop.wsType === 'workshop' ? 'Workshop' : 'Conferință'}

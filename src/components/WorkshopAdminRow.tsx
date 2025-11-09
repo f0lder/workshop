@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Workshop, User } from '@/types/models';
+import type { Workshop, User } from '@/types/models';
 import { FaCalendarAlt, FaEdit, FaUsers, FaMapMarkerAlt, FaUser } from 'react-icons/fa'
 import DeleteWorkshopButton from '@/components/DeleteWorkshopButton'
 import { getRegistrations } from '@/app/admin/workshops/actions';
@@ -65,7 +65,12 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 					)}
 					<div className="flex items-center">
 						<FaUsers className="flex-shrink-0 mr-1.5 h-4 w-4" />
-						<span>{workshop.currentParticipants || 0}/{workshop.maxParticipants} participanți</span>
+						<span>
+							{workshop.wsType === 'conferinta' 
+								? `${workshop.currentParticipants || 0} participanți (nelimitat)`
+								: `${workshop.currentParticipants || 0}/${workshop.maxParticipants} participanți`
+							}
+						</span>
 					</div>
 					{workshop.instructor && (
 						<div className="flex items-center">

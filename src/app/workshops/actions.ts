@@ -153,13 +153,20 @@ export async function getUserRegistrations(userId: string): Promise<registration
     // Combine registrations with workshops
     const registrationsWithWorkshops = registrations
       .filter((reg) => workshopMap[reg.workshopId])
-      .map((reg) => ({
-        _id: String(reg._id),
-        userId: reg.userId,
-        workshopId: reg.workshopId,
-        workshop: workshopMap[reg.workshopId] as unknown as WorkshopType,
-        attendance: reg.attendance || { confirmed: false }
-      })) as registrationsWithWorkshops[];
+      .map((reg) => {
+        const workshop = workshopMap[reg.workshopId];
+        return {
+          _id: String(reg._id),
+          userId: reg.userId,
+          workshopId: reg.workshopId,
+          workshop: {
+            ...workshop,
+            _id: workshop._id?.toString(),
+            id: workshop._id?.toString(),
+          } as unknown as WorkshopType,
+          attendance: reg.attendance || { confirmed: false }
+        };
+      }) as registrationsWithWorkshops[];
 
     return registrationsWithWorkshops
 
@@ -212,7 +219,12 @@ export async function getAllWorkshops(): Promise<WorkshopType[]> {
 
   try {
     const workshops = await Workshop.find({}).sort({ date: 1 }).lean()
-    return workshops as unknown as WorkshopType[]
+    // Convert MongoDB _id to string
+    return workshops.map(w => ({
+      ...w,
+      _id: w._id?.toString(),
+      id: w._id?.toString(),
+    })) as unknown as WorkshopType[]
   } catch (error) {
     console.error('Error fetching workshops:', error)
     return []

@@ -30,12 +30,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 		return new Intl.DateTimeFormat('ro-RO', { dateStyle: "long" }).format(d);
 	};
 
-	const availableSpots = workshop.maxParticipants - workshop.currentParticipants;
+	const isConference = workshop.wsType === 'conferinta';
+	const availableSpots = isConference ? 'nelimitate' : (workshop.maxParticipants - workshop.currentParticipants).toString();
 	const workshopDate = workshop.date ? formatDate(workshop.date) : "Data va fi anunțată";
 
 	return {
 		title: `${workshop.title} - ${wType} MIMESISS 2025`,
-		description: `${workshop.description} | ${workshopDate} | ${availableSpots} locuri disponibile | Instructor: ${workshop.instructor || 'Va fi anunțat'}`,
+		description: `${workshop.description} | ${workshopDate} | ${isConference ? 'Locuri nelimitate' : `${availableSpots} locuri disponibile`} | Instructor: ${workshop.instructor || 'Va fi anunțat'}`,
 		keywords: [
 			'MIMESISS 2025',
 			'congres medical',
@@ -96,8 +97,9 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 	const isRegistered = workshop ? await getIsRegisteredForWorkshop(workshop._id?.toString() ?? '') : false;
 
 	const workshopDate = workshop.date ? new Date(workshop.date) : undefined;
-	const availableSpots = workshop.maxParticipants - workshop.currentParticipants;
-	const isWorkshopFull = availableSpots <= 0;
+	const isConference = workshop.wsType === 'conferinta';
+	const availableSpots = isConference ? Infinity : workshop.maxParticipants - workshop.currentParticipants;
+	const isWorkshopFull = !isConference && availableSpots <= 0;
 
 	const wType = workshop.wsType === 'workshop' ? 'Workshop' :
 		workshop.wsType === 'conferinta' ? 'Conferință' : workshop.wsType;
@@ -205,31 +207,47 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 						Informații Participare
 					</h2>
 
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-						<div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/10">
-							<div className="text-2xl font-bold text-primary mb-1">{workshop.maxParticipants}</div>
-							<div className="text-sm text-muted-foreground">Locuri disponibile</div>
-						</div>
-
-						<div className="text-center p-4 bg-muted/30 rounded-lg">
-							<div className="text-2xl font-bold text-foreground mb-1">{workshop.currentParticipants}</div>
-							<div className="text-sm text-muted-foreground">Participanți înscriși</div>
-						</div>
-
-						<div className="text-center p-4 bg-muted/30 rounded-lg">
-							<div className={`text-2xl font-bold mb-1 ${isWorkshopFull ? 'text-destructive' : 'text-green-600'}`}>
-								{availableSpots}
+					{isConference ? (
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/10">
+								<div className="text-2xl font-bold text-primary mb-1">∞</div>
+								<div className="text-sm text-muted-foreground">Locuri nelimitate</div>
 							</div>
-							<div className="text-sm text-muted-foreground">Locuri rămase</div>
-						</div>
-					</div>
 
-					{isWorkshopFull && (
-						<div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-							<p className="text-sm text-destructive text-center font-medium">
-								⚠️ Workshop-ul este complet rezervat
-							</p>
+							<div className="text-center p-4 bg-muted/30 rounded-lg">
+								<div className="text-2xl font-bold text-foreground mb-1">{workshop.currentParticipants}</div>
+								<div className="text-sm text-muted-foreground">Participanți înscriși</div>
+							</div>
 						</div>
+					) : (
+						<>
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+								<div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/10">
+									<div className="text-2xl font-bold text-primary mb-1">{workshop.maxParticipants}</div>
+									<div className="text-sm text-muted-foreground">Locuri disponibile</div>
+								</div>
+
+								<div className="text-center p-4 bg-muted/30 rounded-lg">
+									<div className="text-2xl font-bold text-foreground mb-1">{workshop.currentParticipants}</div>
+									<div className="text-sm text-muted-foreground">Participanți înscriși</div>
+								</div>
+
+								<div className="text-center p-4 bg-muted/30 rounded-lg">
+									<div className={`text-2xl font-bold mb-1 ${isWorkshopFull ? 'text-destructive' : 'text-green-600'}`}>
+										{availableSpots}
+									</div>
+									<div className="text-sm text-muted-foreground">Locuri rămase</div>
+								</div>
+							</div>
+
+							{isWorkshopFull && (
+								<div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+									<p className="text-sm text-destructive text-center font-medium">
+										⚠️ Workshop-ul este complet rezervat
+									</p>
+								</div>
+							)}
+						</>
 					)}
 				</div>
 
