@@ -37,8 +37,8 @@ export default async function WorkshopsPage() {
   const appSettings = await getAppSettings()
   const workshopVisibleToPublic = appSettings?.workshopVisibleToPublic || false
   const globalRegistrationEnabled = appSettings.globalRegistrationEnabled || false
-  const registrationStartTime = appSettings.registrationStartTime ? new Date(appSettings.registrationStartTime).toISOString() : null
-  const registrationDeadline = appSettings.registrationDeadline ? new Date(appSettings.registrationDeadline).toISOString() : null
+  const registrationStartTime = appSettings.registrationStartTime ? appSettings.registrationStartTime.toString() : null
+  const registrationDeadline = appSettings.registrationDeadline ? appSettings.registrationDeadline.toString() : null
 
   return (
     <>

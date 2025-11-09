@@ -73,8 +73,8 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 
 	const appSettings = await getAppSettings()
 	const globalRegistrationEnabled = appSettings?.globalRegistrationEnabled || false
-	const registrationStartTime = appSettings?.registrationStartTime ? new Date(appSettings.registrationStartTime).toISOString() : null
-	const registrationDeadline = appSettings?.registrationDeadline ? new Date(appSettings.registrationDeadline).toISOString() : null
+	const registrationStartTime = appSettings?.registrationStartTime ? appSettings.registrationStartTime.toString() : null
+	const registrationDeadline = appSettings?.registrationDeadline ? appSettings.registrationDeadline.toString() : null
 
 	const workshop = (await getWorkshopById(id)) as Workshop | null;
 
