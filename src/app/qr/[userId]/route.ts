@@ -13,7 +13,7 @@ export async function GET(
 
 	// If no current user, redirect to profile
 	if (!currentUserData) {
-		redirect('/dashboard/profile');
+		redirect('/program');
 	}
 	await connectDB();
 
@@ -32,6 +32,6 @@ export async function GET(
 		redirect(`/admin/attendance/${userId}`);
 	} else {
 		// Regular user: redirect to their profile
-		redirect('/dashboard');
+		redirect('/program');
 	}
 }

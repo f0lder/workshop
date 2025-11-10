@@ -36,6 +36,7 @@ export default function Header() {
   const links = [
     { href: '/', label: 'Acasă', icon: FaHome },
     { href: '/info', label: 'Informații', icon: FaInfoCircle },
+    { href: '/program', label: 'Program', icon: FaCalendarAlt },
     { href: '/about', label: 'Cine suntem', icon: FaUsers },
     { href: '/workshops', label: 'Ateliere', icon: FaCalendarAlt },
     { href: '/editii', label: 'Ediții anterioare', icon: FaChartBar },
