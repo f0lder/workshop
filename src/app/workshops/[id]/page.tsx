@@ -1,12 +1,10 @@
 import { getWorkshopById } from "../actions";
 import HeaderContent from "@/components/HeaderContent";
-import { WorkshopRegistrationButton } from "@/components/WorkshopRegistrationButton";
 import { RegistrationProvider } from "@/contexts/RegistrationContext";
 import type { Workshop } from "@/types/models";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaChalkboardTeacher, FaUsers, FaInfoCircle, FaInstagram } from 'react-icons/fa';
 import { getAppSettings } from "@/lib/settings";
-import { getIsRegisteredForWorkshop } from "../actions";
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { InstagramPost } from "@/components/InstagramPost";
 
 // Generate dynamic metadata for SEO
@@ -91,11 +89,6 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 		);
 	}
 
-	// Serialize the workshop data for client components
-	const wsJSON = JSON.parse(JSON.stringify(workshop));
-
-	const isRegistered = workshop ? await getIsRegisteredForWorkshop(workshop._id?.toString() ?? '') : false;
-
 	const workshopDate = workshop.date ? new Date(workshop.date) : undefined;
 	const isConference = workshop.wsType === 'conferinta';
 	const availableSpots = isConference ? Infinity : workshop.maxParticipants - workshop.currentParticipants;
@@ -122,13 +115,7 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 							<p className="text-lg text-muted-foreground leading-relaxed">{workshop.description}</p>
 						</div>
 
-						{/* Registration Button */}
-						<div className="flex justify-center mb-6">
-							<WorkshopRegistrationButton
-								workshop={wsJSON}
-								isRegistered={isRegistered}
-							/>
-						</div>					{/* Status Badge */}
+						{/* Status Badge */}
 						<div className="flex justify-center">
 							<span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${workshop.status === 'active' ? 'bg-primary/10 text-primary border border-primary/20' :
 								workshop.status === 'completed' ? 'bg-green-100 text-green-800 border border-green-200' :
