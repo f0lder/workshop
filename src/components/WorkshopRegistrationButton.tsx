@@ -1,6 +1,6 @@
 'use client'
 
-import { Workshop } from '@/types/models'
+import type { Workshop } from '@/types/models'
 import { useTransition } from 'react'
 import { useToast } from '@/components/ui/ToastProvider'
 import { registerForWorkshop } from '@/app/workshops/actions'
@@ -101,7 +101,16 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isReg
 
     startTransition(async () => {
       try {
-        await registerForWorkshop(formData)
+        const result = await registerForWorkshop(formData)
+
+        if (!result.success) {
+          // Revert optimistic update on error
+          if (onOptimisticUpdate) {
+            onOptimisticUpdate(workshopId, !willBeRegistered)
+          }
+          showToast(result.error || 'A apărut o eroare. Te rugăm încearcă din nou.', 'error')
+          return
+        }
 
         // Show success message for immediate feedback
         if (isRegistered) {

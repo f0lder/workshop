@@ -7,14 +7,19 @@ import connectDB from '@/lib/mongodb'
 import { getAppSettings } from '@/lib/settings'
 import type { Workshop as WorkshopType, Registrations } from '@/types/models'
 
-export async function registerForWorkshop(formData: FormData): Promise<void> {
+type ActionResult = {
+  success: boolean
+  error?: string
+}
+
+export async function registerForWorkshop(formData: FormData): Promise<ActionResult> {
   const clerkUser = await currentUser()
   
   const workshopId = formData.get('workshopId') as string
   const action = formData.get('action') as string
 
   if (!clerkUser) {
-    throw new Error('Authentication required')
+    return { success: false, error: 'Authentication required' }
   }
 
   await connectDB()
@@ -37,24 +42,24 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
     const existingRegistration = existingReg as Registrations | null
 
     if (!workshop) {
-      throw new Error('Workshop not found')
+      return { success: false, error: 'Workshop not found' }
     }
 
     // Check global registration settings
     if (!appSettings.globalRegistrationEnabled) {
-      throw new Error('Inregistrarile sunt inchise in acest moment')
+      return { success: false, error: 'Inregistrarile sunt inchise in acest moment' }
     }
 
     // Check if registration deadline has passed (only for workshops, not conferences)
     if (workshop.wsType === 'workshop' && appSettings.registrationDeadline && new Date(appSettings.registrationDeadline) < new Date()) {
-      throw new Error('Termenul limită pentru înregistrări la workshop-uri a expirat')
+      return { success: false, error: 'Termenul limită pentru înregistrări la workshop-uri a expirat' }
     }
 
     if (action === 'register') {
       // Validate registration conditions
       
       if (existingRegistration) {
-        throw new Error('Ești deja înregistrat la acest workshop')
+        return { success: false, error: 'Ești deja înregistrat la acest workshop' }
       }
       
       // OPTIMIZATION 2: Skip conference capacity checks entirely
@@ -128,12 +133,12 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
 
         // Validate user workshop limit
         if (userWorkshopCount >= 2) {
-          throw new Error('Poți fi înregistrat la maxim 2 workshop-uri simultan')
+          return { success: false, error: 'Poți fi înregistrat la maxim 2 workshop-uri simultan' }
         }
 
         // Validate workshop capacity
         if (currentRegistrations >= workshop.maxParticipants) {
-          throw new Error('Workshop is full')
+          return { success: false, error: 'Workshop is full' }
         }
 
         // OPTIMIZATION 4: Use atomic operations to prevent race conditions
@@ -152,11 +157,11 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
 
     } else if (action === 'cancel') {
       if (!appSettings.allowCancelRegistration) {
-        throw new Error('Registration cancellation is not allowed')
+        return { success: false, error: 'Registration cancellation is not allowed' }
       }
 
       if (!existingRegistration) {
-        throw new Error('No registration found to cancel')
+        return { success: false, error: 'No registration found to cancel' }
       }
 
       // OPTIMIZATION 5: Use atomic decrement and delete in parallel
@@ -168,14 +173,19 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
       ])
     }
 
+    // Only revalidate on success
+    revalidatePath('/workshops')
+    revalidatePath('/dashboard')
+    
+    return { success: true }
+
   } catch (error) {
     console.error('Registration action error:', error)
-    throw error // Re-throw to let the client handle the error
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'A apărut o eroare. Te rugăm încearcă din nou.' 
+    }
   }
-
-  // Only revalidate on success
-  revalidatePath('/workshops')
-  revalidatePath('/dashboard')
 }
 
 interface registrationsWithWorkshops extends Registrations {
