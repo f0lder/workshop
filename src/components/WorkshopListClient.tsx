@@ -3,10 +3,9 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUsers, FaSearch } from 'react-icons/fa';
-import { WorkshopRegistrationButton } from './WorkshopRegistrationButton';
 import type { Workshop } from '@/types/models';
 import Card from '@/components/ui/Card';
-import { useRegistration } from '@/contexts/RegistrationContext';
+// registration context not needed on the list page
 
 // This is the same type from your server component
 type ExtendedWorkshop = {
@@ -30,12 +29,7 @@ const FILTER_TYPE = {
 };
 
 export default function WorkshopListClient({ initialWorkshops }: WorkshopListClientProps) {
-	const { globalRegistrationEnabled, registrationStartTime } = useRegistration();
-	
-	// Check if registration has started
-	const now = Date.now();
-	const startTimestamp = registrationStartTime ? new Date(registrationStartTime).getTime() : null;
-	const hasRegistrationStarted = !startTimestamp || now >= startTimestamp;
+	// registration controls handled at the parent/server; this client only shows details
 	
 	// --- State for our filters ---
 	const [searchTerm, setSearchTerm] = useState('');
@@ -212,12 +206,7 @@ export default function WorkshopListClient({ initialWorkshops }: WorkshopListCli
 									</div>
 								)}
 							</div>
-							{globalRegistrationEnabled && hasRegistrationStarted && (
-								<WorkshopRegistrationButton 
-									workshop={JSON.parse(JSON.stringify(workshop))} 
-									isRegistered={workshop.isRegistered}
-								/>
-							)}
+							{/* Registration button removed on list page - only details link shown */}
 							<div className="mt-6">
 								<Link
 									href={`/workshops/${workshop._id || workshop.id || ''}`}
