@@ -2,6 +2,7 @@
 
 import { currentUser } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 import { Workshop, Registration, User } from '@/models'
 import connectDB from '@/lib/mongodb'
 import { syncUserWithDatabase } from '@/lib/auth'
@@ -262,6 +263,12 @@ export async function generateWorkshopsReport(): Promise<string> {
   await connectDB()
 
   try {
+    // Get the current host from headers
+    const headersList = await headers()
+    const host = headersList.get('host') || 'mimesiss.ro'
+    const protocol = host.includes('localhost') ? 'http' : 'https'
+    const baseUrl = `${protocol}://${host}`
+
     // Fetch all workshops with their registrations
     const workshopsData = await Workshop.find({}).sort({ date: 1 }).lean() as unknown as WorkshopType[]
 
@@ -305,7 +312,7 @@ export async function generateWorkshopsReport(): Promise<string> {
 
       const workshopName = `"${(workshop.title || '').replace(/"/g, '""')}"` // Escape quotes
       const workshopType = `"${(workshop.wsType || '').replace(/"/g, '""')}"` // Escape quotes
-      const workshopLink = `"${(workshop.url || `https://mimesiss.ro/workshops/${workshop._id}`).replace(/"/g, '""')}"` // Escape quotes
+      const workshopLink = `"${baseUrl}/workshops/${workshop._id}"`
 
       if (registrationsWithUsers.length === 0) {
         // Workshop with no registrations
