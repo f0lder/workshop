@@ -3,10 +3,11 @@ import { redirect } from 'next/navigation'
 import { FaCalendarAlt, FaPlus } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
-import { User as UserType, Workshop as WorkshopType } from '@/types/models'
+import type { User as UserType, Workshop as WorkshopType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Workshop } from '@/models'
 import WorkshopAdminRow from '@/components/WorkshopAdminRow'
+import { DownloadReportButton } from '@/components/DownloadReportButton'
 
 export default async function AdminWorkshopsPage() {
   const clerkUser = await currentUser()
@@ -37,13 +38,17 @@ export default async function AdminWorkshopsPage() {
             Creați, editați și gestionați workshop-urile.
           </p>
         </div>
+        <div>
         <Link
           href="/admin/workshops/new"
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 mr-2"
         >
           <FaPlus className="mr-2 h-4 w-4" />
           Workshop nou
         </Link>
+
+        <DownloadReportButton />
+        </div>
       </div>
 
       {/* Workshops List */}

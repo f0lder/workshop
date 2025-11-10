@@ -107,10 +107,12 @@ export default async function AttendancePage({ params }: { params: Promise<{ use
 													{registration.workshop.title}
 												</h3>
 												<div className="text-sm text-muted-foreground space-y-1">
-													<p>📅 Data: {new Date(registration.workshop.date).toLocaleDateString('ro-RO')}</p>
-													<p>🕐 Ora: {registration.workshop.time}</p>
-													<p>📍 Locația: {registration.workshop.location}</p>
-													<p>👨‍🏫 Instructor: {registration.workshop.instructor}</p>
+													<p>Tip: {registration.workshop.wsType}</p>
+													<p>Data: {new Date(registration.workshop.date).toLocaleDateString('ro-RO')}</p>
+													<p>Ora: {registration.workshop.time}</p>
+													<p>ocația: {registration.workshop.location}</p>
+													<p>Instructor: {registration.workshop.instructor}</p>
+
 												</div>
 											</div>
 											<div className="flex flex-col items-end gap-2">

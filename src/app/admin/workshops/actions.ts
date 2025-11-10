@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { Workshop, Registration, User } from '@/models'
 import connectDB from '@/lib/mongodb'
 import { syncUserWithDatabase } from '@/lib/auth'
-import { User as UserType } from '@/types/models'
+import type { User as UserType, Workshop as WorkshopType } from '@/types/models'
 
 export async function createWorkshop(formData: FormData) {
   const clerkUser = await currentUser()
@@ -242,5 +242,89 @@ export async function getRegistrations(workshopId: string): Promise<UserType[]> 
   } catch (error) {
     console.error('Error fetching registrations:', error)
     throw new Error('Failed to fetch registrations')
+  }
+}
+
+export async function generateWorkshopsReport(): Promise<string> {
+  const clerkUser = await currentUser()
+
+  if (!clerkUser) {
+    throw new Error('Authentication required')
+  }
+
+  // Sync user and check if admin
+  const user = await syncUserWithDatabase(clerkUser)
+
+  if (user.role !== 'admin') {
+    throw new Error('Admin access required')
+  }
+
+  await connectDB()
+
+  try {
+    // Fetch all workshops with their registrations
+    const workshopsData = await Workshop.find({}).sort({ date: 1 }).lean() as unknown as WorkshopType[]
+
+    // Build CSV content
+    const csvRows: string[] = []
+    
+    // CSV Header
+    csvRows.push('Workshop Name,Type,Link,User First Name,User Last Name,User Email')
+
+    // Process each workshop
+    for (const workshop of workshopsData) {
+      const workshopId = String(workshop._id || workshop.id || '')
+      
+      // Get registrations for this workshop with user details
+      const registrationsWithUsers = await Registration.aggregate([
+        {
+          $match: { workshopId }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: 'clerkId',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: {
+            path: '$user',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            'user.firstName': 1,
+            'user.lastName': 1,
+            'user.email': 1
+          }
+        }
+      ])
+
+      const workshopName = `"${(workshop.title || '').replace(/"/g, '""')}"` // Escape quotes
+      const workshopType = `"${(workshop.wsType || '').replace(/"/g, '""')}"` // Escape quotes
+      const workshopLink = `"${(workshop.url || `https://mimesiss.ro/workshops/${workshop._id}`).replace(/"/g, '""')}"` // Escape quotes
+
+      if (registrationsWithUsers.length === 0) {
+        // Workshop with no registrations
+        csvRows.push(`${workshopName},${workshopType},${workshopLink},,,`)
+      } else {
+        // Add a row for each registered user
+        for (const reg of registrationsWithUsers) {
+          const firstName = `"${(reg.user?.firstName || '').replace(/"/g, '""')}"`
+          const lastName = `"${(reg.user?.lastName || '').replace(/"/g, '""')}"`
+          const email = `"${(reg.user?.email || '').replace(/"/g, '""')}"`
+          
+          csvRows.push(`${workshopName},${workshopType},${workshopLink},${firstName},${lastName},${email}`)
+        }
+      }
+    }
+
+    return csvRows.join('\n')
+  } catch (error) {
+    console.error('Error generating workshops report:', error)
+    throw new Error('Failed to generate report')
   }
 }

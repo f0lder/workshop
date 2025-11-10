@@ -95,6 +95,11 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 									<tr key={user._id} className="hover:bg-muted">
 										<td className="px-4 py-2 text-sm text-foreground">{user.firstName} {user.lastName}</td>
 										<td className="px-4 py-2 text-sm text-muted-foreground">{user.email}</td>
+										<td className="px-4 py-2 text-sm text-muted-foreground">
+											<Link href={`/admin/attendance/${user.clerkId}`} className="text-primary hover:underline">
+												Prezenta
+											</Link>
+										</td>
 									</tr>
 								))}
 							</tbody>
