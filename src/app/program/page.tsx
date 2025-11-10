@@ -61,9 +61,9 @@ const timelineData = [
 	conferences: [
 		{ time: '9:00 - 9:45', speaker: 'DR. TUDOR IONESCU', title: 'Fascinanta clinică și chirurgie a vocii' },
 		{ time: '9:45 - 10:00', break: 'Coffee break' },
-		{ time: '10:00 - 10:45', speaker: 'DR. PAUL OARGĂ', title: 'De la sala de operație la lumea online: De ce ar trebui medicii să îmbrățișeze rețelele sociale?' },
-		{ time: '10:45 - 11:00', break: 'Coffee break' },
 		{ time: '11:00 - 11:45', speaker: 'DR. MIHAI OPREA', title: 'Abilitățile non-tehnice — un atu sau o necesitate pentru un medic?' },
+		{ time: '10:45 - 11:00', break: 'Coffee break' },
+		{ time: '10:00 - 10:45', speaker: 'DR. PAUL OARGĂ', title: 'De la sala de operație la lumea online: De ce ar trebui medicii să îmbrățișeze rețelele sociale?' },
 		{ time: '11:45 - 12:00', break: 'Coffee break' },
 		{ time: '12:00 - 12:45', speaker: 'GL. BG. MED. ASIST. UNIV. DR. OANCEA FLORIN', title: 'Pandemia - managementul crizei și lecții învățate' },
 		{ time: '12:45 - 13:00', break: 'Coffee break' },
@@ -71,7 +71,7 @@ const timelineData = [
 		{ time: '13:45 - 14:00', break: 'Coffee break' },
 	],
 	workshops: [
-		{ time: '14:00 - 19:00', instructor: 'Echipa MIMESISS', title: 'Sesiunea de Prezentări Științifice a Studenților', location: 'De anunțat' },
+		{ time: '14:00 - 19:00', instructor: 'Echipa MIMESISS', title: 'Sesiunea de Prezentări Științifice a Studenților', location: '' },
 	]
   },
 ];export default async function ProgramPage() {
