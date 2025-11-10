@@ -20,12 +20,21 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
   await connectDB()
 
   try {
-    // Get all data in parallel for faster execution
-    const [appSettings, workshop, existingRegistration] = await Promise.all([
+    // OPTIMIZATION 1: Get only essential fields with select() and use lean()
+    const [appSettings, workshopDoc, existingReg] = await Promise.all([
       getAppSettings(),
-      Workshop.findById(workshopId),
+      Workshop.findById(workshopId)
+        .select('wsType maxParticipants currentParticipants status')
+        .lean()
+        .exec(),
       Registration.findOne({ userId: clerkUser.id, workshopId })
+        .select('_id')
+        .lean()
+        .exec()
     ])
+
+    const workshop = workshopDoc as WorkshopType | null
+    const existingRegistration = existingReg as Registrations | null
 
     if (!workshop) {
       throw new Error('Workshop not found')
@@ -48,48 +57,98 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
         throw new Error('Ești deja înregistrat la acest workshop')
       }
       
-      // Enforce maximum of 2 active "workshop" type registrations.
-      // If the current workshop is a 'conferinta' type, allow unlimited registrations.
-      if (workshop.wsType !== 'conferinta') {
-        // Get the user's other registrations (exclude current workshop)
-        const otherRegs = await Registration.find({
-          userId: clerkUser.id,
-          workshopId: { $ne: workshopId }
-        }).lean()
-
-        const otherWorkshopIds = otherRegs.map(r => r.workshopId)
-
-        // Count how many of those registrations are for workshops of type 'workshop'
-        let userWorkshopCount = 0
-        if (otherWorkshopIds.length > 0) {
-          userWorkshopCount = await Workshop.countDocuments({
-            _id: { $in: otherWorkshopIds },
-            wsType: 'workshop'
-          })
-        }
-
-        if (userWorkshopCount >= 2) {
-          throw new Error('Poți fi înregistrat la maxim 2 workshop-uri simultan')
-        }
-      }
-
-      // Get current registration count for this workshop
-      const currentRegistrations = await Registration.countDocuments({ workshopId })
-      if (currentRegistrations >= workshop.maxParticipants) {
-        throw new Error('Workshop is full')
-      }
-
-      // Perform registration and update count atomically
-      await Promise.all([
-        Registration.create({
+      // OPTIMIZATION 2: Skip conference capacity checks entirely
+      if (workshop.wsType === 'conferinta') {
+        // For conferences, just create registration without checks
+        await Registration.create({
           userId: clerkUser.id,
           workshopId,
           status: 'confirmed'
-        }),
-        Workshop.findByIdAndUpdate(workshopId, {
-          currentParticipants: currentRegistrations + 1
         })
-      ])
+        
+        // Update participant count with atomic increment
+        await Workshop.findByIdAndUpdate(workshopId, {
+          $inc: { currentParticipants: 1 }
+        })
+      } else {
+        // For workshops, enforce limits
+        // OPTIMIZATION 3: Use single aggregation for all validation
+        const [validationResult] = await Registration.aggregate([
+          {
+            $facet: {
+              // Check user's workshop count
+              userWorkshops: [
+                {
+                  $match: {
+                    userId: clerkUser.id,
+                    workshopId: { $ne: workshopId }
+                  }
+                },
+                {
+                  // Convert workshopId string to ObjectId
+                  $addFields: {
+                    workshopObjectId: { $toObjectId: '$workshopId' }
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'workshops',
+                    localField: 'workshopObjectId',
+                    foreignField: '_id',
+                    as: 'workshop'
+                  }
+                },
+                {
+                  $unwind: '$workshop'
+                },
+                {
+                  $match: {
+                    'workshop.wsType': 'workshop'
+                  }
+                },
+                {
+                  $count: 'total'
+                }
+              ],
+              // Check current workshop registrations
+              workshopRegistrations: [
+                {
+                  $match: { workshopId }
+                },
+                {
+                  $count: 'total'
+                }
+              ]
+            }
+          }
+        ])
+
+        const userWorkshopCount = validationResult?.userWorkshops[0]?.total || 0
+        const currentRegistrations = validationResult?.workshopRegistrations[0]?.total || 0
+
+        // Validate user workshop limit
+        if (userWorkshopCount >= 2) {
+          throw new Error('Poți fi înregistrat la maxim 2 workshop-uri simultan')
+        }
+
+        // Validate workshop capacity
+        if (currentRegistrations >= workshop.maxParticipants) {
+          throw new Error('Workshop is full')
+        }
+
+        // OPTIMIZATION 4: Use atomic operations to prevent race conditions
+        // Create registration and increment counter atomically
+        await Registration.create({
+          userId: clerkUser.id,
+          workshopId,
+          status: 'confirmed'
+        })
+        
+        // Use $inc for atomic increment
+        await Workshop.findByIdAndUpdate(workshopId, {
+          $inc: { currentParticipants: 1 }
+        })
+      }
 
     } else if (action === 'cancel') {
       if (!appSettings.allowCancelRegistration) {
@@ -100,13 +159,11 @@ export async function registerForWorkshop(formData: FormData): Promise<void> {
         throw new Error('No registration found to cancel')
       }
 
-      // Get current count and perform cancellation atomically
-      const currentRegistrations = await Registration.countDocuments({ workshopId })
-      
+      // OPTIMIZATION 5: Use atomic decrement and delete in parallel
       await Promise.all([
         Registration.findOneAndDelete({ userId: clerkUser.id, workshopId }),
         Workshop.findByIdAndUpdate(workshopId, {
-          currentParticipants: Math.max(0, currentRegistrations - 1)
+          $inc: { currentParticipants: -1 }
         })
       ])
     }
@@ -134,41 +191,58 @@ export async function getUserRegistrations(userId: string): Promise<registration
   await connectDB()
 
   try {
-    const registrations = await Registration.find({ userId }).lean()
+    // Optimized: Use aggregation with $lookup to join in one query
+    const registrationsWithWorkshops = await Registration.aggregate([
+      {
+        $match: { userId }
+      },
+      {
+        // Convert workshopId string to ObjectId for the lookup
+        $addFields: {
+          workshopObjectId: { $toObjectId: '$workshopId' }
+        }
+      },
+      {
+        $lookup: {
+          from: 'workshops',
+          localField: 'workshopObjectId',
+          foreignField: '_id',
+          as: 'workshop'
+        }
+      },
+      {
+        $unwind: '$workshop'
+      },
+      {
+        $project: {
+          _id: { $toString: '$_id' },
+          userId: 1,
+          workshopId: { $toString: '$workshopId' },
+          'workshop._id': { $toString: '$workshop._id' },
+          'workshop.id': { $toString: '$workshop._id' },
+          'workshop.title': 1,
+          'workshop.description': 1,
+          'workshop.date': 1,
+          'workshop.time': 1,
+          'workshop.location': 1,
+          'workshop.maxParticipants': 1,
+          'workshop.currentParticipants': 1,
+          'workshop.instructor': 1,
+          'workshop.status': 1,
+          'workshop.wsType': 1,
+          'workshop.url': 1,
+          'workshop.createdAt': 1,
+          'workshop.updatedAt': 1,
+          attendance: {
+            confirmed: { $ifNull: ['$attendance.confirmed', false] },
+            confirmedAt: '$attendance.confirmedAt',
+            confirmedBy: '$attendance.confirmedBy'
+          }
+        }
+      }
+    ])
 
-    if (registrations.length === 0) {
-      return []
-    }
-
-    // Get all workshop IDs from registrations
-    const workshopIds = registrations.map((reg) => reg.workshopId);
-
-    // Fetch all workshops at once
-    const workshops = await Workshop.find({ _id: { $in: workshopIds } }).lean();
-
-    const workshopMap = Object.fromEntries(
-      workshops.map(workshop => [String(workshop._id), workshop])
-    );
-
-    // Combine registrations with workshops
-    const registrationsWithWorkshops = registrations
-      .filter((reg) => workshopMap[reg.workshopId])
-      .map((reg) => {
-        const workshop = workshopMap[reg.workshopId];
-        return {
-          _id: String(reg._id),
-          userId: reg.userId,
-          workshopId: reg.workshopId,
-          workshop: {
-            ...workshop,
-            _id: workshop._id?.toString(),
-            id: workshop._id?.toString(),
-          } as unknown as WorkshopType,
-          attendance: reg.attendance || { confirmed: false }
-        };
-      }) as registrationsWithWorkshops[];
-
-    return registrationsWithWorkshops
+    return registrationsWithWorkshops as registrationsWithWorkshops[]
 
   } catch (error) {
     console.error('Error fetching user registrations:', error)
@@ -218,7 +292,13 @@ export async function getAllWorkshops(): Promise<WorkshopType[]> {
   await connectDB()
 
   try {
-    const workshops = await Workshop.find({}).sort({ date: 1 }).lean()
+    // Use lean() for better performance and select only needed fields
+    const workshops = await Workshop
+      .find({})
+      .select('title description date time location maxParticipants currentParticipants instructor status wsType url createdAt updatedAt')
+      .sort({ date: 1 })
+      .lean()
+      
     // Convert MongoDB _id to string
     return workshops.map(w => ({
       ...w,

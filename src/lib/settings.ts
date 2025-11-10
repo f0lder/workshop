@@ -1,5 +1,6 @@
 import connectDB from '@/lib/mongodb'
-import { AppSettings, IAppSettings } from '@/models'
+import { AppSettings } from '@/models'
+import type { IAppSettings } from '@/models'
 
 // Default settings
 const DEFAULT_SETTINGS = {

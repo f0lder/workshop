@@ -6,7 +6,7 @@ import connectDB from '@/lib/mongodb'
 import { User } from '@/models'
 import { isUserAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { UserType,User as UserInterface } from '@/types/models'
+import type { UserType, User as UserInterface } from '@/types/models'
 
 // Type definitions for update operations
 interface UserUpdateData {
@@ -185,7 +185,11 @@ export async function fetchAllUsers() {
 
   await connectDB()
 
-  const users = await User.find({})
+  // Use lean() for better performance and select only needed fields
+  const users = await User
+    .find({})
+    .select('clerkId firstName lastName email role userType accessLevel createdAt updatedAt')
+    .lean()
 
   const usersJSON = JSON.parse(JSON.stringify(users)) as UserInterface[];
 

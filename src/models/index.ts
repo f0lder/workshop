@@ -1,5 +1,6 @@
-import mongoose, { Schema, Document } from 'mongoose'
-import { UserRole, UserType } from '@/types/models'
+import mongoose, { Schema } from 'mongoose'
+import type { Document } from 'mongoose'
+import type { UserRole, UserType } from '@/types/models'
 
 // User interface
 export interface IUser extends Document {
@@ -49,8 +50,8 @@ export interface ITicket extends Document {
 
 // User schema
 const UserSchema = new Schema<IUser>({
-  clerkId: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
+  clerkId: { type: String, required: true, unique: true }, // unique: true creates an index
+  email: { type: String, required: true, unique: true }, // unique: true creates an index
   firstName: { type: String },
   lastName: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
@@ -60,7 +61,7 @@ const UserSchema = new Schema<IUser>({
   timestamps: true
 })
 
-// Add indexes for performance
+// Add indexes for performance (clerkId and email already indexed via unique: true)
 UserSchema.index({ role: 1 })
 UserSchema.index({ accessLevel: 1 })
 
@@ -84,6 +85,8 @@ const WorkshopSchema = new Schema<IWorkshop>({
 // Add indexes for common queries
 WorkshopSchema.index({ status: 1, date: 1 })
 WorkshopSchema.index({ wsType: 1 })
+WorkshopSchema.index({ date: 1 })
+WorkshopSchema.index({ status: 1 })
 
 // Registration schema
 const RegistrationSchema = new Schema<IRegistration>({
@@ -103,6 +106,8 @@ RegistrationSchema.index({ userId: 1, workshopId: 1 }, { unique: true })
 // Add individual indexes for common queries
 RegistrationSchema.index({ userId: 1 })
 RegistrationSchema.index({ workshopId: 1 })
+// Index for attendance queries
+RegistrationSchema.index({ 'attendance.confirmed': 1 })
 
 // Payment interface
 export interface IPayment extends Document {
