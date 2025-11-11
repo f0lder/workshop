@@ -31,7 +31,6 @@ export default async function ManualAssignmentPage() {
   // Convert to plain objects to avoid serialization issues
   const users = JSON.parse(JSON.stringify(usersData)) as UserType[]
 
-  const paidUsers = users.filter(user => user.accessLevel !== 'unpaid')
   const workshops = JSON.parse(JSON.stringify(workshopsData))
 
   return (
@@ -58,7 +57,7 @@ export default async function ManualAssignmentPage() {
 
       {/* Assignment Form */}
       <div className="bg-card shadow border border-border rounded-lg p-6">
-		<ManualAssignmentForm users={paidUsers} workshops={workshops} />
+		<ManualAssignmentForm users={users} workshops={workshops} />
       </div>
     </div>
   )

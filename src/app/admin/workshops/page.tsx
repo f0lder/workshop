@@ -31,7 +31,7 @@ export default async function AdminWorkshopsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Gestionare Workshop-uri</h1>
           <p className="mt-1 text-sm text-muted-foreground">
