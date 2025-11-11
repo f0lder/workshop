@@ -19,7 +19,7 @@ export async function GET(
 		const userData = await syncUserWithDatabase(currentUserData);
 
 		// Check if current user is admin
-		const isAdmin = userData?.role === 'admin';
+		const isAdmin = userData?.role === 'admin' || userData?.role === 'moderator';
 		if (!isAdmin) {
 			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 		}
@@ -74,9 +74,9 @@ export async function PATCH(
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		// Check if current user is admin
+		// Check if current user is admin or moderator
 		const userData = await syncUserWithDatabase(currentUserData);
-		const isAdmin = userData?.role === 'admin';
+		const isAdmin = userData?.role === 'admin' || userData?.role === 'moderator';
 		if (!isAdmin) {
 			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 		}

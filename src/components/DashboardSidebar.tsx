@@ -14,10 +14,9 @@ import SignOutButton from '@/components/signOutButton'
 
 interface DashboardSidebarProps {
   user: User
-  isAdmin: boolean
 }
 
-export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProps) {
+export default function DashboardSidebar({ user }: DashboardSidebarProps) {
   const baseLinks = [
     { href: '/dashboard', icon: FaHome, label: 'Dashboard' },
     { href: '/dashboard/profile', icon: FaUser, label: 'Profil' },
@@ -34,6 +33,19 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
     { href: '/admin/payments', icon: FaCreditCard, label: 'Administrare Plăți' },
     { href: '/admin/settings', icon: FaCogs, label: 'Setări Aplicație' },
   ]
+
+  const moderatorLinks = [
+    { href: '/dashboard/moderator', icon: FaCalendarAlt, label: 'Moderator' },
+  ]
+
+
+  adminLinks.push(...moderatorLinks);
+  
+
+  const isAdmin = user.role === 'admin';
+  const isModerator = user.role === 'moderator';
+
+
 
   return (
     <>
@@ -81,6 +93,22 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
                   ))}
                 </>
               )}
+
+              {isModerator && (
+                <>
+                  <div className="border-t border-border my-4" />
+                  {moderatorLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-foreground hover:bg-accent hover:text-accent-foreground transition-colors whitespace-nowrap"
+                    >
+                      <link.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                      {link.label}
+                    </Link>
+                  ))}
+                </>
+              )}
             </nav>
 
             {/* Sign Out */}
@@ -101,7 +129,9 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
                 {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
               </p>
               <p className="text-xs text-muted-foreground">
-                {isAdmin ? 'Administrator' : 'Utilizator'}
+                {user.role === 'admin' && 'Administrator'}
+                {user.role === 'moderator' && 'Moderator'}
+                {user.role !== 'user' && 'Utilizator'}
               </p>
             </div>
           </div>
@@ -132,6 +162,22 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
                 {link.label}
               </Link>
             ))}
+
+            {isModerator && (
+              <>
+                <div className="border-t border-border my-4" />
+                {moderatorLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-foreground hover:bg-accent hover:text-accent-foreground transition-colors whitespace-nowrap"
+                  >
+                    <link.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                    {link.label}
+                  </Link>
+                ))}
+              </>
+            )}
           </div>
         </div>
       </div>

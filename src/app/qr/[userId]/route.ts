@@ -24,6 +24,13 @@ export async function GET(
 		redirect('/auth/sign-in');
 	}
 
+	const isModerator = userData.role === 'moderator';
+
+	if (isModerator) {
+		// Moderator: redirect to moderator attendance page
+		redirect(`/moderator/attendance/${userId}`);
+	}
+
 	// Check if current user is admin
 	const isAdmin = userData.role === 'admin';
 

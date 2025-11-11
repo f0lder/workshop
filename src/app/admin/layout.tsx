@@ -24,13 +24,11 @@ export default async function AdminLayout({
     redirect('/unauthorized')
   }
 
-  const isAdmin = true // We already verified this above
-
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop: Flex layout with sidebar */}
       <div className="hidden lg:flex h-screen">
-        <DashboardSidebar user={user} isAdmin={isAdmin} />
+        <DashboardSidebar user={user} />
         
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
@@ -42,7 +40,7 @@ export default async function AdminLayout({
 
       {/* Mobile/Tablet: Full screen layout with sticky navigation */}
       <div className="lg:hidden min-h-screen flex flex-col">
-        <DashboardSidebar user={user} isAdmin={isAdmin} />
+        <DashboardSidebar user={user} />
         <main className="flex-1 p-3 sm:p-4 pb-safe">
           {children}
         </main>

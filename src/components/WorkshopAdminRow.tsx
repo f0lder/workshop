@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Workshop, User } from '@/types/models';
 import { FaCalendarAlt, FaEdit, FaUsers, FaMapMarkerAlt, FaUser } from 'react-icons/fa'
 import DeleteWorkshopButton from '@/components/DeleteWorkshopButton'
+import { RemoveUserButton } from '@/components/RemoveUserButton'
 import { getRegistrations } from '@/app/admin/workshops/actions';
 import { FaLink } from 'react-icons/fa';
 
@@ -86,8 +87,9 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 						<table className="min-w-full divide-y divide-border">
 							<thead>
 								<tr>
-									<th colSpan={1} className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Utilizator</th>
+									<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Utilizator</th>
 									<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Email</th>
+									<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Acțiuni</th>
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-border">
@@ -96,9 +98,16 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 										<td className="px-4 py-2 text-sm text-foreground">{user.firstName} {user.lastName}</td>
 										<td className="px-4 py-2 text-sm text-muted-foreground">{user.email}</td>
 										<td className="px-4 py-2 text-sm text-muted-foreground">
-											<Link href={`/admin/attendance/${user.clerkId}`} className="text-primary hover:underline">
-												Prezenta
-											</Link>
+											<div className="flex items-center space-x-3">
+												<Link href={`/admin/attendance/${user.clerkId}`} className="text-primary hover:underline">
+													Prezenta
+												</Link>
+												<RemoveUserButton 
+													userId={user.clerkId}
+													workshopId={workshop._id?.toString() || workshop.id || ''}
+													userName={`${user.firstName} ${user.lastName}`}
+												/>
+											</div>
 										</td>
 									</tr>
 								))}

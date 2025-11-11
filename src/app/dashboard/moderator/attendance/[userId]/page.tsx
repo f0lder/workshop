@@ -127,7 +127,7 @@ export default async function AttendancePage({ params }: { params: Promise<{ use
 													<p>Tip: {registration.workshop.wsType}</p>
 													<p>Data: {new Date(registration.workshop.date).toLocaleDateString('ro-RO')}</p>
 													<p>Ora: {registration.workshop.time}</p>
-													<p>ocația: {registration.workshop.location}</p>
+													<p>Locația: {registration.workshop.location}</p>
 													<p>Instructor: {registration.workshop.instructor}</p>
 
 												</div>

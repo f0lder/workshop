@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'user';
+export type UserRole = 'admin' | 'user' | 'moderator';
 
 export type UserType = 'student' | 'elev' | 'rezident';
 

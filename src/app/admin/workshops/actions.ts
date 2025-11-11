@@ -335,3 +335,221 @@ export async function generateWorkshopsReport(): Promise<string> {
     throw new Error('Failed to generate report')
   }
 }
+
+type ManualAssignResult = {
+  success: boolean
+  error?: string
+}
+
+export async function manuallyAssignUserToWorkshop(
+  userId: string,
+  workshopId: string
+): Promise<ManualAssignResult> {
+  const clerkUser = await currentUser()
+
+  if (!clerkUser) {
+    return { success: false, error: 'Authentication required' }
+  }
+
+  // Sync user and check if admin
+  const user = await syncUserWithDatabase(clerkUser)
+
+  if (user.role !== 'admin') {
+    return { success: false, error: 'Admin access required' }
+  }
+
+  await connectDB()
+
+  try {
+    // Get workshop details
+    const workshopDoc = await Workshop.findById(workshopId)
+      .select('wsType maxParticipants currentParticipants')
+      .lean()
+
+    const workshop = workshopDoc as unknown as WorkshopType
+
+    if (!workshop) {
+      return { success: false, error: 'Workshop not found' }
+    }
+
+    // Check if user is already registered
+    const existingRegistration = await Registration.findOne({ userId, workshopId }).lean()
+
+    if (existingRegistration) {
+      return { success: false, error: 'User is already registered for this workshop' }
+    }
+
+    // For workshops (not conferences), enforce limits
+    if (workshop.wsType !== 'conferinta') {
+      // Check user's workshop count using aggregation
+      const [validationResult] = await Registration.aggregate([
+        {
+          $facet: {
+            // Check user's workshop count
+            userWorkshops: [
+              {
+                $match: {
+                  userId,
+                  workshopId: { $ne: workshopId }
+                }
+              },
+              {
+                $addFields: {
+                  workshopObjectId: { $toObjectId: '$workshopId' }
+                }
+              },
+              {
+                $lookup: {
+                  from: 'workshops',
+                  localField: 'workshopObjectId',
+                  foreignField: '_id',
+                  as: 'workshop'
+                }
+              },
+              {
+                $unwind: '$workshop'
+              },
+              {
+                $match: {
+                  'workshop.wsType': 'workshop'
+                }
+              },
+              {
+                $count: 'total'
+              }
+            ],
+            // Check current workshop registrations
+            workshopRegistrations: [
+              {
+                $match: { workshopId }
+              },
+              {
+                $count: 'total'
+              }
+            ]
+          }
+        }
+      ])
+
+      const userWorkshopCount = validationResult?.userWorkshops[0]?.total || 0
+      const currentRegistrations = validationResult?.workshopRegistrations[0]?.total || 0
+
+      // Validate user workshop limit
+      if (userWorkshopCount >= 2) {
+        return { success: false, error: 'User is already registered for 2 workshops (maximum allowed)' }
+      }
+
+      // Validate workshop capacity
+      if (currentRegistrations >= workshop.maxParticipants) {
+        return { success: false, error: 'Workshop is at full capacity' }
+      }
+    }
+
+    // Create registration
+    await Registration.create({
+      userId,
+      workshopId,
+      status: 'confirmed'
+    })
+
+    // Update participant count with atomic increment
+    await Workshop.findByIdAndUpdate(workshopId, {
+      $inc: { currentParticipants: 1 }
+    })
+
+    revalidatePath('/admin/workshops')
+    revalidatePath('/workshops')
+    
+    return { success: true }
+
+  } catch (error) {
+    console.error('Error manually assigning user to workshop:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to assign user to workshop' 
+    }
+  }
+}
+
+export async function getAllUsers(): Promise<UserType[]> {
+  const clerkUser = await currentUser()
+
+  if (!clerkUser) {
+    throw new Error('Authentication required')
+  }
+
+  // Sync user and check if admin
+  const user = await syncUserWithDatabase(clerkUser)
+
+  if (user.role !== 'admin') {
+    throw new Error('Admin access required')
+  }
+
+  await connectDB()
+
+  try {
+    const usersData = await User.find({})
+      .select('clerkId email firstName lastName role userType accessLevel')
+      .lean()
+      .exec()
+
+    return usersData as unknown as UserType[]
+  } catch (error) {
+    console.error('Error fetching users:', error)
+    throw new Error('Failed to fetch users')
+  }
+}
+
+type RemoveUserResult = {
+  success: boolean
+  error?: string
+}
+
+export async function removeUserFromWorkshop(
+  userId: string,
+  workshopId: string
+): Promise<RemoveUserResult> {
+  const clerkUser = await currentUser()
+
+  if (!clerkUser) {
+    return { success: false, error: 'Authentication required' }
+  }
+
+  // Sync user and check if admin
+  const user = await syncUserWithDatabase(clerkUser)
+
+  if (user.role !== 'admin') {
+    return { success: false, error: 'Admin access required' }
+  }
+
+  await connectDB()
+
+  try {
+    // Check if registration exists
+    const registration = await Registration.findOne({ userId, workshopId })
+
+    if (!registration) {
+      return { success: false, error: 'User is not registered for this workshop' }
+    }
+
+    // Delete registration and decrement participant count atomically
+    await Promise.all([
+      Registration.findOneAndDelete({ userId, workshopId }),
+      Workshop.findByIdAndUpdate(workshopId, {
+        $inc: { currentParticipants: -1 }
+      })
+    ])
+
+    revalidatePath('/admin/workshops')
+    revalidatePath('/workshops')
+    
+    return { success: true }
+
+  } catch (error) {
+    console.error('Error removing user from workshop:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to remove user from workshop' 
+    }
+  }
+}

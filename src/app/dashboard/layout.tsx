@@ -16,13 +16,12 @@ export default async function DashboardLayout({
 
   // Sync Clerk user with our database and get user data
   const user = await syncUserWithDatabase(clerkUser)
-  const isAdmin = user.role === 'admin'
 
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop: Flex layout with sidebar */}
       <div className="hidden lg:flex h-screen">
-        <DashboardSidebar user={user} isAdmin={isAdmin} />
+        <DashboardSidebar user={user} />
         
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
@@ -34,7 +33,7 @@ export default async function DashboardLayout({
 
       {/* Mobile/Tablet: Single column layout */}
       <div className="lg:hidden">
-        <DashboardSidebar user={user} isAdmin={isAdmin} />
+        <DashboardSidebar user={user} />
         <main className="p-4">
           {children}
         </main>

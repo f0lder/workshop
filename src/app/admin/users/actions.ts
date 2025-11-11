@@ -43,7 +43,7 @@ export async function updateUserRole(formData: FormData) {
       throw new Error('Date invalide.')
     }
 
-    if (newRole !== 'user' && newRole !== 'admin') {
+    if (newRole !== 'user' && newRole !== 'admin' && newRole !== 'moderator') {
       throw new Error('Rol invalid.')
     }
 

@@ -54,7 +54,7 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true }, // unique: true creates an index
   firstName: { type: String },
   lastName: { type: String },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  role: { type: String, enum: ['user', 'admin', 'moderator'], default: 'user' },
   userType: { type: String, enum: ['student', 'elev', 'rezident'], default: 'student' },
   accessLevel: { type: String, default: 'unpaid' },
 }, {

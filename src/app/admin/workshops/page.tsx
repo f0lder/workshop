@@ -1,6 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { FaCalendarAlt, FaPlus } from 'react-icons/fa'
+import { FaCalendarAlt, FaPlus, FaUserPlus } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
 import type { User as UserType, Workshop as WorkshopType } from '@/types/models'
@@ -38,10 +38,18 @@ export default async function AdminWorkshopsPage() {
             Creați, editați și gestionați workshop-urile.
           </p>
         </div>
-        <div>
+        <div className="flex gap-2">
+        <Link
+          href="/admin/workshops/assign"
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-foreground bg-green-600 hover:bg-green-700"
+        >
+          <FaUserPlus className="mr-2 h-4 w-4" />
+          Alocare Manuală
+        </Link>
+
         <Link
           href="/admin/workshops/new"
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 mr-2"
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
         >
           <FaPlus className="mr-2 h-4 w-4" />
           Workshop nou

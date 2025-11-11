@@ -37,7 +37,7 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
   const [qrPopupUserId, setQrPopupUserId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [editData, setEditData] = useState<{
-    role: 'user' | 'admin',
+    role: 'user' | 'admin' | 'moderator',
     userType: UserType | '',
     accessLevel: string
   }>({ role: 'user', userType: '', accessLevel: 'unpaid' })
@@ -313,8 +313,9 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
                         : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
                         }`}>
                         {user.role === 'admin' && <FaCrown className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />}
-                        <span className="hidden sm:inline">{user.role === 'admin' ? 'Administrator' : 'Utilizator'}</span>
-                        <span className="sm:hidden">{user.role === 'admin' ? 'Admin' : 'User'}</span>
+                        <span className="hidden sm:inline">
+                          {user.role === 'admin' ? 'Administrator' : user.role === 'moderator' ? 'Moderator' : 'Utilizator'}</span>
+                        <span className="sm:hidden">{user.role === 'admin' ? 'Admin' : user.role === 'moderator' ? 'Moderator' : 'User'}</span>
                       </span>
                     </td>
                     <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
@@ -339,11 +340,12 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
                                 <select
                                   id={`${user.clerkId}-role`}
                                   value={editData.role}
-                                  onChange={(e) => setEditData({ ...editData, role: e.target.value as 'user' | 'admin' })}
+                                  onChange={(e) => setEditData({ ...editData, role: e.target.value as 'user' | 'admin' | 'moderator' })}
                                   className="w-full text-sm border border-input bg-background rounded px-2 py-1"
                                   disabled={isPending}
                                 >
                                   <option value="user">Utilizator</option>
+                                  <option value="moderator">Moderator</option>
                                   <option value="admin">Administrator</option>
                                 </select>
                               </div>
