@@ -81,7 +81,9 @@ export default async function DashboardPage() {
                     Rol
                   </dt>
                   <dd className="text-lg font-medium text-foreground">
-                    {user.role === 'admin' ? 'Administrator' : 'Utilizator'}
+                    {user.role === 'admin' && 'Administrator'}
+                    {user.role === 'moderator' && 'Moderator'}
+                    {user.role === 'user' && 'Utilizator'}
                   </dd>
                 </dl>
               </div>

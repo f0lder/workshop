@@ -27,7 +27,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop: Flex layout with sidebar */}
-      <div className="hidden lg:flex h-screen">
+      <div className="hidden lg:flex">
         <DashboardSidebar user={user} />
         
         {/* Main Content */}
