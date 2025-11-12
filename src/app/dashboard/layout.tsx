@@ -18,7 +18,7 @@ export default async function DashboardLayout({
   const user = await syncUserWithDatabase(clerkUser)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Desktop: Flex layout with sidebar */}
       <div className="hidden lg:flex">
         <DashboardSidebar user={user} />

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import type { User as UserType } from '@/types/models'
 import Link from 'next/link'
 import { FaCircle, FaCheckCircle, FaTimes } from 'react-icons/fa'
+import { getAppSettings } from '@/lib/settings'
 
 export default async function RegistrationsPage() {
 	const clerkUser = await currentUser()
@@ -18,6 +19,11 @@ export default async function RegistrationsPage() {
 
 	// Fetch  user registrations
 	const registrations = await getUserRegistrations(user.clerkId)
+
+	//get app settings
+	const appSettings = await getAppSettings()
+
+	const workshopVisibleToPublic = appSettings.workshopVisibleToPublic || false
 
 	return (
 		<>
@@ -45,13 +51,13 @@ export default async function RegistrationsPage() {
 											</>
 										)}
 										<span>
-											{registration.workshop.wsType === 'conferinta' 
+											{registration.workshop.wsType === 'conferinta'
 												? `${registration.workshop.currentParticipants} participanți (nelimitat)`
 												: `${registration.workshop.currentParticipants} / ${registration.workshop.maxParticipants} locuri ocupate`
 											}
 										</span>
 									</div>
-								
+
 									<div>
 										{registration.attendance.confirmed ? (
 											<span className="inline-flex items-center px-2 py-1 mt-1 rounded text-sm bg-green-100 text-green-800">
@@ -64,12 +70,14 @@ export default async function RegistrationsPage() {
 										)}
 									</div>
 								</div>
-								<Link
-									href={`/workshops/${registration.workshop._id || registration.workshop.id || ''}`}
-									className="text-sm font-medium text-primary hover:underline"
-								>
-									Detalii {registration.workshop.wsType === 'workshop' ? 'Workshop' : 'Conferință'}
-								</Link>
+								{workshopVisibleToPublic && (
+									<Link
+										href={`/workshops/${registration.workshop._id || registration.workshop.id || ''}`}
+										className="text-sm font-medium text-primary hover:underline"
+									>
+										Detalii {registration.workshop.wsType === 'workshop' ? 'Workshop' : 'Conferință'}
+									</Link>
+								)}
 							</li>
 						))}
 					</ul>

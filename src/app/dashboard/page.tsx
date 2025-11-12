@@ -1,5 +1,5 @@
 import { currentUser } from '@clerk/nextjs/server'
-import { FaCalendarAlt, FaUsers, FaCog } from 'react-icons/fa'
+import { FaCalendarAlt, FaUsers, FaCog,FaCalendarCheck } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
 import SimpleUserQRCode from '@/components/SimpleUserQRCode'
@@ -28,69 +28,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="bg-card overflow-hidden shadow border border-border rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FaCalendarAlt className="h-8 w-8 text-primary" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-muted-foreground truncate">
-                    Workshop înregistrate
-                  </dt>
-                  <dd className="text-lg font-medium text-foreground">
-                    0
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-card overflow-hidden shadow border border-border rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FaUsers className="h-8 w-8 text-green-600" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-muted-foreground truncate">
-                    Urmează
-                  </dt>
-                  <dd className="text-lg font-medium text-foreground">
-                    0
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-card overflow-hidden shadow border border-border rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FaCog className="h-8 w-8 text-blue-600" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-muted-foreground truncate">
-                    Rol
-                  </dt>
-                  <dd className="text-lg font-medium text-foreground">
-                    {user.role === 'admin' && 'Administrator'}
-                    {user.role === 'moderator' && 'Moderator'}
-                    {user.role === 'user' && 'Utilizator'}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* User QR Code Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -143,7 +81,11 @@ export default async function DashboardPage() {
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
             >
               <FaCalendarAlt className="mr-2 h-4 w-4" />
-              Vezi workshop-urile
+               Workshop-uri
+            </Link>
+            <Link href="/dashboard/registrations" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90">
+              <FaCalendarCheck className="mr-2 h-4 w-4" />
+              Înregistrările mele
             </Link>
             <Link
               href="/dashboard/profile"
