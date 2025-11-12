@@ -98,7 +98,7 @@ export default function WorkshopAdminRow({ workshop, registrations }: { workshop
 					</button>
 
 					{isExpanded && (
-						<div className="mt-2 max-h-60 overflow-y-auto">
+						<div className="mt-2">
 							{registrations && registrations.length > 0 ? (
 								<table className="min-w-full divide-y divide-border">
 									<thead>
