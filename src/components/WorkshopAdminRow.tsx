@@ -1,15 +1,14 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link';
 import type { Workshop, User } from '@/types/models';
-import { FaCalendarAlt, FaEdit, FaUsers, FaMapMarkerAlt, FaUser } from 'react-icons/fa'
+import { FaCalendarAlt, FaEdit, FaUsers, FaMapMarkerAlt, FaUser, FaChevronDown, FaChevronUp, FaLink } from 'react-icons/fa'
 import DeleteWorkshopButton from '@/components/DeleteWorkshopButton'
 import { RemoveUserButton } from '@/components/RemoveUserButton'
-import { getRegistrations } from '@/app/admin/workshops/actions';
-import { FaLink } from 'react-icons/fa';
 
-export default async function WorkshopAdminRow({ workshop }: { workshop: Workshop }) {
-
-	// Ensure we always have a User[] even if getRegistrations returns void or an unexpected value
-	const registrations = await getRegistrations(workshop._id?.toString() || workshop.id || '');
+export default function WorkshopAdminRow({ workshop, registrations }: { workshop: Workshop, registrations: User[] }) {
+	const [isExpanded, setIsExpanded] = useState(false)
 
 	return (
 		<li key={workshop._id?.toString() || workshop.id || ''}>
@@ -81,40 +80,59 @@ export default async function WorkshopAdminRow({ workshop }: { workshop: Worksho
 					)}
 				</div>
 
-				<div className="mt-2 max-h-40 overflow-y-auto pt-2">
-					<h4 className="text-sm font-medium text-foreground mb-2">Utilizatori înregistrați</h4>
-					{registrations && registrations.length > 0 ? (
-						<table className="min-w-full divide-y divide-border">
-							<thead>
-								<tr>
-									<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Utilizator</th>
-									<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Email</th>
-									<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Acțiuni</th>
-								</tr>
-							</thead>
-							<tbody className="divide-y divide-border">
-								{registrations.map((user: User) => (
-									<tr key={user._id} className="hover:bg-muted">
-										<td className="px-4 py-2 text-sm text-foreground">{user.firstName} {user.lastName}</td>
-										<td className="px-4 py-2 text-sm text-muted-foreground">{user.email}</td>
-										<td className="px-4 py-2 text-sm text-muted-foreground">
-											<div className="flex items-center space-x-3">
-												<Link href={`/admin/attendance/${user.clerkId}`} className="text-primary hover:underline">
-													Prezenta
-												</Link>
-												<RemoveUserButton 
-													userId={user.clerkId}
-													workshopId={workshop._id?.toString() || workshop.id || ''}
-													userName={`${user.firstName} ${user.lastName}`}
-												/>
-											</div>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					) : (
-						<p className="text-sm text-muted-foreground">Niciun utilizator înregistrat</p>
+				{/* Expandable Users Section */}
+				<div className="mt-4 border-t border-border pt-3">
+					<button
+						type="button"
+						onClick={() => setIsExpanded(!isExpanded)}
+						className="flex items-center justify-between w-full text-left hover:bg-muted/50 rounded px-2 py-1 transition-colors"
+					>
+						<h4 className="text-sm font-medium text-foreground">
+							Utilizatori înregistrați ({registrations?.length || 0})
+						</h4>
+						{isExpanded ? (
+							<FaChevronUp className="h-4 w-4 text-muted-foreground" />
+						) : (
+							<FaChevronDown className="h-4 w-4 text-muted-foreground" />
+						)}
+					</button>
+
+					{isExpanded && (
+						<div className="mt-2 max-h-60 overflow-y-auto">
+							{registrations && registrations.length > 0 ? (
+								<table className="min-w-full divide-y divide-border">
+									<thead>
+										<tr>
+											<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Utilizator</th>
+											<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Email</th>
+											<th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Acțiuni</th>
+										</tr>
+									</thead>
+									<tbody className="divide-y divide-border">
+										{registrations.map((user: User) => (
+											<tr key={user._id} className="hover:bg-muted">
+												<td className="px-4 py-2 text-sm text-foreground">{user.firstName} {user.lastName}</td>
+												<td className="px-4 py-2 text-sm text-muted-foreground">{user.email}</td>
+												<td className="px-4 py-2 text-sm text-muted-foreground">
+													<div className="flex items-center space-x-3">
+														<Link href={`/admin/attendance/${user.clerkId}`} className="text-primary hover:underline">
+															Prezenta
+														</Link>
+														<RemoveUserButton 
+															userId={user.clerkId}
+															workshopId={workshop._id?.toString() || workshop.id || ''}
+															userName={`${user.firstName} ${user.lastName}`}
+														/>
+													</div>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							) : (
+								<p className="text-sm text-muted-foreground px-2 py-3">Niciun utilizator înregistrat</p>
+							)}
+						</div>
 					)}
 				</div>
 			</div>

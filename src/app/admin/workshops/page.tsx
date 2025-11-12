@@ -9,6 +9,7 @@ import { Workshop } from '@/models'
 import WorkshopAdminRow from '@/components/WorkshopAdminRow'
 import { DownloadReportButton } from '@/components/DownloadReportButton'
 import RecountParticipantsButton from '@/components/RecountParticipantsButton'
+import { getRegistrations } from '@/app/admin/workshops/actions'
 
 export default async function AdminWorkshopsPage() {
   const clerkUser = await currentUser()
@@ -28,6 +29,17 @@ export default async function AdminWorkshopsPage() {
 
   // Fetch all workshops
   const workshops = await Workshop.find({}).sort({ date: 1 }).lean() as unknown as WorkshopType[]
+
+  // Fetch registrations for all workshops and serialize
+  const workshopsWithRegistrations = await Promise.all(
+    workshops.map(async (workshop) => {
+      const registrations = await getRegistrations(workshop._id?.toString() || workshop.id || '')
+      return { 
+        workshop: JSON.parse(JSON.stringify(workshop)),
+        registrations: JSON.parse(JSON.stringify(registrations))
+      }
+    })
+  )
 
   return (
     <div className="space-y-6">
@@ -63,9 +75,13 @@ export default async function AdminWorkshopsPage() {
       {/* Workshops List */}
       <div className="bg-card shadow border border-border overflow-hidden sm:rounded-md">
         <ul className="divide-y divide-border">
-          {workshops && workshops.length > 0 ? (
-            workshops.map((workshop: WorkshopType) => (
-              <WorkshopAdminRow key={workshop._id?.toString() || workshop.id || ''} workshop={workshop} />
+          {workshopsWithRegistrations && workshopsWithRegistrations.length > 0 ? (
+            workshopsWithRegistrations.map(({ workshop, registrations }) => (
+              <WorkshopAdminRow 
+                key={workshop._id?.toString() || workshop.id || ''} 
+                workshop={workshop} 
+                registrations={registrations}
+              />
             ))
           ) : (
             <li>
