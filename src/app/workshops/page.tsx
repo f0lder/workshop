@@ -2,7 +2,7 @@ import Link from 'next/link'
 import WorkshopList from '@/components/WorkshopList'
 import { Suspense } from 'react'
 import { getAppSettings } from '@/lib/settings'
-import HeaderContent from '@/components/HeaderContent'
+import HeaderContent from '@/components/ui/HeaderContent'
 import { FaCircle,FaCalendar, FaMapPin } from 'react-icons/fa'
 import RegistrationCountdown from '@/components/RegistrationCountdown'
 

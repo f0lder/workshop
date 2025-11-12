@@ -16,7 +16,7 @@ import {
   FaUsers
 } from 'react-icons/fa'
 
-import AuthLinks from '@/components/AuthLinks'
+import AuthLinks from '@/components/dashboard/AuthLinks'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)

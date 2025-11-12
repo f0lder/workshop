@@ -2,7 +2,7 @@ import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { syncUserWithDatabase } from '@/lib/auth'
 import { getAppSettings } from '@/lib/settings'
-import SettingsForm from '@/components/SettingsForm'
+import SettingsForm from '@/components/admin/SettingsForm'
 
 export default async function AdminSettingsPage() {
   const clerkUser = await currentUser()

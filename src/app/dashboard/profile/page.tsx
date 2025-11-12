@@ -3,7 +3,7 @@
 import { useMongoUser } from '@/hooks/useMongoUser';
 import ProfileHeader from '@/components/ProfileHeader';
 import ProfileForm from '@/components/ProfileForm';
-import AccountInfo from '@/components/AccountInfo';
+import AccountInfo from '@/components/dashboard/AccountInfo';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function ProfilePage() {

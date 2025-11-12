@@ -1,5 +1,5 @@
-import HeaderContent from "@/components/HeaderContent";
-import PersonCard from "@/components/PersonCard";
+import HeaderContent from "@/components/ui/HeaderContent";
+import PersonCard from "@/components/ui/PersonCard";
 
 type Person = {
 	name: string;
@@ -68,8 +68,8 @@ export default function AboutPage() {
 
 				<div className="grid grid-cols-2 gap-4 py-4 max-w-4xl mx-auto">
 					{peopleData.slice(0, 3).map((group, index) => (
-						group.row.map((person, idx) => (
-							<PersonCard key={`${index}-${idx}`} name={person.name} role={person.role} imageUrl={person.imageUrl} className={person.className ? person.className : ''} />
+						group.row.map((person) => (
+							<PersonCard key={`${index}-${group}`} name={person.name} role={person.role} imageUrl={person.imageUrl} className={person.className ? person.className : ''} />
 						))
 					))}
 				</div>
@@ -78,8 +78,8 @@ export default function AboutPage() {
 
 				<div className="grid grid-cols-2 gap-4 py-4 max-w-4xl mx-auto">
 					{peopleData.slice(3).map((group, index) => (
-						group.row.map((person, idx) => (
-							<PersonCard key={`${index}-${idx}`} name={person.name} role={person.role} imageUrl={person.imageUrl} className={person.className ? person.className : ''} />
+						group.row.map((person) => (
+							<PersonCard key={`${index}-${group}`} name={person.name} role={person.role} imageUrl={person.imageUrl} className={person.className ? person.className : ''} />
 						))
 					))}
 				</div>

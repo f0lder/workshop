@@ -5,10 +5,10 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { ToastProvider } from "@/components/ui/ToastProvider";
-import Header from "@/components/Header";
+import Header from "@/components/ui/Header";
 import "./critical.css";
 import "./globals.css";
-import Footer from "@/components/Footer";
+import Footer from "@/components/ui/Footer";
 
 const inter = Inter({
   variable: "--font-inter",

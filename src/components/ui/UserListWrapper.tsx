@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { User } from '@/types/models'; // Make sure this path is correct
-import UserList from './UserList';
+import UserList from '@/components/admin/UserList';
 import QRCode from 'qrcode';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';

@@ -18,8 +18,8 @@ export default function BreadCrumbs({ items = [] }: { items?: Crumb[] }) {
 						Acasa
 					</Link>
 				</li>
-				{items.map((item, idx) => (
-					<li key={idx} className="inline-flex items-center">
+				{items.map((item) => (
+					<li key={item.label} className="inline-flex items-center">
 						<HiChevronRight className="w-4 h-4 text-muted-foreground mx-1" />
 						{item.href ? (
 							<Link

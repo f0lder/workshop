@@ -1,4 +1,4 @@
-import BreadCrumbs from "@/components/BreadCrumbs";
+import BreadCrumbs from "@/components/ui/BreadCrumbs";
 
 interface HeaderContentProps {
 	title?: string;

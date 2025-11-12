@@ -2,7 +2,7 @@ import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { isUserAdmin } from '@/lib/auth'
 import { fetchAllUsers } from './actions'
-import UserListWrapper from '@/components/UserListWrapper' // Ensure this path is correct
+import UserListWrapper from '@/components/ui/UserListWrapper' // Ensure this path is correct
 
 export default async function AdminUsersPage() {
   const clerkUser = await currentUser()

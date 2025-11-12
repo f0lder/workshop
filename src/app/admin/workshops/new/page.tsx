@@ -2,7 +2,7 @@ import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { syncUserWithDatabase } from '@/lib/auth'
 import { getAppSettings } from '@/lib/settings'
-import WorkshopForm from '@/components/WorkshopForm'
+import WorkshopForm from '@/components/admin/WorkshopForm'
 
 export default async function NewWorkshopPage() {
   const clerkUser = await currentUser()

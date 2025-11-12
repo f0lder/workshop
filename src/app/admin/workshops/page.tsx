@@ -6,9 +6,9 @@ import { syncUserWithDatabase } from '@/lib/auth'
 import type { User as UserType, Workshop as WorkshopType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Workshop } from '@/models'
-import WorkshopAdminRow from '@/components/WorkshopAdminRow'
-import { DownloadReportButton } from '@/components/DownloadReportButton'
-import RecountParticipantsButton from '@/components/RecountParticipantsButton'
+import WorkshopAdminRow from '@/components/admin/WorkshopAdminRow'
+import { DownloadReportButton } from '@/components/admin/DownloadReportButton'
+import RecountParticipantsButton from '@/components/admin/RecountParticipantsButton'
 import { getRegistrations } from '@/app/admin/workshops/actions'
 
 export default async function AdminWorkshopsPage() {

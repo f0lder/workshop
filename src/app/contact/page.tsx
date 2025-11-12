@@ -1,4 +1,4 @@
-import HeaderContent from "@/components/HeaderContent";
+import HeaderContent from "@/components/ui/HeaderContent";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { FaInstagram, FaFacebook } from "react-icons/fa";
 import Link from "next/link";

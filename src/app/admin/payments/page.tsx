@@ -5,7 +5,7 @@ import type { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Payment, User } from '@/models'
 // Import the new client component
-import PaymentsClient from '@/components/PaymentsClient'
+import PaymentsClient from '@/components/payments/PaymentsClient'
 
 // You can move these interfaces to a shared types file or to PaymentsClient.tsx
 interface PaymentStats {

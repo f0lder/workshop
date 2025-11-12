@@ -4,8 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link';
 import type { Workshop, User } from '@/types/models';
 import { FaCalendarAlt, FaEdit, FaUsers, FaMapMarkerAlt, FaUser, FaChevronDown, FaChevronUp, FaLink } from 'react-icons/fa'
-import DeleteWorkshopButton from '@/components/DeleteWorkshopButton'
-import { RemoveUserButton } from '@/components/RemoveUserButton'
+import DeleteWorkshopButton from '@/components/admin/DeleteWorkshopButton'
+import { RemoveUserButton } from '@/components/admin/RemoveUserButton'
 
 export default function WorkshopAdminRow({ workshop, registrations }: { workshop: Workshop, registrations: User[] }) {
 	const [isExpanded, setIsExpanded] = useState(false)

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
-import MimesissCountdown from '@/components/MimesissCountdown'
+import MimesissCountdown from '@/components/ui/MimesissCountdown'
 import { FaCalendar, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa'
 import { getAppSettings } from '@/lib/settings'
 

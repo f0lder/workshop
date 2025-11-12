@@ -4,7 +4,7 @@ import { syncUserWithDatabase } from '@/lib/auth'
 import { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
 import { Workshop } from '@/models'
-import WorkshopForm from '@/components/WorkshopForm'
+import WorkshopForm from '@/components/admin/WorkshopForm'
 import { Workshop as WorkshopType } from '@/types/models'
 
 interface EditWorkshopPageProps {

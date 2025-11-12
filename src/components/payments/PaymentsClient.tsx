@@ -1,7 +1,7 @@
 'use client'
 
 import { FaCreditCard, FaEuroSign, FaTicketAlt } from 'react-icons/fa'
-import PaymentsList from '@/components/PaymentsList'
+import PaymentsList from '@/components/admin/PaymentsList'
 import Link from 'next/link'
 
 // Define the types again here or import them from a shared types file

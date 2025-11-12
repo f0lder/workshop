@@ -1,4 +1,4 @@
-import HeaderContent from "@/components/HeaderContent";
+import HeaderContent from "@/components/ui/HeaderContent";
 
 
 export default function GhidPage() {

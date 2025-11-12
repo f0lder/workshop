@@ -16,7 +16,7 @@ import {
 } from 'react-icons/fa'
 import { deleteUser, updateUserRole } from '@/app/admin/users/actions'
 import type { User, UserType } from '@/types/models'
-import SimpleUserQRCode from './SimpleUserQRCode'
+import SimpleUserQRCode from '@/components/SimpleUserQRCode'
 
 interface UserListProps {
   users: User[]

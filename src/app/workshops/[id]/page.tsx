@@ -1,5 +1,5 @@
 import { getWorkshopById } from "../actions";
-import HeaderContent from "@/components/HeaderContent";
+import HeaderContent from "@/components/ui/HeaderContent";
 import { WorkshopRegistrationButton } from "@/components/WorkshopRegistrationButton";
 import { RegistrationProvider } from "@/contexts/RegistrationContext";
 import type { Workshop } from "@/types/models";

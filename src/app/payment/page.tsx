@@ -2,7 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { syncUserWithDatabase } from '@/lib/auth';
 import { User } from '@/types/models';
-import EnhancedTicketSelector from '@/components/EnhancedTicketSelector';
+import EnhancedTicketSelector from '@/components/payments/EnhancedTicketSelector';
 import { getAppSettings } from '@/lib/settings';
 
 export default async function PaymentPage() {

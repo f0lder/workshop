@@ -3,7 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import { syncUserWithDatabase } from '@/lib/auth'
 import { User as UserType } from '@/types/models'
 import { getTicketById } from '../actions'
-import EditTicketForm from '@/components/EditTicketForm'
+import EditTicketForm from '@/components/admin/EditTicketForm'
 
 interface EditTicketPageProps {
 	params: Promise<{

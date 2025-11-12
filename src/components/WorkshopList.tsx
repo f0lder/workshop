@@ -21,13 +21,7 @@ function isString(value: unknown): value is string {
 export default async function WorkshopList({ workshopVisibleToPublic, globalRegistrationEnabled, registrationStartTime, registrationDeadline }: WorkshopListProps) {
   // If workshops are not visible to public, show coming soon message
   if (!workshopVisibleToPublic) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground text-lg">
-          În curând...
-        </p>
-      </div>
-    );
+    return null;
   }
 
   const workshops = await getAllWorkshops();
