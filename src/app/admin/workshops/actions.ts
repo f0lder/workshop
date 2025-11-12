@@ -463,10 +463,62 @@ export async function manuallyAssignUserToWorkshop(
     return { success: true }
 
   } catch (error) {
-    console.error('Error manually assigning user to workshop:', error)
+    console.error('Error removing user from workshop:', error)
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Failed to assign user to workshop' 
+      error: error instanceof Error ? error.message : 'Failed to remove user from workshop' 
+    }
+  }
+}
+
+export async function recountAllWorkshopParticipants() {
+  const clerkUser = await currentUser()
+
+  if (!clerkUser) {
+    return { success: false, error: 'Authentication required' }
+  }
+
+  const user = await syncUserWithDatabase(clerkUser)
+
+  if (user.role !== 'admin') {
+    return { success: false, error: 'Admin access required' }
+  }
+
+  try {
+    await connectDB()
+
+    // Get all workshops
+    const workshops = await Workshop.find({}).select('_id')
+
+    let updated = 0
+
+    // For each workshop, count registrations and update currentParticipants
+    for (const workshop of workshops) {
+      const count = await Registration.countDocuments({ 
+        workshopId: workshop._id.toString() 
+      })
+
+      await Workshop.findByIdAndUpdate(
+        workshop._id,
+        { currentParticipants: count },
+        { new: true }
+      )
+
+      updated++
+    }
+
+    revalidatePath('/admin/workshops')
+
+    return { 
+      success: true, 
+      message: `Successfully recounted ${updated} workshops` 
+    }
+
+  } catch (error) {
+    console.error('Error recounting participants:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to recount participants' 
     }
   }
 }

@@ -8,6 +8,7 @@ import connectDB from '@/lib/mongodb'
 import { Workshop } from '@/models'
 import WorkshopAdminRow from '@/components/WorkshopAdminRow'
 import { DownloadReportButton } from '@/components/DownloadReportButton'
+import RecountParticipantsButton from '@/components/RecountParticipantsButton'
 
 export default async function AdminWorkshopsPage() {
   const clerkUser = await currentUser()
@@ -87,6 +88,11 @@ export default async function AdminWorkshopsPage() {
             </li>
           )}
         </ul>
+      </div>
+
+      {/* Recount Button */}
+      <div className="flex justify-end">
+        <RecountParticipantsButton />
       </div>
     </div>
   )
