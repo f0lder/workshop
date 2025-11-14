@@ -28,7 +28,7 @@ export async function GET(
 
 	if (isModerator) {
 		// Moderator: redirect to moderator attendance page
-		redirect(`/moderator/attendance/${userId}`);
+		redirect(`/dashboard/moderator/attendance/${userId}`);
 	}
 
 	// Check if current user is admin
