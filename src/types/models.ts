@@ -50,6 +50,15 @@ export interface WorkshopRegistration {
   updatedAt: Date;
 }
 
+// User with attendance info (for admin workshop display)
+export interface UserWithAttendance extends User {
+  attendance?: {
+    confirmed: boolean;
+    confirmedAt?: Date | string;
+    confirmedBy?: string;
+  };
+}
+
 export interface AuthUser {
   id: string;
   email: string;

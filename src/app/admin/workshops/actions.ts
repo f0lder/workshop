@@ -6,7 +6,7 @@ import { headers } from 'next/headers'
 import { Workshop, Registration, User } from '@/models'
 import connectDB from '@/lib/mongodb'
 import { syncUserWithDatabase } from '@/lib/auth'
-import type { User as UserType, Workshop as WorkshopType } from '@/types/models'
+import type { User as UserType, Workshop as WorkshopType, UserWithAttendance } from '@/types/models'
 
 export async function createWorkshop(formData: FormData) {
   const clerkUser = await currentUser()
@@ -216,7 +216,7 @@ export async function deleteWorkshop(workshopId: string) {
 }
 
 
-export async function getRegistrations(workshopId: string): Promise<UserType[]> {
+export async function getRegistrations(workshopId: string): Promise<UserWithAttendance[]> {
   const clerkUser = await currentUser()
 
   if (!clerkUser) {
@@ -237,9 +237,27 @@ export async function getRegistrations(workshopId: string): Promise<UserType[]> 
 
     const users = await User.find({
       clerkId: { $in: registrations.map(reg => reg.userId) }
+    }).lean<UserType[]>()
+
+    // Map users with their attendance information
+    const usersWithAttendance: UserWithAttendance[] = users.map((user) => {
+      const registration = registrations.find(reg => reg.userId === user.clerkId)
+      return {
+        _id: String(user._id),
+        clerkId: user.clerkId,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        userType: user.userType,
+        accessLevel: user.accessLevel,
+        attendance: registration?.attendance || { confirmed: false }
+      }
     })
 
-    return users as UserType[];
+    return usersWithAttendance
   } catch (error) {
     console.error('Error fetching registrations:', error)
     throw new Error('Failed to fetch registrations')
