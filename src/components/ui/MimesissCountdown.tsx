@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { FaCalendar, FaCircle } from 'react-icons/fa'
+import { FaCalendar } from 'react-icons/fa'
 
 interface TimeLeft {
   days: number
