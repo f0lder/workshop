@@ -112,12 +112,11 @@ export default function MimesissCountdown() {
       {isConferenceStarted && (
         <div className="text-center">
           <div className="bg-primary/20 rounded-lg p-6 border border-primary/30">
-            <FaCircle className="h-8 w-8 text-green-500 mx-auto mb-4 animate-pulse" />
             <p className="text-lg text-white font-medium">
-              Bun venit la cea de-a V-a ediție a MIMESISS!
+              Cea dea V-a edittie a MIMEMISS s-a incehiat!
             </p>
             <p className="mimesiss-text-secondary mt-2">
-              Spitalul universitar de urgență militar central &ldquo;Dr. CAROL DAVILA&rdquo;
+              Multumim pentru participare și ne vedem la următoarea ediție!
             </p>
           </div>
         </div>

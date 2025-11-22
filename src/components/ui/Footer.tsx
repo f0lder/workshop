@@ -10,11 +10,6 @@ import { FaCircle, FaEnvelope, FaInstagram, FaFacebook } from 'react-icons/fa'
 */
 const orgs = [
   { src: '/orgs/1.png', alt: 'ASSM' },
-  { src: '/orgs/3.png', alt: 'Directia Medicala' },
-  { src: '/orgs/2.png', alt: 'Spitalul Militar Central' },
-  { src: '/orgs/aero.png', alt: 'Institutul National de Medicina Aeronautica' },
-  { src: '/orgs/5.png', alt: 'Intitutul Medici Militar' },
-  { src: '/orgs/4.png', alt: 'Universitatea de Medicina si Farmacie' },
 ]
 
 export default function Footer() {
