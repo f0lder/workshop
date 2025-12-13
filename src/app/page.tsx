@@ -1,15 +1,10 @@
-import Link from 'next/link'
 import Image from 'next/image'
-import { currentUser } from '@clerk/nextjs/server'
 import MimesissCountdown from '@/components/ui/MimesissCountdown'
 import { FaCalendar, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa'
-import { getAppSettings } from '@/lib/settings'
+import HomePageCTAs, { HomePageCTAsSkeleton } from '@/components/HomePageCTAs'
+import { Suspense } from 'react'
 
-export default async function HomePage() {
-  const user = await currentUser()
-  const settings = await getAppSettings();
-
-  const paymentsEnabled = settings?.paymentsEnabled ?? false;
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
       {/* Banner Section */}
@@ -61,39 +56,9 @@ export default async function HomePage() {
           <MimesissCountdown />
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          {user ? (
-            // Logged in user CTAs
-            <>
-            {paymentsEnabled && (
-              <Link href="/payment" className="mimesiss-btn-primary">
-                Cumpără Bilet
-              </Link>
-            )}
-              <Link href="/dashboard" className="mimesiss-btn-primary">
-                Accesează Contul
-              </Link>
-
-              <Link href="/workshops" className="mimesiss-btn-secondary">
-                Vezi Atelierele
-              </Link>
-            </>
-          ) : (
-            // Guest user CTAs
-            <>
-              <Link href="/auth/signup" className="mimesiss-btn-primary">
-                Înregistrează-te pentru a cumpara bilet
-              </Link>
-
-              <Link href="/info" className="mimesiss-btn-secondary">
-                Informații
-              </Link>
-              <Link href="/reg" className="mimesiss-btn-secondary">
-                Regulament
-              </Link>
-            </>
-          )}
-        </div>
+        <Suspense fallback={<HomePageCTAsSkeleton />}>
+          <HomePageCTAs />
+        </Suspense>
 
         <div className="bg-gradient-to-r from-secondary/20 to-background/50 backdrop-blur-sm rounded-lg border border-border/30 p-8 mx-auto">
           <h3 className="text-2xl font-bold text-accent text-center mb-6">Cine suntem?</h3>
