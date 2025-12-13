@@ -84,13 +84,6 @@
 
 @layer components {
   /* MIMESISS specific components */
-  .mimesiss-hero-bg {
-    @apply min-h-screen bg-gradient-to-br from-background via-background/95 to-background;
-  }
-  
-  .mimesiss-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20;
-  }
   
   .mimesiss-title {
     @apply text-4xl font-extrabold text-white sm:text-5xl md:text-6xl text-center;
@@ -108,10 +101,6 @@
     @apply bg-card/80 backdrop-blur-sm rounded-lg border-2 border-border;
   }
   
-  .mimesiss-card-dark {
-    @apply bg-card/60 backdrop-blur-sm rounded-lg border-2 border-border/50;
-  }
-  
   .mimesiss-section-card {
     @apply bg-card rounded-lg shadow border border-border overflow-hidden;
   }
@@ -122,10 +111,6 @@
   
   .mimesiss-btn-secondary {
     @apply w-full flex items-center justify-center px-8 py-3 border border-border text-base font-medium rounded-md text-secondary-foreground bg-secondary hover:bg-secondary/80 md:py-4 md:text-lg md:px-10 transition duration-200;
-  }
-  
-  .mimesiss-btn-card {
-    @apply w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition duration-200;
   }
   
   .mimesiss-contact-card {
@@ -146,14 +131,6 @@
   
   .mimesiss-section-header {
     @apply bg-gradient-to-r from-card/90 to-card rounded-lg p-8 text-white border border-border;
-  }
-  
-  .mimesiss-countdown-container {
-    @apply mt-8 mb-12;
-  }
-  
-  .mimesiss-countdown-card {
-    @apply bg-card/60 backdrop-blur-sm rounded-lg p-6 max-w-4xl mx-auto border border-border;
   }
   
   .mimesiss-countdown-grid {
@@ -179,10 +156,6 @@
   
   .mimesiss-text-secondary {
     @apply text-gray-300;
-  }
-  
-  .mimesiss-text-muted {
-    @apply text-gray-400;
   }
   
   .mimesiss-border-step-1 {
