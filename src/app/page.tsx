@@ -15,12 +15,13 @@ export default function HomePage() {
             <Image
               src="/banners/desktop.jpeg"
               alt="MIMESISS 2025 Desktop Banner"
-              width={1200}
-              height={400}
+              width={1920}
+              height={640}
               className="w-full h-auto object-cover"
               priority
-              fetchPriority='high'
-              loading='eager'
+              fetchPriority="high"
+              quality={85}
+              sizes="100vw"
             />
           </div>
         </div>
@@ -31,11 +32,13 @@ export default function HomePage() {
             <Image
               src="/banners/mobile.jpeg"
               alt="MIMESISS 2025 Mobile Banner"
-              width={400}
-              height={600}
+              width={828}
+              height={1242}
               className="w-full h-auto object-cover"
               priority
               fetchPriority="high"
+              quality={85}
+              sizes="100vw"
             />
           </div>
         </div>
