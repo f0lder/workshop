@@ -54,8 +54,8 @@ export default function Header() {
               <Image
                 src="/icons/logo_simple.png"
                 alt="MIMESISS 2025"
-                width={500}
-                height={200}
+                width={100}
+                height={40}
                 className="h-10 w-auto"
                 priority
               />

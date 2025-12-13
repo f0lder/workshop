@@ -19,6 +19,7 @@ export default function HomePage() {
               height={400}
               className="w-full h-auto object-cover"
               priority
+              fetchPriority='high'
               loading='eager'
             />
           </div>
