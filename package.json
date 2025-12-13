@@ -2,12 +2,6 @@
   "name": "mimesiss",
   "version": "0.1.0",
   "private": true,
-  "browserslist": [
-    "chrome >= 90",
-    "edge >= 90",
-    "firefox >= 88",
-    "safari >= 14"
-  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
