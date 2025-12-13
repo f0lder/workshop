@@ -129,6 +129,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ro" className="dark">
         <head>
+          <link rel="preconnect" href="https://clerk.mimesiss.ro" crossOrigin="anonymous" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
           <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
