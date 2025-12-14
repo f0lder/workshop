@@ -54,7 +54,6 @@ export default function Header() {
             alt="MIMESISS 2025"
             width={168}
             height={40}
-            className="h-10 w-auto"
             priority
             quality={40}
           />
