@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import MimesissCountdown from '@/components/ui/MimesissCountdown'
 import { FaCalendar, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa'
 import HomePageCTAs, { HomePageCTAsSkeleton } from '@/components/HomePageCTAs'
@@ -7,25 +8,32 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
       {/* Banner Section */}
-      <div className="w-full">
-        {/* Desktop Banner */}
 
-        <picture>
-          <source
-            media="(min-width: 768px)"
-            srcSet="/banners/desktop.jpeg"
-          />
-          <img
-            src="/banners/mobile.jpeg"
-            alt="MIMESISS 2025 Banner"
-            className="w-full h-auto object-cover"
-            fetchPriority="high"
-            loading="eager"
-            width="828"
-            height="1242"
-          />
-        </picture>
-      </div>
+      {/* Mobile Banner Image */}
+      <Image
+        src="/banners/mobile.jpeg"
+        alt="MIMESISS 2025 Mobile Banner"
+        width={828}
+        height={1242}
+        className="w-full h-auto object-cover md:hidden"
+        priority
+        fetchPriority="high"
+        quality={85}
+        sizes="100vw"
+      />
+
+      {/* Desktop Banner Image */}
+      <Image
+        src="/banners/desktop.jpeg"
+        alt="MIMESISS 2025 Desktop Banner"
+        width={1920}
+        height={640}
+        className="w-full h-auto object-cover hidden md:block"
+        priority
+        fetchPriority="high"
+        quality={85}
+        sizes="100vw"
+      />
 
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-10">
