@@ -46,46 +46,42 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-        <div className="mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <Image
-                src="/icons/logo_simple.png"
-                alt="MIMESISS 2025"
-                width={168}
-                height={40}
-                className="h-10 w-auto"
-                priority
-                quality={40}
-              />
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border flex items-center justify-between h-16 mx-auto px-4">
+        {/* Logo */}
+        <Link href="/" className="flex items-center space-x-2">
+          <Image
+            src="/icons/logo_simple.png"
+            alt="MIMESISS 2025"
+            width={168}
+            height={40}
+            className="h-10 w-auto"
+            priority
+            quality={40}
+          />
+        </Link>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden lg:flex items-center space-x-6">
+          {links.map(({ href, label, icon: Icon }) => (
+            <Link key={href} href={href} className={`transition-colors relative underline-offset-4 ${isActive(href) ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
+              <Icon className="mr-2 hidden lg:inline-block" />
+              {label}
             </Link>
+          ))}
+        </nav>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-6">
-              {links.map(({ href, label, icon: Icon }) => (
-                <Link key={href} href={href} className={`transition-colors relative underline-offset-4 ${isActive(href) ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
-                  <Icon className="mr-2 hidden lg:inline-block" />
-                  {label}
-                </Link>
-              ))}
-            </nav>
+        {/* Desktop Auth Section - REPLACED */}
+        <AuthLinks variant="desktop" />
 
-            {/* Desktop Auth Section - REPLACED */}
-            <AuthLinks variant="desktop" />
-
-            {/* Mobile Menu Button */}
-            <button
-              type="button"
-              aria-label='Open Mobile Menu'
-              className="lg:hidden p-2 text-foreground hover:bg-accent rounded-md transition-colors"
-              onClick={toggleMobileMenu}
-            >
-              <FaBars className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
+        {/* Mobile Menu Button */}
+        <button
+          type="button"
+          aria-label='Open Mobile Menu'
+          className="lg:hidden p-2 text-foreground hover:bg-accent rounded-md transition-colors"
+          onClick={toggleMobileMenu}
+        >
+          <FaBars className="h-5 w-5" />
+        </button>
       </header>
 
       {/* Mobile Side Menu Overlay */}
