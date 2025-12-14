@@ -6,9 +6,7 @@ import { Suspense } from 'react'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
-      {/* Banner Section */}
-
+    <>
       {/* Mobile Banner Image */}
       <Image
         src="/banners/mobile.jpeg"
@@ -36,7 +34,7 @@ export default function HomePage() {
       />
 
       {/* Hero Section */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-10">
         {/* Event Details */}
         <div className="mimesiss-card flex flex-col gap-5 p-4">
           <div className="flex items-center justify-center">
@@ -84,7 +82,7 @@ export default function HomePage() {
           </a>
 
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   )
 }

@@ -139,7 +139,7 @@ export default function RootLayout({
         >
           <ToastProvider>
             <Header />
-            <main>
+            <main className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
               {children}
             </main>
           <Footer />
