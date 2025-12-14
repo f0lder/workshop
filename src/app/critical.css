@@ -1,8 +1,0 @@
-/* Critical CSS for above-the-fold content - Load first for better FCP */
-
-/* Essential variables */
-:root {
-  --primary: 261 83% 68%;
-  --background: 0 0% 4%;
-  --foreground: 0 0% 98%;
-}
