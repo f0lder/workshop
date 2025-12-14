@@ -104,7 +104,7 @@ export default function AuthLinks({ variant, isMobileMenuOpen, onLinkClick }: Au
 				</Link>
 				<Link
 					href="/auth/signup"
-					className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md transition-colors"
+					className="mimesiss-btn-primary p-2 text-base"
 				>
 					Înregistrare
 				</Link>

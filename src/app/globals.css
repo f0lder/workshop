@@ -11,8 +11,8 @@
     --card-foreground: 16 100% 4%;
     --popover: 0 0% 100%;
     --popover-foreground: 16 100% 4%;
-    --primary: 13 76% 42%; /* MIMESISS Orange - darkened to meet WCAG AA (4.5:1 contrast) */
-    --primary-foreground: 0 0% 100%; /* Pure white for WCAG compliance */
+    --primary: 13 76% 50%; /* MIMESISS Orange - restored brightness */
+    --primary-foreground: 0 0% 0%; /* Black text for better contrast */
     --secondary: 0 100% 47%; /* MIMESISS Purple #790000 */
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 96%;
@@ -35,8 +35,8 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 13 76% 42%; /* MIMESISS Orange - darkened to meet WCAG AA (4.5:1 contrast) */
-    --primary-foreground: 0 0% 100%; /* Pure white for WCAG compliance */
+    --primary: 13 76% 50%; /* MIMESISS Orange - restored brightness */
+    --primary-foreground: 0 0% 0%; /* Black text for better contrast */
     --secondary: 0 100% 47%; /* MIMESISS Purple #790000 */
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 12%;
@@ -106,7 +106,7 @@
   }
   
   .mimesiss-btn-primary {
-    @apply w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10 transition duration-200;
+    @apply w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-black bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10 transition duration-200;
   }
   
   .mimesiss-btn-secondary {
