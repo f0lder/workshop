@@ -78,6 +78,7 @@ export default function Header() {
             {/* Mobile Menu Button */}
             <button
               type="button"
+              aria-label='Open Mobile Menu'
               className="lg:hidden p-2 text-foreground hover:bg-accent rounded-md transition-colors"
               onClick={toggleMobileMenu}
             >
@@ -114,7 +115,7 @@ export default function Header() {
                 MIMESISS
               </Link>
               <button
-                aria-label='Mobile Menu'
+                aria-label='Close Mobile Menu'
                 type="button"
                 onClick={toggleMobileMenu}
                 className="p-2 text-foreground hover:bg-accent rounded-md transition-colors duration-200"
