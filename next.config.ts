@@ -35,7 +35,6 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['react-icons', 'lucide-react'],
   },
-  transpilePackages: ['html5-qrcode', 'react-social-media-embed'],
 };
 
 export default nextConfig;

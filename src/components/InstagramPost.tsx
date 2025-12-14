@@ -1,11 +1,21 @@
 "use client"; 
 
-import { InstagramEmbed } from 'react-social-media-embed';
-
 export function InstagramPost({url}: {url: string}) {
+	// Extract post ID from Instagram URL
+	const postId = url.match(/\/p\/([^\/]+)/)?.[1] || url.match(/\/reel\/([^\/]+)/)?.[1]
+	
+	if (!postId) return null
+
 	return (
-		<div style={{ display: 'flex', justifyContent: 'center' }}>
-			<InstagramEmbed url={url} lang='ro_RO' />
+		<div className="flex justify-center">
+			<iframe
+				title="Instagram post"
+				src={`https://www.instagram.com/p/${postId}/embed`}
+				width="500"
+				height="880"
+				loading="lazy"
+				className="border-0 max-w-full"
+			/>
 		</div>
 	);
 }
