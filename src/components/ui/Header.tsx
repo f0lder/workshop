@@ -54,7 +54,7 @@ export default function Header() {
               <Image
                 src="/icons/logo_simple.png"
                 alt="MIMESISS 2025"
-                width={100}
+                width={168}
                 height={40}
                 className="h-10 w-auto"
                 priority
@@ -114,6 +114,7 @@ export default function Header() {
                 MIMESISS
               </Link>
               <button
+                aria-label='Mobile Menu'
                 type="button"
                 onClick={toggleMobileMenu}
                 className="p-2 text-foreground hover:bg-accent rounded-md transition-colors duration-200"

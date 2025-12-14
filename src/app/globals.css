@@ -11,8 +11,8 @@
     --card-foreground: 16 100% 4%;
     --popover: 0 0% 100%;
     --popover-foreground: 16 100% 4%;
-    --primary: 13 76% 55%; /* MIMESISS Orange #DF5739 */
-    --primary-foreground: 0 0% 98%;
+    --primary: 13 76% 50%; /* MIMESISS Orange - darker for better contrast */
+    --primary-foreground: 0 0% 100%; /* Pure white for better contrast */
     --secondary: 0 100% 47%; /* MIMESISS Purple #790000 */
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 96%;
@@ -35,8 +35,8 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 13 76% 55%; /* MIMESISS Orange #DF5739 */
-    --primary-foreground: 0 0% 98%;
+    --primary: 13 76% 50%; /* MIMESISS Orange - darker for better contrast */
+    --primary-foreground: 0 0% 100%; /* Pure white for better contrast */
     --secondary: 0 100% 47%; /* MIMESISS Purple #790000 */
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 12%;
