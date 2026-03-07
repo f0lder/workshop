@@ -12,7 +12,6 @@ interface PaymentWithUser {
   stripePaymentIntentId?: string
   amount: number
   currency: string
-  accessLevel: string
   ticketId: string
   ticketType: string
   createdAt: Date
@@ -62,7 +61,6 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
         : ''
       const userEmail = payment.user?.email?.toLowerCase() || ''
       const ticketType = payment.ticketType?.toLowerCase() || ''
-      const accessLevel = payment.accessLevel?.toLowerCase() || ''
       const amount = formatCurrency(payment.amount, payment.currency).toLowerCase()
       const stripeId = payment.stripePaymentIntentId?.toLowerCase() || ''
 
@@ -70,7 +68,6 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
         userName.includes(lowerSearch) ||
         userEmail.includes(lowerSearch) ||
         ticketType.includes(lowerSearch) ||
-        accessLevel.includes(lowerSearch) ||
         amount.includes(lowerSearch) ||
         stripeId.includes(lowerSearch)
       )
@@ -159,14 +156,12 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm space-y-1">
-                      {/* Show ticket type with badge for new payments */}
                       {payment.ticketType ? (
                         <>
                           <div className="flex items-center gap-2">
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                               {payment.ticketType}
                             </span>
-                            <span className="text-xs text-muted-foreground">(nou)</span>
                           </div>
                           {payment.ticketId && (
                             <div className="text-xs text-muted-foreground">
@@ -175,13 +170,7 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
                           )}
                         </>
                       ) : (
-                        /* Show access level for old payments */
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">
-                            {payment.accessLevel}
-                          </span>
-                          <span className="text-xs text-muted-foreground">(vechi)</span>
-                        </div>
+                        <div className="text-xs text-muted-foreground">N/A</div>
                       )}
                     </div>
                   </td>

@@ -42,7 +42,6 @@ export async function GET() {
         createdAt: mongoUser?.createdAt || new Date(clerkUser.createdAt),
         updatedAt: mongoUser?.updatedAt || new Date(clerkUser.updatedAt || clerkUser.createdAt),
         userType: mongoUser?.userType || 'student',
-        accessLevel: mongoUser?.accessLevel || 'unpaid',
       }
     })
 

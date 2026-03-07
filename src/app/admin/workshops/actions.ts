@@ -252,7 +252,6 @@ export async function getRegistrations(workshopId: string): Promise<UserWithAtte
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         userType: user.userType,
-        accessLevel: user.accessLevel,
         attendance: registration?.attendance || { confirmed: false }
       }
     })
@@ -559,7 +558,7 @@ export async function getAllUsers(): Promise<UserType[]> {
 
   try {
     const usersData = await User.find({})
-      .select('clerkId email firstName lastName role userType accessLevel')
+      .select('clerkId email firstName lastName role userType')
       .lean()
       .exec()
 

@@ -8,6 +8,8 @@ import { ToastProvider } from "@/components/ui/ToastProvider";
 import Header from "@/components/ui/Header";
 import "./globals.css";
 import Footer from "@/components/ui/Footer";
+import { AppSettingsProvider, type AppSettingsData } from '@/contexts/AppSettingsContext';
+import { getAppSettings } from '@/lib/settings';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -119,11 +121,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const rawSettings = await getAppSettings()
+  const appSettings: AppSettingsData = {
+    eventMode: rawSettings.eventMode ?? 'workshops',
+    globalRegistrationEnabled: rawSettings.globalRegistrationEnabled ?? true,
+    paymentsEnabled: rawSettings.paymentsEnabled ?? false,
+    workshopVisibleToPublic: rawSettings.workshopVisibleToPublic ?? false,
+    allowCancelRegistration: rawSettings.allowCancelRegistration ?? true,
+    registrationStartTime: rawSettings.registrationStartTime ? new Date(rawSettings.registrationStartTime).toISOString() : null,
+    registrationDeadline: rawSettings.registrationDeadline ? new Date(rawSettings.registrationDeadline).toISOString() : null,
+    defaultMaxParticipants: rawSettings.defaultMaxParticipants ?? 20,
+    ballTicketAvailableFrom: rawSettings.ballTicketAvailableFrom ? new Date(rawSettings.ballTicketAvailableFrom).toISOString() : null,
+    ballTicketAvailableTo: rawSettings.ballTicketAvailableTo ? new Date(rawSettings.ballTicketAvailableTo).toISOString() : null,
+    ballMaxTicketsPerUser: rawSettings.ballMaxTicketsPerUser ?? 2,
+  }
   return (
     <ClerkProvider>
       <html lang="ro" className="dark">
@@ -137,13 +153,15 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground min-h-screen`}
         >
-          <ToastProvider>
-            <Header />
-            <main className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
-              {children}
-            </main>
-          <Footer />
-          </ToastProvider>
+          <AppSettingsProvider settings={appSettings}>
+            <ToastProvider>
+              <Header />
+              <main className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
+                {children}
+              </main>
+              <Footer />
+            </ToastProvider>
+          </AppSettingsProvider>
           <SpeedInsights />
           <Analytics />
           <GoogleAnalytics gaId="G-2H44Z5Z7S3" />

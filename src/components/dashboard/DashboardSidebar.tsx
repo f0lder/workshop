@@ -14,6 +14,7 @@ import {
 } from 'react-icons/fa'
 import type { User } from '@/types/models'
 import SignOutButton from '@/components/dashboard/signOutButton'
+import { useAppSettings } from '@/contexts/AppSettingsContext'
 
 interface DashboardSidebarProps {
   user: User
@@ -21,11 +22,13 @@ interface DashboardSidebarProps {
 
 export default function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname()
+  const { eventMode } = useAppSettings()
   const baseLinks = [
     { href: '/dashboard', icon: FaHome, label: 'Dashboard' },
     { href: '/dashboard/profile', icon: FaUser, label: 'Profil' },
-    { href: '/dashboard/registrations', icon: FaCalendarAlt, label: 'Înregistrările mele' },
-    { href: '/workshops', icon: FaCalendarAlt, label: 'Workshop-uri' },
+    ...(eventMode !== 'ball' ? [{ href: '/dashboard/registrations', icon: FaCalendarAlt, label: 'Înregistrările mele' }] : []),
+    { href: '/dashboard/tickets', icon: FaTicketAlt, label: 'Biletele mele' },
+    ...(eventMode !== 'ball' ? [{ href: '/workshops', icon: FaCalendarAlt, label: 'Workshop-uri' }] : []),
     { href: '/payment', icon: FaCreditCard, label: 'Cumpără Bilet' },
   ]
 

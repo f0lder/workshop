@@ -1,13 +1,9 @@
 import { getAllWorkshops, getIsRegisteredForWorkshop } from '@/app/workshops/actions';
 import type { Workshop } from '@/types/models';
-import WorkshopListClient from './WorkshopListClient'; // <-- Import the new client component
-import { RegistrationProvider } from '@/contexts/RegistrationContext';
+import WorkshopListClient from './WorkshopListClient';
 
 interface WorkshopListProps {
   workshopVisibleToPublic: boolean;
-  globalRegistrationEnabled: boolean;
-  registrationStartTime: string | null;
-  registrationDeadline: string | null;
 }
 
 type ExtendedWorkshop = {
@@ -18,7 +14,7 @@ function isString(value: unknown): value is string {
   return typeof value === 'string';
 }
 
-export default async function WorkshopList({ workshopVisibleToPublic, globalRegistrationEnabled, registrationStartTime, registrationDeadline }: WorkshopListProps) {
+export default async function WorkshopList({ workshopVisibleToPublic }: WorkshopListProps) {
   // If workshops are not visible to public, show coming soon message
   if (!workshopVisibleToPublic) {
     return null;
@@ -71,15 +67,5 @@ export default async function WorkshopList({ workshopVisibleToPublic, globalRegi
     };
   });
 
-  return (
-    <RegistrationProvider
-      value={{
-        globalRegistrationEnabled,
-        registrationStartTime,
-        registrationDeadline,
-      }}
-    >
-      <WorkshopListClient initialWorkshops={plainWorkshops} />
-    </RegistrationProvider>
-  );
+  return <WorkshopListClient initialWorkshops={plainWorkshops} />;
 }

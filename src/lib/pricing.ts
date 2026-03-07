@@ -27,11 +27,3 @@ export const TICKET_PRICES = {
 } as const;
 
 export type TicketType = keyof typeof TICKET_PRICES;
-
-// Helper function to get ticket details
-export function getTicketDetails(accessLevel: string) {
-  if (accessLevel === 'unpaid') {
-    return null;
-  }
-  return TICKET_PRICES[accessLevel as TicketType];
-}

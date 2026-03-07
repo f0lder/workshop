@@ -71,12 +71,7 @@ export default async function WorkshopsPage() {
 
           {/* Workshop List with Loading */}
           <Suspense fallback={<WorkshopListSkeleton />}>
-            <WorkshopList 
-              workshopVisibleToPublic={workshopVisibleToPublic} 
-              globalRegistrationEnabled={globalRegistrationEnabled}
-              registrationStartTime={registrationStartTime}
-              registrationDeadline={registrationDeadline}
-            />
+            <WorkshopList workshopVisibleToPublic={workshopVisibleToPublic} />
           </Suspense>
 
           {/* Info Section */}

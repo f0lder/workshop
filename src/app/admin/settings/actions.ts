@@ -24,16 +24,11 @@ export async function updateSettings(formData: FormData) {
     const registrationStartTimeStr = formData.get('registrationStartTime') as string
     const registrationDeadlineStr = formData.get('registrationDeadline') as string
     
-    // Helper to convert datetime-local input to proper Date
-    // The input is in the user's timezone (Romania = UTC+2)
-    // The server is in UTC, so we need to preserve the user's intended time
+    // Helper to convert datetime-local input to a Date.
+    // Returns undefined for empty input so Mongoose strips it from $set
+    // (leaving the existing DB value untouched).
     const parseDateTime = (dateTimeStr: string): Date | undefined => {
       if (!dateTimeStr) return undefined
-      
-      // datetime-local format: "2025-11-10T20:00"
-      // When user enters 20:00 in Romania (UTC+2), they mean 20:00 Romania time
-      // But server interprets as 20:00 UTC (wrong!)
-      // Solution: Append 'Z' to treat input as UTC, which preserves the numbers
       return new Date(dateTimeStr + ':00.000Z')
     }
     
@@ -46,6 +41,11 @@ export async function updateSettings(formData: FormData) {
       registrationStartTime: parseDateTime(registrationStartTimeStr),
       registrationDeadline: parseDateTime(registrationDeadlineStr),
       defaultMaxParticipants: parseInt(formData.get('defaultMaxParticipants') as string) || 20,
+      // Event mode and ball settings
+      eventMode: (formData.get('eventMode') as string) === 'ball' ? 'ball' as const : 'workshops' as const,
+      ballMaxTicketsPerUser: parseInt(formData.get('ballMaxTicketsPerUser') as string) || 2,
+      ballTicketAvailableFrom: parseDateTime(formData.get('ballTicketAvailableFrom') as string),
+      ballTicketAvailableTo: parseDateTime(formData.get('ballTicketAvailableTo') as string),
     }
 
     // Update settings
@@ -54,6 +54,7 @@ export async function updateSettings(formData: FormData) {
     // Revalidate pages that might use settings
     revalidatePath('/admin/settings')
     revalidatePath('/workshops')
+    revalidatePath('/payment')
     revalidatePath('/')
     
     return { success: true }

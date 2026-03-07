@@ -91,12 +91,6 @@ export default async function AttendancePage({ params }: { params: Promise<{ use
 								{user.userType}
 							</span>
 						</div>
-						<div>
-							<p className="font-semibold text-muted-foreground">Nivel Acces:</p>
-							<span className="inline-block bg-primary/10 text-primary px-2 py-1 rounded text-sm border border-primary/20">
-								{user.accessLevel}
-							</span>
-						</div>
 					</div>
 				</div>
 

@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from "next/cache";
 import { Ticket as TicketType } from "@/types/models";
 import { Ticket } from "@/models";
 import connectDB from "@/lib/mongodb";
@@ -24,14 +25,17 @@ export async function createTicket(data: {
 	features: string[];
 	type: string;
 	enabled?: boolean;
+	category?: 'workshop' | 'ball';
 }): Promise<void> {
 	await connectDB();
 
 	const ticket = new Ticket({
 		...data,
-		enabled: data.enabled ?? true
+		enabled: data.enabled ?? true,
+		category: data.category ?? 'workshop',
 	});
 	await ticket.save();
+	revalidatePath('/admin/tickets');
 }
 
 export async function updateTicket(ticketId: string, data: {
@@ -41,6 +45,7 @@ export async function updateTicket(ticketId: string, data: {
 	features?: string[];
 	type?: string;
 	enabled?: boolean;
+	category?: 'workshop' | 'ball';
 }): Promise<void> {
 	await connectDB();
 
@@ -55,9 +60,10 @@ export async function updateTicket(ticketId: string, data: {
 	ticket.features = data.features ?? ticket.features;
 	ticket.type = data.type ?? ticket.type;
 	ticket.enabled = data.enabled ?? ticket.enabled;
+	if (data.category) ticket.category = data.category;
 	await ticket.save();
 
-	// Don't return the Mongoose document to avoid serialization errors
+	revalidatePath('/admin/tickets');
 }
 
 

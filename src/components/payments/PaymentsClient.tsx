@@ -18,7 +18,6 @@ interface PaymentWithUser {
 	stripePaymentIntentId?: string
 	amount: number
 	currency: string
-	accessLevel: string
 	ticketId: string
 	ticketType: string
 	status: 'pending' | 'completed' | 'failed' | 'refunded'
@@ -71,7 +70,7 @@ export default function PaymentsClient({ stats, payments }: PaymentsClientProps)
 				escapeCSV(p.user?.lastName),
 				escapeCSV(p.user?.firstName),
 				escapeCSV(p.user?.email),
-				escapeCSV(p.ticketType || p.accessLevel), // Use combined logic
+				escapeCSV(p.ticketType || ''),
 				String(p.amount / 100), // Raw number for CSV
 				escapeCSV(p.currency),
 				escapeCSV(p.stripeSessionId),

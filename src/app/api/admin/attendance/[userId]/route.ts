@@ -52,8 +52,7 @@ export async function GET(
 				firstName: userData.firstName,
 				lastName: userData.lastName,
 				email: userData.email,
-				userType: userData.userType,
-				accessLevel: userData.accessLevel
+				userType: userData.userType
 			},
 			registrations: transformedRegistrations
 		});

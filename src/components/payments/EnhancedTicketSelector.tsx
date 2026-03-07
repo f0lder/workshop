@@ -7,10 +7,9 @@ import type { Ticket as TicketType } from '@/types/models';
 import EmbeddedCheckout from './EmbeddedCheckout';
 
 interface EnhancedTicketSelectorProps {
-	currentAccessLevel?: string;
 }
 
-export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedTicketSelectorProps) {
+export default function EnhancedTicketSelector() {
 	const [selectedTicket, setSelectedTicket] = useState<TicketType | null>(null);
 	const [showCheckout, setShowCheckout] = useState(false);
 	const [tickets, setTickets] = useState<TicketType[]>([]);
@@ -42,11 +41,6 @@ export default function EnhancedTicketSelector({ currentAccessLevel }: EnhancedT
 	const handlePaymentError = (error: string) => {
 		console.error('Payment error:', error);
 		// Keep checkout open for retry
-	};
-
-
-	const isPurchased = () => {
-		return currentAccessLevel === selectedTicket?._id;
 	};
 
 	if (showCheckout && selectedTicket) {

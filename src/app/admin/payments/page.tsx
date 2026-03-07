@@ -21,7 +21,6 @@ interface PaymentWithUser {
   stripePaymentIntentId?: string
   amount: number
   currency: string
-  accessLevel: string
   ticketId: string
   ticketType: string
   status: 'pending' | 'completed' | 'failed' | 'refunded'
@@ -57,8 +56,6 @@ export default async function PaymentsPage() {
     .reduce((acc, p) => {
       if (p.ticketType) {
         acc[p.ticketType] = (acc[p.ticketType] || 0) + 1
-      } else if (p.accessLevel) {
-        acc[p.accessLevel] = (acc[p.accessLevel] || 0) + 1
       } else {
         acc['unknown'] = (acc['unknown'] || 0) + 1
       }
@@ -88,7 +85,6 @@ export default async function PaymentsPage() {
       stripePaymentIntentId: payment.stripePaymentIntentId,
       amount: payment.amount || 0,
       currency: payment.currency || 'RON',
-      accessLevel: payment.accessLevel || 'passive',
       ticketId: payment.ticketId || '',
       ticketType: payment.ticketType || '',
       status: payment.status || 'pending',

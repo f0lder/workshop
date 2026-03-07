@@ -15,35 +15,17 @@ const DEFAULT_SETTINGS = {
 }
 
 /**
- * Get app settings from database or create default if doesn't exist.
- * Also patches any fields that were added to the schema after the document
- * was first created (lazy migration — safe and idempotent).
+ * Get app settings from database or create default if doesn't exist
  */
 export async function getAppSettings(): Promise<IAppSettings> {
   await connectDB()
   
+  // Look for any settings document (should only be one)
   let settings = await AppSettings.findOne()
   
   if (!settings) {
+    // Create default settings if they don't exist
     settings = await AppSettings.create(DEFAULT_SETTINGS)
-    return settings
-  }
-
-  // Lazily migrate fields that may be missing in documents created before
-  // they were added to the schema. Only write if something is actually missing.
-  const patch: Partial<typeof DEFAULT_SETTINGS> = {}
-  for (const [key, defaultValue] of Object.entries(DEFAULT_SETTINGS) as [keyof typeof DEFAULT_SETTINGS, unknown][]) {
-    if (settings[key] === undefined || settings[key] === null) {
-      (patch as Record<string, unknown>)[key] = defaultValue
-    }
-  }
-
-  if (Object.keys(patch).length > 0) {
-    settings = await AppSettings.findByIdAndUpdate(
-      settings._id,
-      { $set: patch },
-      { new: true }
-    ) ?? settings
   }
   
   return settings

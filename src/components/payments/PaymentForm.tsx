@@ -31,7 +31,7 @@ export default function PaymentForm({users, tickets}: {users: User[], tickets: T
 				clerkId: userId,
 				ticketId: ticketId,
 				ticketType: tickets.find(t => t._id === ticketId)?.type || 'unknown',
-				accessLevel: tickets.find(t => t._id === ticketId)?.type || 'unpaid',
+
 				amount: Number(amount) * 100, // Convert to cents
 				currency: 'RON',
 				stripeSessionId: `manual_${Date.now()}_${userId}`,

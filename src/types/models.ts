@@ -13,7 +13,6 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   userType: UserType;
-  accessLevel: string;
 }
 
 // For Clerk user type, we'll use the imported type from @clerk/nextjs/server
@@ -87,9 +86,10 @@ export interface Payment {
   stripePaymentIntentId?: string;
   amount: number;
   currency: string;
-  accessLevel: string; // Kept for backward compatibility
   ticketId?: string;
   ticketType?: string;
+  ticketCategory?: 'workshop' | 'ball';
+  quantity: number;
   status: 'pending' | 'completed' | 'failed' | 'refunded';
   metadata?: Record<string, string>;
   createdAt: Date;
@@ -105,6 +105,7 @@ export interface Ticket {
   price: number; // Ticket price in RON
   features: string[]; // List of features
   enabled: boolean; // Whether the ticket is available for purchase
+  category: 'workshop' | 'ball'; // Which event type this ticket belongs to
   createdAt?: Date;
   updatedAt?: Date;
 }

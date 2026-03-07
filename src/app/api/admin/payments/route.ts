@@ -2,7 +2,6 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { createTicketPayment } from '@/app/admin/payments/actions';
 import type { Payment } from '@/types/models';
-import { updateUserAccessLevel } from '@/app/admin/users/actions';
 
 export async function POST(request: NextRequest) {
 	try {
@@ -29,12 +28,6 @@ export async function POST(request: NextRequest) {
 		const newPayment = await createTicketPayment(paymentData);
 
 		console.log('Payment created successfully:', newPayment);
-
-		// update user access level based on payment (if needed)
-		if (paymentData.amount > 0) {
-			console.log('Updating user access level:', paymentData.clerkId, paymentData.accessLevel);
-			await updateUserAccessLevel(paymentData.clerkId, paymentData.accessLevel || 'unpaid');
-		}
 
 		return NextResponse.json(newPayment, { status: 201 });
 	} catch (error) {

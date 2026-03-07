@@ -24,6 +24,7 @@ export default function NewTicketPage() {
 		const features = featuresString.split(',').map(f => f.trim()).filter(f => f.length > 0)
 		const type = formData.get('type') as string
 		const enabled = formData.get('enabled') === 'on'
+		const category = formData.get('category') as 'workshop' | 'ball'
 
 		const data = {
 			title,
@@ -31,14 +32,14 @@ export default function NewTicketPage() {
 			price,
 			features,
 			type,
-			enabled
+			enabled,
+			category: category || 'workshop',
 		}
 
 		startTransition(async () => {
 			try {
 				await createTicket(data)
 				router.push('/admin/tickets')
-				router.refresh()
 			} catch (err) {
 				setError(err instanceof Error ? err.message : 'A apărut o eroare')
 			}
@@ -146,6 +147,32 @@ export default function NewTicketPage() {
 			  <label htmlFor="enabled" className="text-sm font-medium text-foreground">
 				  Bilet activ (disponibil pentru cumpărare)
 			  </label>
+			</div>
+
+			<div>
+			  <label className="block text-sm font-medium text-foreground mb-2">
+				  Categorie bilet <span className="text-destructive">*</span>
+			  </label>
+			  <div className="flex gap-4">
+				  {(['workshop', 'ball'] as const).map((cat) => (
+					  <label key={cat} className="flex items-center gap-2 cursor-pointer">
+						  <input
+							  type="radio"
+							  name="category"
+							  value={cat}
+							  defaultChecked={cat === 'workshop'}
+							  disabled={isPending}
+							  className="w-4 h-4 text-primary border-input"
+						  />
+						  <span className="text-sm text-foreground">
+							  {cat === 'workshop' ? '🎓 Workshop' : '🎭 Bal'}
+						  </span>
+					  </label>
+				  ))}
+			  </div>
+			  <p className="mt-1 text-sm text-muted-foreground">
+				  Biletele de tip <strong>Bal</strong> se vând cu cantitate și apar pe pagina de bal.
+			  </p>
 			</div>
 		</div>
 

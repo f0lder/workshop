@@ -4,10 +4,9 @@ import { UserType } from '@/types/models';
 
 interface AccountInfoProps {
   userType: UserType;
-  accessLevel: string;
 }
 
-export default function AccountInfo({ userType, accessLevel }: AccountInfoProps) {
+export default function AccountInfo({ userType }: AccountInfoProps) {
   const { user } = useUser();
 
   if (!user) {
@@ -44,14 +43,6 @@ export default function AccountInfo({ userType, accessLevel }: AccountInfoProps)
             {userType === 'student' && 'Student'}
             {userType === 'elev' && 'Elev'}
             {userType === 'rezident' && 'Rezident'}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm font-medium text-muted-foreground">
-            Nivel acces
-          </dt>
-          <dd className="mt-1 text-sm text-foreground">
-            {accessLevel ?? 'N/A'}
           </dd>
         </div>
       </dl>

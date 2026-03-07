@@ -27,7 +27,6 @@ export async function syncUserWithDatabase(clerkUser: ClerkUser): Promise<User> 
         lastName: clerkUser.lastName || existingUser?.lastName || '',
         role: role, // Preserve existing role or use Clerk's metadata
         userType: clerkUser.unsafeMetadata?.userType || existingUser?.userType || 'student', // Default to 'student' if not set
-        accessLevel: clerkUser.unsafeMetadata?.accessLevel || existingUser?.accessLevel || 'unpaid' // Default to 'unpaid' if not set
       },
       {
         upsert: true, // Create if doesn't exist

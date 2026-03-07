@@ -3,6 +3,7 @@ import { FaCalendarAlt, FaUsers, FaCog,FaCalendarCheck } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
 import SimpleUserQRCode from '@/components/SimpleUserQRCode'
+import { getAppSettings } from '@/lib/settings'
 
 export default async function DashboardPage() {
   const clerkUser = await currentUser()
@@ -12,6 +13,8 @@ export default async function DashboardPage() {
 
   // Sync user with database
   const user = await syncUserWithDatabase(clerkUser)
+  const appSettings = await getAppSettings()
+  const isBallMode = appSettings?.eventMode === 'ball'
 
   return (
     <div className="space-y-6">
@@ -55,10 +58,6 @@ export default async function DashboardPage() {
                 <span className="ml-2 font-medium text-foreground">{user.userType}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Nivel acces:</span>
-                <span className="ml-2 font-medium text-foreground">{user.accessLevel}</span>
-              </div>
-              <div>
                 <span className="text-muted-foreground">Rol:</span>
                 <span className="ml-2 font-medium text-foreground">
                   {user.role === 'admin' ? 'Administrator' : 'Utilizator'}
@@ -76,17 +75,20 @@ export default async function DashboardPage() {
             Acțiuni rapide
           </h3>
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Link
-              href="/workshops"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
-            >
-              <FaCalendarAlt className="mr-2 h-4 w-4" />
-               Workshop-uri
-            </Link>
-            <Link href="/dashboard/registrations" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90">
-              <FaCalendarCheck className="mr-2 h-4 w-4" />
-              Înregistrările mele
-            </Link>
+            {!isBallMode && (
+              <Link href="/workshops"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
+              >
+                <FaCalendarAlt className="mr-2 h-4 w-4" />
+                 Workshop-uri
+              </Link>
+            )}
+            {!isBallMode && (
+              <Link href="/dashboard/registrations" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90">
+                <FaCalendarCheck className="mr-2 h-4 w-4" />
+                Înregistrările mele
+              </Link>
+            )}
             <Link
               href="/dashboard/profile"
               className="inline-flex items-center px-4 py-2 border border-input text-sm font-medium rounded-md text-foreground bg-background hover:bg-accent"

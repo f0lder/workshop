@@ -32,17 +32,8 @@ const nextConfig: NextConfig = {
 	compiler: {
 		removeConsole: process.env.NODE_ENV === 'production',
 	},
-	// Disable Next.js polyfills for modern browsers (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
-	webpack: (config, { isServer }) => {
-		if (!isServer) {
-			// Replace next-polyfill-module with empty module to eliminate 14KB polyfills
-			config.resolve.alias = {
-				...config.resolve.alias,
-				'next-polyfill-module': false,
-			};
-		}
-		return config;
-	},
+	// Turbopack configuration (Next.js 16 uses Turbopack by default)
+	turbopack: {},
 	experimental: {
 		optimizePackageImports: ['react-icons', 'lucide-react'],
 	},

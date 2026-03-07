@@ -43,7 +43,8 @@ export default async function EditTicketPage({ params }: EditTicketPageProps) {
 		price: ticket.price,
 		features: ticket.features,
 		type: ticket.type,
-		enabled: ticket.enabled
+		enabled: ticket.enabled,
+		category: ticket.category || 'workshop',
 	}
 
 	return <EditTicketForm ticket={ticketData} />

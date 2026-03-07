@@ -28,6 +28,7 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 		const features = featuresString.split(',').map(f => f.trim()).filter(f => f.length > 0)
 		const type = formData.get('type') as string
 		const enabled = formData.get('enabled') === 'on'
+		const category = (formData.get('category') as 'workshop' | 'ball') || 'workshop'
 
 		// Get the ticket ID - use id property (not _id)
 		const ticketId = ticket.id || ticket._id
@@ -45,10 +46,10 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 					price,
 					features,
 					type,
-					enabled
+					enabled,
+					category,
 				})
 				router.push('/admin/tickets')
-				router.refresh()
 			} catch (err) {
 				setError(err instanceof Error ? err.message : 'A apărut o eroare')
 			}
@@ -158,6 +159,29 @@ export default function EditTicketForm({ ticket }: EditTicketFormProps) {
 							Bilet activ (disponibil pentru cumpărare)
 						</label>
 					</div>
+
+				<div>
+					<label className="block text-sm font-medium text-foreground mb-2">
+						Categorie bilet
+					</label>
+					<div className="flex gap-4">
+						{(['workshop', 'ball'] as const).map((cat) => (
+							<label key={cat} className="flex items-center gap-2 cursor-pointer">
+								<input
+									type="radio"
+									name="category"
+									value={cat}
+									defaultChecked={(ticket.category || 'workshop') === cat}
+									disabled={isPending}
+									className="w-4 h-4 text-primary border-input"
+								/>
+								<span className="text-sm text-foreground">
+									{cat === 'workshop' ? '🎓 Workshop' : '🎭 Bal'}
+								</span>
+							</label>
+						))}
+					</div>
+				</div>
 				</div>
 
 				<div className="flex gap-3">

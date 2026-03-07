@@ -16,6 +16,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY 
 
 interface EmbeddedCheckoutProps {
 	ticketId: string;
+	quantity?: number;
 	onSuccess?: () => void;
 	onError?: (error: string) => void;
 }
@@ -95,7 +96,7 @@ function CheckoutForm({ onSuccess, onError }: { onSuccess?: () => void; onError?
 	);
 }
 
-export default function EmbeddedCheckout({ ticketId, onSuccess, onError }: EmbeddedCheckoutProps) {
+export default function EmbeddedCheckout({ ticketId, quantity = 1, onSuccess, onError }: EmbeddedCheckoutProps) {
 	const [clientSecret, setClientSecret] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -110,7 +111,7 @@ export default function EmbeddedCheckout({ ticketId, onSuccess, onError }: Embed
 				const res = await fetch('/api/payments/create-payment-intent', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ ticketId }),
+					body: JSON.stringify({ ticketId, quantity }),
 				});
 				
 				const data = await res.json();
@@ -212,9 +213,6 @@ export default function EmbeddedCheckout({ ticketId, onSuccess, onError }: Embed
 		<div className="max-w-md mx-auto">
 			{clientSecret && (
 				<>
-					<p className='mb-4 text-sm text-muted-foreground'>
-						Înainte de efectuarea plății taxei de participare, vă rugăm să descărcați și să completați formularul GDPR (disponibil <Link href="/docs/gdpr.pdf" target='_blank' className="text-primary underline">aici</Link>) și să îl trimiteți împreună cu dovada plății la adresa de e-mail a secretariatului: <Link href="mailto:secretariat@asmm-bucuresti.com" className="text-primary underline">secretariat@asmm-bucuresti.com</Link>. Validarea înscrierii se va face doar după primirea ambelor documente.
-					</p>
 					<Elements options={options} stripe={stripePromise}>
 						<CheckoutForm onSuccess={onSuccess} onError={onError} />
 					</Elements>

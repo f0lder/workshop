@@ -39,8 +39,7 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
   const [editData, setEditData] = useState<{
     role: 'user' | 'admin' | 'moderator',
     userType: UserType | '',
-    accessLevel: string
-  }>({ role: 'user', userType: '', accessLevel: 'unpaid' })
+  }>({ role: 'user', userType: '' })
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -59,13 +58,11 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
       const email = user.email.toLowerCase()
       const role = user.role.toLowerCase()
       const userType = (user.userType || '').toLowerCase()
-      const accessLevel = (user.accessLevel || '').toLowerCase()
 
       return name.includes(query) ||
         email.includes(query) ||
         role.includes(query) ||
-        userType.includes(query) ||
-        accessLevel.includes(query)
+        userType.includes(query)
     })
   }, [users, searchQuery])
 
@@ -74,7 +71,6 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
     setEditData({
       role: user.role,
       userType: user.userType || '',
-      accessLevel: user.accessLevel || 'unpaid'
     })
     setMessage('')
     setError('')
@@ -88,7 +84,6 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
         formData.append('userId', userId)
         formData.append('role', editData.role)
         formData.append('userType', editData.userType)
-        formData.append('accessLevel', editData.accessLevel)
 
         const result = await updateUserRole(formData)
         setMessage(result.message)
@@ -207,7 +202,7 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
         </div>
         <input
           type="text"
-          placeholder="Caută utilizatori după nume, email, rol, tip cont sau nivel acces..."
+          placeholder="Caută utilizatori după nume, email, rol sau tip cont..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="block w-full pl-10 pr-10 py-3 border border-border rounded-lg bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
@@ -258,9 +253,6 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
               <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Tip cont
               </th>
-              <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Nivel Access
-              </th>
               <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Acțiuni
               </th>
@@ -269,7 +261,7 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
           <tbody className="bg-card divide-y divide-border">
             {filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center">
+                <td colSpan={6} className="px-6 py-12 text-center">
                   <div className="flex flex-col items-center justify-center text-muted-foreground">
                     <FaSearch className="h-12 w-12 mb-3 opacity-50" />
                     <p className="text-lg font-medium">Niciun utilizator găsit</p>
@@ -324,10 +316,6 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
                     <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                       {user.userType || 'N/A'}
                     </td>
-
-                    <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                      {user.accessLevel || 'N/A'}
-                    </td>
                     <td className="px-3 sm:px-6 py-4 text-sm text-muted-foreground">
                       {editingUserId === user.clerkId ? (
                         <div className="relative">
@@ -363,20 +351,6 @@ export default function UserList({ users, currentUserId, onRefresh }: UserListPr
                                   <option value="student">Student</option>
                                   <option value="elev">Elev</option>
                                   <option value="rezident">Rezident</option>
-                                </select>
-                              </div>
-
-                              <div>
-                                <label htmlFor={`${user.clerkId}-accessLevel`} className="block text-xs font-medium text-muted-foreground mb-1">Nivel acces</label>
-                                <select
-                                  id={`${user.clerkId}-accessLevel`}
-                                  value={editData.accessLevel}
-                                  onChange={(e) => setEditData({ ...editData, accessLevel: e.target.value })}
-                                  className="w-full text-sm border border-input bg-background rounded px-2 py-1"
-                                  disabled={isPending}
-                                >
-                                  <option value="unpaid">Neplătit</option>
-                                  <option value="paid">Plătit</option>
                                 </select>
                               </div>
                             </div>

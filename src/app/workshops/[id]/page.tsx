@@ -1,10 +1,8 @@
 import { getWorkshopById } from "../actions";
 import HeaderContent from "@/components/ui/HeaderContent";
 import { WorkshopRegistrationButton } from "@/components/WorkshopRegistrationButton";
-import { RegistrationProvider } from "@/contexts/RegistrationContext";
 import type { Workshop } from "@/types/models";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaChalkboardTeacher, FaUsers, FaInfoCircle, FaInstagram } from 'react-icons/fa';
-import { getAppSettings } from "@/lib/settings";
 import { getIsRegisteredForWorkshop } from "../actions";
 import { Metadata } from 'next';
 import { InstagramPost } from "@/components/InstagramPost";
@@ -72,11 +70,6 @@ function formatDateTime(value?: Date | string) {
 export default async function WorkshopPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
 
-	const appSettings = await getAppSettings()
-	const globalRegistrationEnabled = appSettings?.globalRegistrationEnabled || false
-	const registrationStartTime = appSettings?.registrationStartTime ? appSettings.registrationStartTime.toString() : null
-	const registrationDeadline = appSettings?.registrationDeadline ? appSettings.registrationDeadline.toString() : null
-
 	const workshop = (await getWorkshopById(id)) as Workshop | null;
 
 	if (!workshop) {
@@ -107,14 +100,7 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 	return (
 		<>
 			<HeaderContent title={`${wType}: ${workshop.title}`} />
-			<RegistrationProvider
-				value={{
-					globalRegistrationEnabled,
-					registrationStartTime,
-					registrationDeadline,
-				}}
-			>
-				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 					{/* Hero Section */}
 					<div className="mimesiss-card p-8">
 						<div className="text-center mb-6">
@@ -298,7 +284,6 @@ export default async function WorkshopPage({ params }: { params: Promise<{ id: s
 						</div>
 					)}
 				</div>
-			</RegistrationProvider>
 		</>
 	);
 }

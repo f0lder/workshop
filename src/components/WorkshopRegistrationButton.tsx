@@ -5,7 +5,7 @@ import { useTransition } from 'react'
 import { useToast } from '@/components/ui/ToastProvider'
 import { registerForWorkshop } from '@/app/workshops/actions'
 import { useMongoUser } from '@/hooks/useMongoUser'
-import { useRegistration } from '@/contexts/RegistrationContext'
+import { useAppSettings } from '@/contexts/AppSettingsContext'
 import Link from 'next/link'
 
 interface WorkshopRegistrationButtonProps {
@@ -24,7 +24,7 @@ function Spinner() {
 
 export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isRegistered }: WorkshopRegistrationButtonProps) {
   const { user: mongoUser, isLoading: isLoadingUser, error } = useMongoUser()
-  const { globalRegistrationEnabled, registrationStartTime, registrationDeadline } = useRegistration()
+  const { globalRegistrationEnabled, registrationStartTime, registrationDeadline } = useAppSettings()
   const [isPending, startTransition] = useTransition()
   const { showToast } = useToast()
 
@@ -141,20 +141,6 @@ export function WorkshopRegistrationButton({ workshop, onOptimisticUpdate, isReg
       <div className="w-full text-center py-2 px-4 bg-gray-100 text-gray-600 rounded-md border border-gray-300">
         Înregistrările sunt închise
       </div>
-    )
-  }
-
-  // If user has unpaid access level, show link to payment page
-  if (mongoUser.accessLevel === 'unpaid') {
-    return (
-      <Link href="/payment" className="w-full">
-        <button
-          type="button"
-          className="w-full font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white"
-        >
-          Cumpără bilet pentru a te înregistra
-        </button>
-      </Link>
     )
   }
 

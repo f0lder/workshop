@@ -187,6 +187,96 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
           </div>
         </div>
 
+        {/* Ball (Gala) Settings */}
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-medium text-foreground border-b border-border pb-2">
+              Mod Eveniment &amp; Setări Bal
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Comutați între modul Workshop (bilete individuale) și modul Bal (bilete multiple cu cantitate).
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Mod activ
+            </label>
+            <div className="flex gap-3">
+              {(['workshops', 'ball'] as const).map((mode) => (
+                <label
+                  key={mode}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="eventMode"
+                    value={mode}
+                    defaultChecked={initialSettings.eventMode === mode || (!initialSettings.eventMode && mode === 'workshops')}
+                    className="w-4 h-4 text-primary border-input focus:ring-primary"
+                  />
+                  <span className="text-sm text-foreground capitalize">
+                    {mode === 'workshops' ? '🎓 Workshop-uri' : '🎭 Bal'}
+                  </span>
+                </label>
+              ))}
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              <strong>Workshop-uri</strong> — pagina de plată și dashboard-ul utilizatorului arată biletele pentru conferință/workshop.
+              <br />
+              <strong>Bal</strong> — pagina de plată arată biletele de bal cu selector de cantitate.
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="ballMaxTicketsPerUser" className="block text-sm font-medium text-foreground">
+              Număr maxim de bilete de bal per utilizator
+            </label>
+            <div className="mt-1 max-w-xs">
+              <input
+                type="number"
+                name="ballMaxTicketsPerUser"
+                min="1"
+                max="50"
+                defaultValue={initialSettings.ballMaxTicketsPerUser ?? 2}
+                className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label htmlFor="ballTicketAvailableFrom" className="block text-sm font-medium text-foreground">
+                Bilete de bal disponibile începând cu
+              </label>
+              <div className="mt-1">
+                <input
+                  type="datetime-local"
+                  name="ballTicketAvailableFrom"
+                  defaultValue={formatDateTimeLocal(initialSettings.ballTicketAvailableFrom)}
+                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                />
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">Lăsați gol pentru disponibilitate imediată.</p>
+            </div>
+
+            <div>
+              <label htmlFor="ballTicketAvailableTo" className="block text-sm font-medium text-foreground">
+                Vânzare bilete de bal încheiată pe
+              </label>
+              <div className="mt-1">
+                <input
+                  type="datetime-local"
+                  name="ballTicketAvailableTo"
+                  defaultValue={formatDateTimeLocal(initialSettings.ballTicketAvailableTo)}
+                  className="block w-full px-3 py-2 border border-input bg-background rounded-md shadow-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                />
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">Lăsați gol pentru nelimitat.</p>
+            </div>
+          </div>
+        </div>
+
         {/* Action Buttons */}
         <div className="flex justify-between pt-6 border-t border-border">
           <button

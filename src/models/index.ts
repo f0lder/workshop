@@ -10,7 +10,6 @@ export interface IUser extends Document {
   lastName?: string
   role: UserRole
   userType: UserType
-  accessLevel: string
 }
 
 // Workshop interface
@@ -46,6 +45,7 @@ export interface ITicket extends Document {
   features: string[] // List of features
   description?: string // Optional detailed description
   enabled: boolean // Whether the ticket is available for purchase
+  category: 'workshop' | 'ball' // Type of event this ticket belongs to
 }
 
 // User schema
@@ -56,14 +56,12 @@ const UserSchema = new Schema<IUser>({
   lastName: { type: String },
   role: { type: String, enum: ['user', 'admin', 'moderator'], default: 'user' },
   userType: { type: String, enum: ['student', 'elev', 'rezident'], default: 'student' },
-  accessLevel: { type: String, default: 'unpaid' },
 }, {
   timestamps: true
 })
 
 // Add indexes for performance (clerkId and email already indexed via unique: true)
 UserSchema.index({ role: 1 })
-UserSchema.index({ accessLevel: 1 })
 
 // Workshop schema
 const WorkshopSchema = new Schema<IWorkshop>({
@@ -116,11 +114,14 @@ export interface IPayment extends Document {
   stripePaymentIntentId?: string
   amount: number
   currency: string
-  accessLevel: string // Kept for backward compatibility
   ticketId?: string
   ticketType?: string
+  ticketCategory?: 'workshop' | 'ball'
+  quantity: number
   status: 'pending' | 'completed' | 'failed' | 'refunded'
   metadata?: Record<string, string>
+  createdAt: Date
+  updatedAt: Date
 }
 
 // Payment schema
@@ -130,12 +131,10 @@ const PaymentSchema = new Schema<IPayment>({
   stripePaymentIntentId: { type: String },
   amount: { type: Number, required: true },
   currency: { type: String, required: true, default: 'ron' },
-  accessLevel: {
-    type: String,
-    required: true, // Kept for backward compatibility
-  },
   ticketId: { type: String, index: true },
   ticketType: { type: String, index: true },
+  ticketCategory: { type: String, enum: ['workshop', 'ball'], index: true },
+  quantity: { type: Number, required: true, default: 1, min: 1 },
   status: {
     type: String,
     required: true,
@@ -158,16 +157,63 @@ const TicketSchema = new Schema<ITicket>({
   features: { type: [String], required: true },
   type: { type: String, required: true },
   enabled: { type: Boolean, required: true, default: true },
+  category: { type: String, enum: ['workshop', 'ball'], default: 'workshop', required: true },
 }, {
   timestamps: true
 })
 
-// Models
-export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema)
+// Counter (for auto-incrementing sequences)
+interface ICounter extends Document {
+  _id: string
+  seq: number
+}
+const CounterSchema = new Schema<ICounter>({ seq: { type: Number, default: 0 } })
+export const Counter = mongoose.models.Counter || mongoose.model<ICounter>('Counter', CounterSchema)
+
+// IssuedTicket — one document per physical ticket issued to a user
+export interface IIssuedTicket extends Document {
+  ticketNumber: number        // globally unique sequential number (1, 2, 3…)
+  clerkId: string             // owner
+  paymentId: string           // Payment._id reference
+  ticketTypeId: string        // Ticket._id reference (the product)
+  ticketTitle: string         // denormalized for display
+  ticketType: string          // e.g. "bal"
+  category: 'workshop' | 'ball'
+  status: 'active' | 'used' | 'cancelled'
+  pricePerTicket: number      // amount paid per ticket in smallest currency unit
+  currency: string
+  createdAt: Date
+  updatedAt: Date
+}
+const IssuedTicketSchema = new Schema<IIssuedTicket>({
+  ticketNumber: { type: Number, required: true, unique: true },
+  clerkId: { type: String, required: true, index: true },
+  paymentId: { type: String, required: true, index: true },
+  ticketTypeId: { type: String, required: true },
+  ticketTitle: { type: String, required: true },
+  ticketType: { type: String, required: true },
+  category: { type: String, enum: ['workshop', 'ball'], required: true },
+  status: { type: String, enum: ['active', 'used', 'cancelled'], default: 'active' },
+  pricePerTicket: { type: Number, required: true },
+  currency: { type: String, required: true, default: 'RON' },
+}, { timestamps: true })
+IssuedTicketSchema.index({ clerkId: 1, category: 1 })
+
+if (mongoose.models.IssuedTicket) delete mongoose.models.IssuedTicket
+export const IssuedTicket = mongoose.model<IIssuedTicket>('IssuedTicket', IssuedTicketSchema)
+
+
 export const Workshop = mongoose.models.Workshop || mongoose.model<IWorkshop>('Workshop', WorkshopSchema)
+export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema)
 export const Registration = mongoose.models.Registration || mongoose.model<IRegistration>('Registration', RegistrationSchema)
-export const Payment = mongoose.models.Payment || mongoose.model<IPayment>('Payment', PaymentSchema)
-export const Ticket = mongoose.models.Ticket || mongoose.model<ITicket>('Ticket', TicketSchema)
+
+// Payment and Ticket had fields added (ticketCategory/quantity and category).
+// Force re-registration so the updated schema is always used.
+if (mongoose.models.Payment) delete mongoose.models.Payment
+export const Payment = mongoose.model<IPayment>('Payment', PaymentSchema)
+
+if (mongoose.models.Ticket) delete mongoose.models.Ticket
+export const Ticket = mongoose.model<ITicket>('Ticket', TicketSchema)
 
 // Import and export AppSettings separately
 import AppSettings from './AppSettings'

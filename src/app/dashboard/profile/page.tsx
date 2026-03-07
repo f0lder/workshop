@@ -35,7 +35,7 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <ProfileHeader />
       <ProfileForm />
-      {mongoUser && <AccountInfo userType={mongoUser.userType} accessLevel={mongoUser.accessLevel} />}
+      {mongoUser && <AccountInfo userType={mongoUser.userType} />}
     </div>
   );
 }

@@ -32,24 +32,6 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
     }
 
-    // Optionally, update the user's access level if this was their only completed payment
-    if (payment.status === 'completed') {
-      const userPayments = await Payment.find({
-        clerkId: payment.clerkId,
-        status: 'completed',
-        _id: { $ne: paymentId } // Exclude the current payment
-      })
-
-      // If user has no other completed payments, reset their access level
-      if (userPayments.length === 0) {
-        const paymentUser = await User.findOne({ clerkId: payment.clerkId })
-        if (paymentUser) {
-          paymentUser.accessLevel = 'unpaid'
-          await paymentUser.save()
-        }
-      }
-    }
-
     // Delete the payment
     await Payment.findByIdAndDelete(paymentId)
 

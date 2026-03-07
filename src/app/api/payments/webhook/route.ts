@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { constructEvent } from '@/lib/stripe';
 import connectDB from '@/lib/mongodb';
-import { Payment, User } from '@/models';
+import { Payment, Counter, IssuedTicket } from '@/models';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -38,12 +38,14 @@ export async function POST(req: NextRequest) {
         const clerkId = paymentIntent.metadata?.clerkId;
         const ticketId = paymentIntent.metadata?.ticketId;
         const ticketType = paymentIntent.metadata?.ticketType;
+        const ticketCategory = (paymentIntent.metadata?.ticketCategory || 'workshop') as 'workshop' | 'ball';
         const ticketTitle = paymentIntent.metadata?.ticketTitle;
         const userName = paymentIntent.metadata?.userName;
         const userEmail = paymentIntent.metadata?.userEmail;
         const userType = paymentIntent.metadata?.userType;
         const eventName = paymentIntent.metadata?.eventName;
         const eventLocation = paymentIntent.metadata?.eventLocation;
+        const quantity = parseInt(paymentIntent.metadata?.quantity || '1') || 1;
 
         if (!clerkId || !ticketId || !ticketType) {
           console.error('Missing required metadata in PaymentIntent:', paymentIntent.id);
@@ -56,14 +58,15 @@ export async function POST(req: NextRequest) {
         });
 
         if (!payment) {
-          // Create new payment record with correct schema fields
+          // Create new payment record
           payment = new Payment({
             clerkId,
-            stripeSessionId: paymentIntent.id, // Required field - use PaymentIntent ID
+            stripeSessionId: paymentIntent.id,
             stripePaymentIntentId: paymentIntent.id,
             ticketId,
             ticketType,
-            accessLevel: ticketType, // Keep for backward compatibility
+            ticketCategory,
+            quantity,
             amount: paymentIntent.amount,
             currency: paymentIntent.currency.toUpperCase(),
             status: 'completed',
@@ -78,18 +81,36 @@ export async function POST(req: NextRequest) {
           });
           await payment.save();
         } else {
-          // Update existing payment record
           payment.status = 'completed';
           payment.ticketId = ticketId;
           payment.ticketType = ticketType;
+          payment.ticketCategory = ticketCategory;
+          payment.quantity = quantity;
           await payment.save();
         }
 
-        // Update user's access level with ticket type
-        const user = await User.findOne({ clerkId });
-        if (user) {
-          user.accessLevel = ticketType;
-          await user.save();
+        // Create individual IssuedTicket documents (one per physical ticket)
+        const paymentObjectId = (payment._id as { toString(): string }).toString();
+        const alreadyIssued = await IssuedTicket.countDocuments({ paymentId: paymentObjectId });
+        if (alreadyIssued === 0) {
+          for (let i = 0; i < quantity; i++) {
+            const counter = await Counter.findOneAndUpdate(
+              { _id: 'issuedTicket' },
+              { $inc: { seq: 1 } },
+              { new: true, upsert: true }
+            );
+            await IssuedTicket.create({
+              ticketNumber: counter!.seq,
+              clerkId,
+              paymentId: paymentObjectId,
+              ticketTypeId: ticketId,
+              ticketTitle: ticketTitle || ticketType,
+              ticketType,
+              category: ticketCategory,
+              pricePerTicket: Math.round(paymentIntent.amount / quantity),
+              currency: paymentIntent.currency.toUpperCase(),
+            });
+          }
         }
 
       } catch (error) {
@@ -107,7 +128,6 @@ export async function POST(req: NextRequest) {
         amount: paymentIntent.amount,
         lastPaymentError: paymentIntent.last_payment_error?.message
       });
-      // No payment record to update since we only create them on success
       break;
     }
 
@@ -126,13 +146,9 @@ export async function POST(req: NextRequest) {
 // Disable body parsing to get raw body for webhook verification
 export const runtime = 'nodejs';
 
-// Explicitly handle OPTIONS for CORS
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
-    headers: {
-      'Allow': 'POST',
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Allow': 'POST', 'Content-Type': 'application/json' },
   });
 }

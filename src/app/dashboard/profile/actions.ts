@@ -16,7 +16,6 @@ export async function updateProfile(formData: FormData) {
   const firstName = formData.get('firstName') as string
   const lastName = formData.get('lastName') as string
   const userType = formData.get('userType') as UserType
-  const accessLevel = formData.get('accessLevel') as string
 
   try {
     // Update the user in Clerk using clerkClient
@@ -28,12 +27,10 @@ export async function updateProfile(formData: FormData) {
         // Preserve existing metadata and only update what we have
         ...clerkUser.publicMetadata,
         userType,
-        accessLevel,
       },
       unsafeMetadata: {
         ...clerkUser.unsafeMetadata,
         userType,
-        accessLevel,
       }
     })
 

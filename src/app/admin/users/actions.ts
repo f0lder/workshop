@@ -12,7 +12,6 @@ import type { UserType, User as UserInterface } from '@/types/models'
 interface UserUpdateData {
   role: 'user' | 'admin'
   userType?: UserType | null
-  accessLevel?: string
 }
 
 interface ClerkMetadataUpdate {
@@ -37,7 +36,6 @@ export async function updateUserRole(formData: FormData) {
     const userId = formData.get('userId') as string
     const newRole = formData.get('role') as 'user' | 'admin'
     const userType = formData.get('userType') as string
-    const accessLevel = formData.get('accessLevel') as 'unpaid' | 'paid'
 
     if (!userId || !newRole) {
       throw new Error('Date invalide.')
@@ -45,10 +43,6 @@ export async function updateUserRole(formData: FormData) {
 
     if (newRole !== 'user' && newRole !== 'admin' && newRole !== 'moderator') {
       throw new Error('Rol invalid.')
-    }
-
-    if (accessLevel && !['unpaid', 'paid', 'active', 'passive'].includes(accessLevel)) {
-      throw new Error('Nivel de acces invalid.')
     }
 
     if (userType && !['student', 'elev', 'rezident', ''].includes(userType)) {
@@ -67,10 +61,6 @@ export async function updateUserRole(formData: FormData) {
 
     if (userType !== undefined) {
       updateData.userType = (userType as UserType) || null
-    }
-
-    if (accessLevel) {
-      updateData.accessLevel = accessLevel
     }
 
     // Update user data in MongoDB
@@ -102,10 +92,6 @@ export async function updateUserRole(formData: FormData) {
 
     if (userType !== undefined) {
       updates.push(`tip: ${userType || 'nespecificat'}`)
-    }
-
-    if (accessLevel) {
-      updates.push(`acces: ${accessLevel}`)
     }
 
     return {
@@ -188,37 +174,10 @@ export async function fetchAllUsers() {
   // Use lean() for better performance and select only needed fields
   const users = await User
     .find({})
-    .select('clerkId firstName lastName email role userType accessLevel createdAt updatedAt')
+    .select('clerkId firstName lastName email role userType createdAt updatedAt')
     .lean()
 
   const usersJSON = JSON.parse(JSON.stringify(users)) as UserInterface[];
 
   return usersJSON;
-}
-
-export async function updateUserAccessLevel(userId: string, newAccessLevel: string) {
-  // Check if current user is admin
-  const clerkUser = await currentUser()
-  if (!clerkUser) {
-    redirect('/auth/login')
-  }
-
-  const isAdmin = await isUserAdmin(clerkUser.id)
-  if (!isAdmin) {
-    throw new Error('Nu aveți permisiunea să efectuați această acțiune.')
-  }
-
-  await connectDB()
-
-  const updatedUser = await User.findOneAndUpdate(
-    { clerkId: userId },
-    { accessLevel: newAccessLevel },
-    { new: true }
-  )
-
-  if (!updatedUser) {
-    throw new Error('Utilizatorul nu a fost găsit.')
-  }
-
-  return updatedUser
 }
