@@ -3,8 +3,10 @@ import { redirect } from 'next/navigation';
 import { syncUserWithDatabase } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import { IssuedTicket, Payment, Ticket } from '@/models';
-import { FaTicketAlt, FaCheck, FaTimes, FaCalendar } from 'react-icons/fa';
+import { FaTicketAlt, FaCheck, FaTimes, FaCalendar, FaShoppingCart } from 'react-icons/fa';
 import type { User as UserType } from '@/types/models';
+import Link from 'next/link';
+import { getAppSettings } from '@/lib/settings';
 
 export default async function MyTicketsPage() {
   const clerkUser = await currentUser();
@@ -12,6 +14,10 @@ export default async function MyTicketsPage() {
 
   const user: UserType = await syncUserWithDatabase(clerkUser);
   await connectDB();
+
+  const appSettings = await getAppSettings();
+  const isBallMode = appSettings?.eventMode === 'ball';
+  const ballMax = appSettings?.ballMaxTicketsPerUser ?? 2;
 
   // --- Ball tickets: fetched from IssuedTicket (one doc per physical ticket) ---
   const issuedTickets = await IssuedTicket.find({ clerkId: user.clerkId })
@@ -32,6 +38,11 @@ export default async function MyTicketsPage() {
   const ticketMap = new Map(ticketProducts.map((t) => [(t._id as { toString(): string }).toString(), t]));
 
   const ballCount = issuedTickets.filter((t) => t.category === 'ball').length;
+  const workshopOwned = workshopPayments.length > 0;
+
+  const ticketsRemaining = isBallMode
+    ? Math.max(0, ballMax - ballCount)
+    : workshopOwned ? 0 : 1;
 
   return (
     <div className="space-y-8">
@@ -41,6 +52,33 @@ export default async function MyTicketsPage() {
           Toate biletele achiziționate pentru MIMESISS 2025
         </p>
       </div>
+
+      {/* Buy more / buy first banner */}
+      {ticketsRemaining > 0 && (
+        <div className="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-lg px-5 py-4">
+          <div>
+            <p className="font-medium text-foreground">
+              {isBallMode
+                ? ballCount === 0
+                  ? 'Nu ai bilete de bal încă'
+                  : `Mai poți cumpăra ${ticketsRemaining} bilet${ticketsRemaining > 1 ? 'e' : ''} de bal`
+                : 'Nu ai niciun bilet de eveniment'}
+            </p>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {isBallMode
+                ? `Limita ta este de ${ballMax} bilet${ballMax > 1 ? 'e' : ''}`
+                : 'Achiziționează un bilet pentru a participa'}
+            </p>
+          </div>
+          <Link
+            href="/payment"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition-colors flex-shrink-0"
+          >
+            <FaShoppingCart className="h-3 w-3" />
+            Cumpără bilet
+          </Link>
+        </div>
+      )}
 
       {issuedTickets.length === 0 && workshopPayments.length === 0 && (
         <div className="text-center py-16 mimesiss-section-card">
@@ -60,7 +98,7 @@ export default async function MyTicketsPage() {
       {ballCount > 0 && (
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-foreground">🎭 Bilete Bal</h2>
+            <h2 className="text-lg font-semibold text-foreground">Bilete Bal</h2>
             <span className="bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">
               {ballCount} bilet{ballCount !== 1 ? 'e' : ''}
             </span>
@@ -79,7 +117,7 @@ export default async function MyTicketsPage() {
                 </div>
                 <div className="p-5 flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <span className="text-lg">🎭</span>
+                    <span className="text-lg"><FaTicketAlt /></span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground">{ticket.ticketTitle}</h3>
@@ -103,7 +141,7 @@ export default async function MyTicketsPage() {
       {/* Workshop tickets */}
       {workshopPayments.length > 0 && (
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold text-foreground">🎓 Bilete Workshop</h2>
+          <h2 className="text-lg font-semibold text-foreground">Bilete Workshop</h2>
           <div className="grid gap-4">
             {workshopPayments.map((payment) => {
               const ticketProduct = ticketMap.get(payment.ticketId || '');

@@ -1,9 +1,11 @@
 import { currentUser } from '@clerk/nextjs/server'
-import { FaCalendarAlt, FaUsers, FaCog,FaCalendarCheck } from 'react-icons/fa'
+import { FaCalendarAlt, FaUsers, FaCog, FaCalendarCheck, FaTicketAlt, FaShoppingCart } from 'react-icons/fa'
 import Link from 'next/link'
 import { syncUserWithDatabase } from '@/lib/auth'
 import SimpleUserQRCode from '@/components/SimpleUserQRCode'
 import { getAppSettings } from '@/lib/settings'
+import connectDB from '@/lib/mongodb'
+import { Payment } from '@/models'
 
 export default async function DashboardPage() {
   const clerkUser = await currentUser()
@@ -15,6 +17,30 @@ export default async function DashboardPage() {
   const user = await syncUserWithDatabase(clerkUser)
   const appSettings = await getAppSettings()
   const isBallMode = appSettings?.eventMode === 'ball'
+
+  // Ticket purchase status
+  await connectDB()
+  let ticketsOwned = 0
+  let ticketsRemaining: number | null = null
+
+  if (isBallMode) {
+    const ballPayments = await Payment.find({
+      clerkId: user.clerkId,
+      ticketCategory: 'ball',
+      status: 'completed',
+    }).lean()
+    ticketsOwned = ballPayments.reduce((sum, p) => sum + ((p as { quantity?: number }).quantity || 1), 0)
+    const max = appSettings?.ballMaxTicketsPerUser ?? 2
+    ticketsRemaining = Math.max(0, max - ticketsOwned)
+  } else {
+    const workshopPayment = await Payment.findOne({
+      clerkId: user.clerkId,
+      status: 'completed',
+      $or: [{ ticketCategory: 'workshop' }, { ticketCategory: { $exists: false } }],
+    }).lean()
+    ticketsOwned = workshopPayment ? 1 : 0
+    ticketsRemaining = workshopPayment ? 0 : 1
+  }
 
   return (
     <div className="space-y-6">
@@ -31,6 +57,51 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick Stats */}
+      <div className="mimesiss-card p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+              <FaTicketAlt className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground">
+                {isBallMode ? 'Bilete Bal' : 'Bilet eveniment'}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {ticketsOwned > 0
+                  ? isBallMode
+                    ? `${ticketsOwned} bilet${ticketsOwned > 1 ? 'e' : ''} cumpărat${ticketsOwned > 1 ? 'e' : ''}`
+                    : 'Bilet achiziționat'
+                  : 'Niciun bilet achiziționat'}
+              </p>
+            </div>
+          </div>
+
+          {ticketsRemaining !== null && ticketsRemaining > 0 ? (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">
+                {isBallMode
+                  ? `Mai poți cumpăra ${ticketsRemaining} bilet${ticketsRemaining > 1 ? 'e' : ''}`
+                  : 'Disponibil pentru cumpărare'}
+              </span>
+              <Link
+                href="/payment"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
+              >
+                <FaShoppingCart className="h-3 w-3" />
+                Cumpără
+              </Link>
+            </div>
+          ) : (
+            <span className="text-sm font-medium text-green-500">
+              {isBallMode ? 'Limită atinsă' : 'Complet'}
+            </span>
+          )}
+        </div>
+        <Link href="/dashboard/tickets" className="text-xs text-primary hover:underline">
+          Vezi toate biletele mele →
+        </Link>
+      </div>
 
 
       {/* User QR Code Section */}

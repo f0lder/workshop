@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import connectDB from '@/lib/mongodb'
-import { Payment, User } from '@/models'
+import { Payment, User, IssuedTicket } from '@/models'
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -32,7 +32,8 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
     }
 
-    // Delete the payment
+    // Delete associated issued tickets first, then the payment
+    await IssuedTicket.deleteMany({ paymentId: paymentId })
     await Payment.findByIdAndDelete(paymentId)
 
     return NextResponse.json({ 

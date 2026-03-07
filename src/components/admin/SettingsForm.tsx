@@ -216,7 +216,7 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
                     className="w-4 h-4 text-primary border-input focus:ring-primary"
                   />
                   <span className="text-sm text-foreground capitalize">
-                    {mode === 'workshops' ? '🎓 Workshop-uri' : '🎭 Bal'}
+                    {mode === 'workshops' ? 'Workshop-uri' : 'Bal'}
                   </span>
                 </label>
               ))}

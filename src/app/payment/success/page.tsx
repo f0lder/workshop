@@ -1,8 +1,12 @@
 import { Suspense } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import Link from 'next/link';
+import { getAppSettings } from '@/lib/settings';
 
-function SuccessContent() {
+async function SuccessContent() {
+  const settings = await getAppSettings();
+  const isBall = settings?.eventMode === 'ball';
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full text-center space-y-6">
@@ -15,14 +19,17 @@ function SuccessContent() {
             Plată finalizată cu succes!
           </h1>
           <p className="text-muted-foreground">
-            Mulțumim pentru achiziționarea biletului pentru MIMESISS 2025.
+            {isBall
+              ? 'Mulțumim pentru achiziționarea biletului la Balul MIMESISS 2026.'
+              : 'Mulțumim pentru achiziționarea biletului pentru MIMESISS 2025.'}
           </p>
         </div>
 
         <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
           <p className="text-sm text-foreground">
-            Veți primi în curând un email de confirmare cu detaliile biletului.
-            Nivelul dvs. de acces a fost actualizat automat.
+            {isBall
+              ? ' Biletul dvs. este disponibil în secțiunea Biletele mele.'
+              : 'Veți primi în curând un email de confirmare cu detaliile biletului. Nivelul dvs. de acces a fost actualizat automat.'}
           </p>
         </div>
 
@@ -34,12 +41,21 @@ function SuccessContent() {
             Mergi la Dashboard
           </Link>
           
-          <Link
-            href="/workshops"
-            className="block w-full border border-border bg-background text-foreground py-3 px-4 rounded-md font-medium hover:bg-muted transition-colors"
-          >
-            Vezi Workshop-urile
-          </Link>
+          {isBall ? (
+            <Link
+              href="/dashboard/tickets"
+              className="block w-full border border-border bg-background text-foreground py-3 px-4 rounded-md font-medium hover:bg-muted transition-colors"
+            >
+              Vezi biletele mele
+            </Link>
+          ) : (
+            <Link
+              href="/workshops"
+              className="block w-full border border-border bg-background text-foreground py-3 px-4 rounded-md font-medium hover:bg-muted transition-colors"
+            >
+              Vezi Workshop-urile
+            </Link>
+          )}
         </div>
       </div>
     </div>

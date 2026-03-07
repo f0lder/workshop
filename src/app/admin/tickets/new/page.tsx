@@ -165,7 +165,7 @@ export default function NewTicketPage() {
 							  className="w-4 h-4 text-primary border-input"
 						  />
 						  <span className="text-sm text-foreground">
-							  {cat === 'workshop' ? '🎓 Workshop' : '🎭 Bal'}
+							  {cat === 'workshop' ? 'Workshop' : 'Bal'}
 						  </span>
 					  </label>
 				  ))}
