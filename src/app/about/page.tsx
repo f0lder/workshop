@@ -67,9 +67,9 @@ export default function AboutPage() {
 				<h3 className="mimesiss-subtitle">Consiliu director</h3>
 
 				<div className="grid grid-cols-2 gap-4 py-4 max-w-4xl mx-auto">
-					{peopleData.slice(0, 3).map((group, index) => (
+					{peopleData.slice(0, 3).map((group) => (
 						group.row.map((person) => (
-							<PersonCard key={`${index}-${group}`} name={person.name} role={person.role} imageUrl={person.imageUrl} className={person.className ? person.className : ''} />
+							<PersonCard key={person.name} name={person.name} role={person.role} imageUrl={person.imageUrl} className={person.className ? person.className : ''} />
 						))
 					))}
 				</div>
@@ -77,9 +77,9 @@ export default function AboutPage() {
 				<h3 className="mimesiss-subtitle">Consiliu director extins</h3>
 
 				<div className="grid grid-cols-2 gap-4 py-4 max-w-4xl mx-auto">
-					{peopleData.slice(3).map((group, index) => (
+					{peopleData.slice(3).map((group) => (
 						group.row.map((person) => (
-							<PersonCard key={`${index}-${group}`} name={person.name} role={person.role} imageUrl={person.imageUrl} className={person.className ? person.className : ''} />
+							<PersonCard key={person.name} name={person.name} role={person.role} imageUrl={person.imageUrl} className={person.className ? person.className : ''} />
 						))
 					))}
 				</div>
