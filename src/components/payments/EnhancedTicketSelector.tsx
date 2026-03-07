@@ -93,7 +93,7 @@ export default function EnhancedTicketSelector() {
 
 			<div className="ticket-grid">
 				{tickets.map((ticket) => {
-					const purchased = isPurchased();
+					const purchased = ticket._id === selectedTicket?._id;
 
 					return (
 						<div
