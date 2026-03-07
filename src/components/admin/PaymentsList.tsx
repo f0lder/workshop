@@ -25,6 +25,7 @@ interface PaymentWithUser {
 
 interface PaymentsListProps {
   payments: PaymentWithUser[]
+  ticketCounts: Record<string, number>
 }
 
 // Helper functions
@@ -46,7 +47,7 @@ function formatDate(date: Date | string): string {
 }
 
 
-export default function PaymentsList({ payments }: PaymentsListProps) {
+export default function PaymentsList({ payments, ticketCounts }: PaymentsListProps) {
   const [searchTerm, setSearchTerm] = useState('')
 
   // Filter payments based on search term
@@ -162,6 +163,11 @@ export default function PaymentsList({ payments }: PaymentsListProps) {
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                               {payment.ticketType}
                             </span>
+                            {ticketCounts[payment._id] != null && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground border border-border">
+                                {ticketCounts[payment._id]} bilet{ticketCounts[payment._id] !== 1 ? 'e' : ''}
+                              </span>
+                            )}
                           </div>
                           {payment.ticketId && (
                             <div className="text-xs text-muted-foreground">

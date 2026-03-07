@@ -1,6 +1,6 @@
 'use client'
 
-import { FaCreditCard, FaEuroSign, FaTicketAlt } from 'react-icons/fa'
+import { FaCreditCard } from 'react-icons/fa'
 import PaymentsList from '@/components/admin/PaymentsList'
 import Link from 'next/link'
 
@@ -33,9 +33,10 @@ interface PaymentWithUser {
 interface PaymentsClientProps {
 	stats: PaymentStats
 	payments: PaymentWithUser[]
+	ticketCounts: Record<string, number>
 }
 
-export default function PaymentsClient({ stats, payments }: PaymentsClientProps) {
+export default function PaymentsClient({ stats, payments, ticketCounts }: PaymentsClientProps) {
 
 	// 1. Move the currency formatter
 	function formatCurrency(amount: number) {
@@ -103,9 +104,12 @@ export default function PaymentsClient({ stats, payments }: PaymentsClientProps)
 			<div className="flex justify-between items-center">
 				<div>
 					<h1 className="text-2xl font-bold text-foreground">Gestionare Plăți</h1>
-					<p className="mt-1 text-sm text-muted-foreground">
+				<p className="mt-1 text-sm text-muted-foreground">
 						Monitorizați și gestionați toate plățile pentru biletele MIMESISS 2025.
 					</p>
+				<p className="mt-1 text-sm text-muted-foreground">
+					Total încasat: <span className="font-semibold text-foreground">{formatCurrency(stats.totalRevenue)}</span>
+				</p>
 
 					{/* 4. Add onClick handler to the button */}
 					<div className="mt-4 flex items-center space-x-4">
@@ -124,52 +128,7 @@ export default function PaymentsClient({ stats, payments }: PaymentsClientProps)
 				</div>
 			</div>
 
-			{/* Statistics Cards */}
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-				<div className="bg-card p-6 rounded-lg border border-border">
-					<div className="flex items-center">
-						<div className="flex-shrink-0">
-							<FaEuroSign className="h-6 w-6 text-primary" />
-						</div>
-						<div className="ml-4">
-							<p className="text-sm font-medium text-muted-foreground">Venituri Totale</p>
-							<p className="text-2xl font-bold text-foreground">{formatCurrency(stats.totalRevenue)}</p>
-						</div>
-					</div>
-				</div>
-
-				<div className="bg-card p-6 rounded-lg border border-border">
-					<div className="flex items-center">
-						<div className="flex-shrink-0">
-							<FaCreditCard className="h-6 w-6 text-primary" />
-						</div>
-						<div className="ml-4">
-							<p className="text-sm font-medium text-muted-foreground">Total Plăți</p>
-							<p className="text-2xl font-bold text-foreground">{stats.totalPayments}</p>
-						</div>
-					</div>
-				</div>
-
-				{/* Dynamic Ticket Type Cards */}
-				{Object.entries(stats.ticketTypeCounts)
-					.sort(([a], [b]) => a.localeCompare(b))
-					.map(([ticketType, count]) => (
-						<div key={ticketType} className="bg-card p-6 rounded-lg border border-border">
-							<div className="flex items-center">
-								<div className="flex-shrink-0">
-									<FaTicketAlt className="h-6 w-6 text-primary" />
-								</div>
-								<div className="ml-4">
-									<p className="text-sm font-medium text-muted-foreground capitalize">
-										Bilete {ticketType}
-									</p>
-									<p className="text-2xl font-bold text-foreground">{count}</p>
-								</div>
-							</div>
-						</div>
-					))}
-			</div>
-
+			{/* Statistics Cards removed */}
 
 			{/* Recent Payments Table */}
 			<div className="bg-card shadow border border-border overflow-hidden sm:rounded-lg">
@@ -180,7 +139,7 @@ export default function PaymentsClient({ stats, payments }: PaymentsClientProps)
 					</p>
 				</div>
 
-				<PaymentsList payments={payments} />
+				<PaymentsList payments={payments} ticketCounts={ticketCounts} />
 
 				{payments.length === 0 && (
 					<div className="text-center py-12">

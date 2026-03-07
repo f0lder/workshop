@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { syncUserWithDatabase } from '@/lib/auth'
 import type { User as UserType } from '@/types/models'
 import connectDB from '@/lib/mongodb'
-import { Payment, User } from '@/models'
+import { Payment, User, IssuedTicket } from '@/models'
 // Import the new client component
 import PaymentsClient from '@/components/payments/PaymentsClient'
 
@@ -98,5 +98,13 @@ export default async function PaymentsPage() {
     }
   })
 
-  return <PaymentsClient stats={stats} payments={recentPayments} />
+  // Count issued tickets per payment
+  const issuedCounts = await IssuedTicket.aggregate([
+    { $group: { _id: '$paymentId', count: { $sum: 1 } } },
+  ])
+  const ticketCounts: Record<string, number> = Object.fromEntries(
+    issuedCounts.map((r: { _id: string; count: number }) => [r._id, r.count])
+  )
+
+  return <PaymentsClient stats={stats} payments={recentPayments} ticketCounts={ticketCounts} />
 }
