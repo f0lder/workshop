@@ -43,6 +43,7 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
 
   const moderatorLinks = [
     { href: '/dashboard/moderator', icon: FaCalendarAlt, label: 'Moderator' },
+    { href: '/dashboard/moderator/tickets', icon: FaTicketAlt, label: 'Bilete emise' },
   ]
 
 

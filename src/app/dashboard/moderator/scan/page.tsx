@@ -24,7 +24,7 @@ export default async function ScannerPage() {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground">Scanner Cod QR</h1>
           <p className="mt-2 text-muted-foreground">
-            Scanați codul QR al participantului pentru a accesa profilul
+            Scanați QR-ul de pe biletul emis pentru validare la intrare
           </p>
         </div>
 

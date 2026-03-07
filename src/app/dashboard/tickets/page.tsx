@@ -7,6 +7,7 @@ import { FaTicketAlt, FaCheck, FaTimes, FaCalendar, FaShoppingCart } from 'react
 import type { User as UserType } from '@/types/models';
 import Link from 'next/link';
 import { getAppSettings } from '@/lib/settings';
+import TicketQRPopover from '@/components/TicketQRPopover';
 
 export default async function MyTicketsPage() {
   const clerkUser = await currentUser();
@@ -111,25 +112,38 @@ export default async function MyTicketsPage() {
                   <span className="text-xs font-mono font-semibold text-primary tracking-widest">
                     Bilet #{String(ticket.ticketNumber).padStart(4, '0')}
                   </span>
-                  <span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <FaCheck className="h-2.5 w-2.5" /> Activ
+                  <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 border ${ticket.status === 'used'
+                    ? 'bg-muted text-muted-foreground border-border'
+                    : ticket.status === 'cancelled'
+                      ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                      : 'bg-green-500/10 text-green-400 border-green-500/20'
+                    }`}>
+                    <FaCheck className="h-2.5 w-2.5" />
+                    {ticket.status === 'used' ? 'Folosit' : ticket.status === 'cancelled' ? 'Anulat' : 'Activ'}
                   </span>
                 </div>
                 <div className="p-5 flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <span className="text-lg"><FaTicketAlt /></span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground">{ticket.ticketTitle}</h3>
-                    <p className="text-sm text-muted-foreground mt-0.5">
-                      {(ticket.pricePerTicket / 100).toFixed(2)} {ticket.currency}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-                      <FaCalendar className="h-3 w-3" />
-                      Achiziționat {new Date(ticket.createdAt).toLocaleDateString('ro-RO', {
-                        day: 'numeric', month: 'long', year: 'numeric',
-                      })}
-                    </p>
+                  <div className="flex-1 min-w-0 flex justify-between items-center">
+                    <div>
+                      <h3 className="font-semibold text-foreground">{ticket.ticketTitle}</h3>
+                      <p className="text-sm text-muted-foreground mt-0.5">
+                        {(ticket.pricePerTicket / 100).toFixed(2)} {ticket.currency}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                        <FaCalendar className="h-3 w-3" />
+                        Achiziționat {new Date(ticket.createdAt).toLocaleDateString('ro-RO', {
+                          day: 'numeric', month: 'long', year: 'numeric',
+                        })}
+                      </p>
+                      
+                    </div>
+                      <TicketQRPopover
+                        ticketId={(ticket._id as { toString(): string }).toString()}
+                        ticketLabel={`${ticket.ticketTitle} #${String(ticket.ticketNumber).padStart(4, '0')}`}
+                      />
                   </div>
                 </div>
               </div>
@@ -150,16 +164,15 @@ export default async function MyTicketsPage() {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <FaTicketAlt className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 flex">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-semibold text-foreground">
                         {ticketProduct?.title || payment.ticketType}
                       </h3>
-                      <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 border ${
-                        payment.status === 'completed'
-                          ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                          : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-                      }`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 border ${payment.status === 'completed'
+                        ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                        : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                        }`}>
                         {payment.status === 'completed'
                           ? <><FaCheck className="h-2.5 w-2.5" /> Plătit</>
                           : <><FaTimes className="h-2.5 w-2.5" /> {payment.status}</>}
@@ -184,6 +197,12 @@ export default async function MyTicketsPage() {
                         day: 'numeric', month: 'long', year: 'numeric',
                       })}
                     </p>
+                    <div className="mt-3">
+                      <TicketQRPopover
+                        ticketId={(payment._id as { toString(): string }).toString()}
+                        ticketLabel={ticketProduct?.title || payment.ticketType || 'Bilet'}
+                      />
+                    </div>
                   </div>
                 </div>
               );
