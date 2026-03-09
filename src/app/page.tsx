@@ -71,7 +71,7 @@ export default function HomePage() {
             </p>
 
             <p>
-              <Link href="https://www.livetickets.ro/e/f657339" className="mimesiss-btn-primary">
+              <Link href="https://www.livetickets.ro/e/f657339" className="mimesiss-btn-primary" target='_blank'>
                 Cumpără Bilet
               </Link>
             </p>

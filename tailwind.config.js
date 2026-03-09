@@ -10,17 +10,17 @@ module.exports = {
     extend: {
       colors: {
         // MIMESISS Brand Colors mapped to design system
-        border: '#DF5739',  // MIMESISS orange for ALL borders
-        input: '#374151',   // Muted gray for input borders (visible but subtle)
-        ring: '#DF5739',    // Orange for focus rings
+        border: '#6699FF',  // MIMESISS orange for ALL borders
+        input: '#6600CC',   // Muted gray for input borders (visible but subtle)
+        ring: '#6699FF',    // Orange for focus rings
         background: '#0F0F10', // MIMESISS black for backgrounds
         foreground: '#ffffff', // White for text on dark backgrounds
         primary: {
-          DEFAULT: '#DF5739',  // Orange as primary
+          DEFAULT: '#6699FF',  // Orange as primary
           foreground: '#ffffff',
         },
         secondary: {
-          DEFAULT: '#790000',  // MIMESISS purple as secondary
+          DEFAULT: '#6600CC',  // MIMESISS purple as secondary
           foreground: '#ffffff',
         },
         destructive: {
@@ -32,7 +32,7 @@ module.exports = {
           foreground: '#9ca3af', // Gray for muted text
         },
         accent: {
-          DEFAULT: '#FFC107',  // Yellow for accents
+          DEFAULT: '##6600CC',  // Yellow for accents
           foreground: '#000000',
         },
         popover: {

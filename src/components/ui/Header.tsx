@@ -50,17 +50,18 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <Image
-            src="/icons/logo_simple.png"
+          className='block py-2'
+            src="/icons/asmm.png"
             alt="MIMESISS 2025"
-            width={168}
-            height={40}
+            width={200}
+            height={68}
             priority
-            quality={40}
+            quality={75}
           />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-6">
+        <nav className="hidden lg:flex items-center space-x-3">
           {links.map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href} className={`transition-colors relative underline-offset-4 ${isActive(href) ? 'text-primary underline' : 'text-foreground hover:text-primary hover:underline'}`}>
               <Icon className="mr-2 hidden lg:inline-block" />

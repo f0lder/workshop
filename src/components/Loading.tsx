@@ -7,7 +7,7 @@ export default function Loading() {
 	  <div className="flex flex-col items-center gap-6">
 		{/* Logo */}
 		<div className="relative h-24 w-48">
-		  <Image src="/icons/logo_simple.png" alt="MIMESISS" fill style={{ objectFit: 'contain' }} />
+		  <Image src="/icons/asmm.png" alt="MIMESISS" fill style={{ objectFit: 'contain' }} />
 		</div>
 
 		{/* Spinner + text */}
