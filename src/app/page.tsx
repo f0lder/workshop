@@ -90,8 +90,8 @@ export default function HomePage() {
         <div className="mimesiss-contact-card flex flex-col items-center text-center p-6">
           <FaEnvelope className="h-6 w-6 text-primary mb-4" />
           <h4 className="text-lg font-semibold text-white mb-2">Email</h4>
-          <a href="mailto:secretariat@asmm-bucuresti.com" className="mimesiss-text-secondary hover:text-primary transition duration-200">
-            secretariat@asmm-bucuresti.com
+          <a href="mailto:office.asmm@gmail.com" className="mimesiss-text-secondary hover:text-primary transition duration-200">
+            office.asmm@gmail.com
           </a>
 
         </div>
